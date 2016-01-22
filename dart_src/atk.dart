@@ -11,8 +11,8 @@ import "gobject.dart" as gobject;
 abstract class Action extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Action');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool doAction(int i) => _staticInfo.callMethodOnReceiver('do_action', this, [i]);
   String getDescription(int i) => _staticInfo.callMethodOnReceiver('get_description', this, [i]);
   String getKeybinding(int i) => _staticInfo.callMethodOnReceiver('get_keybinding', this, [i]);
@@ -36,8 +36,8 @@ class Attribute extends GObjectBase {
 abstract class Component extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Component');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool contains(int x, int y, CoordType coordType) => _staticInfo.callMethodOnReceiver('contains', this, [x, y, coordType]);
   num get alpha => _staticInfo.callMethodOnReceiver('get_alpha', this, []);
   void getExtents(int x, int y, int width, int height, CoordType coordType) => _staticInfo.callMethodOnReceiver('get_extents', this, [x, y, width, height, coordType]);
@@ -102,8 +102,8 @@ class CoordType extends GEnumBase {
 abstract class Document extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Document');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   String getAttributeValue(String attributeName) => _staticInfo.callMethodOnReceiver('get_attribute_value', this, [attributeName]);
   SList /* this will fail */ get attributes => _staticInfo.callMethodOnReceiver('get_attributes', this, []);
   int get currentPageNumber => _staticInfo.callMethodOnReceiver('get_current_page_number', this, []);
@@ -241,8 +241,8 @@ abstract class Document extends GObjectBase {
 abstract class EditableText extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'EditableText');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   void copyText(int startPos, int endPos) => _staticInfo.callMethodOnReceiver('copy_text', this, [startPos, endPos]);
   void cutText(int startPos, int endPos) => _staticInfo.callMethodOnReceiver('cut_text', this, [startPos, endPos]);
   void deleteText(int startPos, int endPos) => _staticInfo.callMethodOnReceiver('delete_text', this, [startPos, endPos]);
@@ -269,9 +269,9 @@ class Hyperlink extends GObjectObject with Action {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Hyperlink');
 
   static const String END_INDEX_PROPERTY = 'end-index';
-  int get numberOfAnchors => getGProperty('number-of-anchors');
+  int get numberOfAnchors => _staticInfo.getGPropertyOnReceiver('number-of-anchors', this);
   static const String NUMBER_OF_ANCHORS_PROPERTY = 'number-of-anchors';
-  bool get selectedLink => getGProperty('selected-link');
+  bool get selectedLink => _staticInfo.getGPropertyOnReceiver('selected-link', this);
   static const String SELECTED_LINK_PROPERTY = 'selected-link';
   static const String START_INDEX_PROPERTY = 'start-index';
   int get endIndex => _staticInfo.callMethodOnReceiver('get_end_index', this, []);
@@ -318,8 +318,8 @@ class Hyperlink extends GObjectObject with Action {
 abstract class HyperlinkImpl extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'HyperlinkImpl');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   Hyperlink get hyperlink => _staticInfo.callMethodOnReceiver('get_hyperlink', this, []);
 }
 
@@ -355,8 +355,8 @@ class HyperlinkStateFlags extends GEnumBase {
 abstract class Hypertext extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Hypertext');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   Hyperlink getLink(int linkIndex) => _staticInfo.callMethodOnReceiver('get_link', this, [linkIndex]);
   int getLinkIndex(int charIndex) => _staticInfo.callMethodOnReceiver('get_link_index', this, [charIndex]);
   int get nLinks => _staticInfo.callMethodOnReceiver('get_n_links', this, []);
@@ -396,8 +396,8 @@ abstract class Hypertext extends GObjectBase {
 abstract class Image extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Image');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   String get imageDescription => _staticInfo.callMethodOnReceiver('get_image_description', this, []);
   String get imageLocale => _staticInfo.callMethodOnReceiver('get_image_locale', this, []);
   void getImagePosition(int x, int y, CoordType coordType) => _staticInfo.callMethodOnReceiver('get_image_position', this, [x, y, coordType]);
@@ -415,8 +415,8 @@ class Implementor extends GObjectBase {
 abstract class ImplementorIface extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'ImplementorIface');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
 }
 
 class KeyEventStruct extends GObjectBase {
@@ -511,47 +511,47 @@ class AtkObject extends GObjectObject {
   AtkObject.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Object');
 
-  int get accessibleComponentLayer => getGProperty('accessible-component-layer');
+  int get accessibleComponentLayer => _staticInfo.getGPropertyOnReceiver('accessible-component-layer', this);
   static const String ACCESSIBLE_COMPONENT_LAYER_PROPERTY = 'accessible-component-layer';
-  int get accessibleComponentMdiZorder => getGProperty('accessible-component-mdi-zorder');
+  int get accessibleComponentMdiZorder => _staticInfo.getGPropertyOnReceiver('accessible-component-mdi-zorder', this);
   static const String ACCESSIBLE_COMPONENT_MDI_ZORDER_PROPERTY = 'accessible-component-mdi-zorder';
-  String get accessibleDescription => getGProperty('accessible-description');
-  void set accessibleDescription(String value) => setGProperty('accessible-description', value);
+  String get accessibleDescription => _staticInfo.getGPropertyOnReceiver('accessible-description', this);
+  void set accessibleDescription(String value) => _staticInfo.setGPropertyOnReceiver('accessible-description', this, value);
   static const String ACCESSIBLE_DESCRIPTION_PROPERTY = 'accessible-description';
-  int get accessibleHypertextNlinks => getGProperty('accessible-hypertext-nlinks');
+  int get accessibleHypertextNlinks => _staticInfo.getGPropertyOnReceiver('accessible-hypertext-nlinks', this);
   static const String ACCESSIBLE_HYPERTEXT_NLINKS_PROPERTY = 'accessible-hypertext-nlinks';
-  String get accessibleName => getGProperty('accessible-name');
-  void set accessibleName(String value) => setGProperty('accessible-name', value);
+  String get accessibleName => _staticInfo.getGPropertyOnReceiver('accessible-name', this);
+  void set accessibleName(String value) => _staticInfo.setGPropertyOnReceiver('accessible-name', this, value);
   static const String ACCESSIBLE_NAME_PROPERTY = 'accessible-name';
-  AtkObject get accessibleParent => getGProperty('accessible-parent');
-  void set accessibleParent(AtkObject value) => setGProperty('accessible-parent', value);
+  AtkObject get accessibleParent => _staticInfo.getGPropertyOnReceiver('accessible-parent', this);
+  void set accessibleParent(AtkObject value) => _staticInfo.setGPropertyOnReceiver('accessible-parent', this, value);
   static const String ACCESSIBLE_PARENT_PROPERTY = 'accessible-parent';
-  int get accessibleRole => getGProperty('accessible-role');
-  void set accessibleRole(int value) => setGProperty('accessible-role', value);
+  int get accessibleRole => _staticInfo.getGPropertyOnReceiver('accessible-role', this);
+  void set accessibleRole(int value) => _staticInfo.setGPropertyOnReceiver('accessible-role', this, value);
   static const String ACCESSIBLE_ROLE_PROPERTY = 'accessible-role';
-  String get accessibleTableCaption => getGProperty('accessible-table-caption');
-  void set accessibleTableCaption(String value) => setGProperty('accessible-table-caption', value);
+  String get accessibleTableCaption => _staticInfo.getGPropertyOnReceiver('accessible-table-caption', this);
+  void set accessibleTableCaption(String value) => _staticInfo.setGPropertyOnReceiver('accessible-table-caption', this, value);
   static const String ACCESSIBLE_TABLE_CAPTION_PROPERTY = 'accessible-table-caption';
-  AtkObject get accessibleTableCaptionObject => getGProperty('accessible-table-caption-object');
-  void set accessibleTableCaptionObject(AtkObject value) => setGProperty('accessible-table-caption-object', value);
+  AtkObject get accessibleTableCaptionObject => _staticInfo.getGPropertyOnReceiver('accessible-table-caption-object', this);
+  void set accessibleTableCaptionObject(AtkObject value) => _staticInfo.setGPropertyOnReceiver('accessible-table-caption-object', this, value);
   static const String ACCESSIBLE_TABLE_CAPTION_OBJECT_PROPERTY = 'accessible-table-caption-object';
-  String get accessibleTableColumnDescription => getGProperty('accessible-table-column-description');
-  void set accessibleTableColumnDescription(String value) => setGProperty('accessible-table-column-description', value);
+  String get accessibleTableColumnDescription => _staticInfo.getGPropertyOnReceiver('accessible-table-column-description', this);
+  void set accessibleTableColumnDescription(String value) => _staticInfo.setGPropertyOnReceiver('accessible-table-column-description', this, value);
   static const String ACCESSIBLE_TABLE_COLUMN_DESCRIPTION_PROPERTY = 'accessible-table-column-description';
-  AtkObject get accessibleTableColumnHeader => getGProperty('accessible-table-column-header');
-  void set accessibleTableColumnHeader(AtkObject value) => setGProperty('accessible-table-column-header', value);
+  AtkObject get accessibleTableColumnHeader => _staticInfo.getGPropertyOnReceiver('accessible-table-column-header', this);
+  void set accessibleTableColumnHeader(AtkObject value) => _staticInfo.setGPropertyOnReceiver('accessible-table-column-header', this, value);
   static const String ACCESSIBLE_TABLE_COLUMN_HEADER_PROPERTY = 'accessible-table-column-header';
-  String get accessibleTableRowDescription => getGProperty('accessible-table-row-description');
-  void set accessibleTableRowDescription(String value) => setGProperty('accessible-table-row-description', value);
+  String get accessibleTableRowDescription => _staticInfo.getGPropertyOnReceiver('accessible-table-row-description', this);
+  void set accessibleTableRowDescription(String value) => _staticInfo.setGPropertyOnReceiver('accessible-table-row-description', this, value);
   static const String ACCESSIBLE_TABLE_ROW_DESCRIPTION_PROPERTY = 'accessible-table-row-description';
-  AtkObject get accessibleTableRowHeader => getGProperty('accessible-table-row-header');
-  void set accessibleTableRowHeader(AtkObject value) => setGProperty('accessible-table-row-header', value);
+  AtkObject get accessibleTableRowHeader => _staticInfo.getGPropertyOnReceiver('accessible-table-row-header', this);
+  void set accessibleTableRowHeader(AtkObject value) => _staticInfo.setGPropertyOnReceiver('accessible-table-row-header', this, value);
   static const String ACCESSIBLE_TABLE_ROW_HEADER_PROPERTY = 'accessible-table-row-header';
-  AtkObject get accessibleTableSummary => getGProperty('accessible-table-summary');
-  void set accessibleTableSummary(AtkObject value) => setGProperty('accessible-table-summary', value);
+  AtkObject get accessibleTableSummary => _staticInfo.getGPropertyOnReceiver('accessible-table-summary', this);
+  void set accessibleTableSummary(AtkObject value) => _staticInfo.setGPropertyOnReceiver('accessible-table-summary', this, value);
   static const String ACCESSIBLE_TABLE_SUMMARY_PROPERTY = 'accessible-table-summary';
-  num get accessibleValue => getGProperty('accessible-value');
-  void set accessibleValue(num value) => setGProperty('accessible-value', value);
+  num get accessibleValue => _staticInfo.getGPropertyOnReceiver('accessible-value', this);
+  void set accessibleValue(num value) => _staticInfo.setGPropertyOnReceiver('accessible-value', this, value);
   static const String ACCESSIBLE_VALUE_PROPERTY = 'accessible-value';
   bool addRelationship(RelationType relationship, AtkObject target) => _staticInfo.callMethodOnReceiver('add_relationship', this, [relationship, target]);
   SList /* this will fail */ get attributes => _staticInfo.callMethodOnReceiver('get_attributes', this, []);
@@ -854,9 +854,9 @@ class Relation extends GObjectObject {
   Relation.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Relation');
 
-  void set relationType(RelationType value) => setGProperty('relation-type', value);
+  void set relationType(RelationType value) => _staticInfo.setGPropertyOnReceiver('relation-type', this, value);
   static const String RELATION_TYPE_PROPERTY = 'relation-type';
-  void set target(ValueArray value) => setGProperty('target', value);
+  void set target(ValueArray value) => _staticInfo.setGPropertyOnReceiver('target', this, value);
   static const String TARGET_PROPERTY = 'target';
   factory Relation(List<AtkObject> targets, RelationType relationship) => _staticInfo.callStatic('new', [targets, relationship]);
   void addTarget(AtkObject target) => _staticInfo.callMethodOnReceiver('add_target', this, [target]);
@@ -1195,8 +1195,8 @@ class Role extends GEnumBase {
 abstract class Selection extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Selection');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool addSelection(int i) => _staticInfo.callMethodOnReceiver('add_selection', this, [i]);
   bool clearSelection() => _staticInfo.callMethodOnReceiver('clear_selection', this, []);
   int get selectionCount => _staticInfo.callMethodOnReceiver('get_selection_count', this, []);
@@ -1368,8 +1368,8 @@ class StateType extends GEnumBase {
 abstract class StreamableContent extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'StreamableContent');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   String getMimeType(int i) => _staticInfo.callMethodOnReceiver('get_mime_type', this, [i]);
   int get nMimeTypes => _staticInfo.callMethodOnReceiver('get_n_mime_types', this, []);
   IOChannel getStream(String mimeType) => _staticInfo.callMethodOnReceiver('get_stream', this, [mimeType]);
@@ -1379,8 +1379,8 @@ abstract class StreamableContent extends GObjectBase {
 abstract class Table extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Table');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool addColumnSelection(int column) => _staticInfo.callMethodOnReceiver('add_column_selection', this, [column]);
   bool addRowSelection(int row) => _staticInfo.callMethodOnReceiver('add_row_selection', this, [row]);
   AtkObject get caption => _staticInfo.callMethodOnReceiver('get_caption', this, []);
@@ -1668,8 +1668,8 @@ class TableRowInsertedEvent {
 abstract class TableCell extends GObjectBase implements AtkObject {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'TableCell');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   List<AtkObject> get columnHeaderCells => _staticInfo.callMethodOnReceiver('get_column_header_cells', this, []);
   int get columnSpan => _staticInfo.callMethodOnReceiver('get_column_span', this, []);
   List getPosition() => _staticInfo.callMethodOnReceiver('get_position', this, []);
@@ -1682,8 +1682,8 @@ abstract class TableCell extends GObjectBase implements AtkObject {
 abstract class Text extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Text');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static void freeRanges(List<TextRange> ranges) => _staticInfo.callStatic('free_ranges', [ranges]);
   bool textAddSelection(int startOffset, int endOffset) => _staticInfo.callMethodOnReceiver('add_selection', this, [startOffset, endOffset]);
   List<TextRange> getBoundedRanges(TextRectangle rect, CoordType coordType, TextClipType xClipType, TextClipType yClipType) => _staticInfo.callMethodOnReceiver('get_bounded_ranges', this, [rect, coordType, xClipType, yClipType]);
@@ -2097,8 +2097,8 @@ class Util extends GObjectObject {
 abstract class Value extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Value');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   void getCurrentValue(Value value) => _staticInfo.callMethodOnReceiver('get_current_value', this, [value]);
   num get increment => _staticInfo.callMethodOnReceiver('get_increment', this, []);
   void getMaximumValue(Value value) => _staticInfo.callMethodOnReceiver('get_maximum_value', this, [value]);
@@ -2199,8 +2199,8 @@ class ValueType extends GEnumBase {
 abstract class Window extends GObjectBase implements AtkObject {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Atk', 'Window');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   int _connectToActivate(bool after, void func()) => signalConnect('activate', func, after);
   Stream get onActivate {
     int signalId;

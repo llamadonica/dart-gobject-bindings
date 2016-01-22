@@ -18,11 +18,13 @@ lib_LTLIBRARIES = libgdart.la
 
 libgdart_la_SOURCES = \
 	gdart.c\
+	gdart/array.c\
 	gdart/importer.c\
 	gdart/common.c\
 	gdart/bridge_context.c\
 	gdart/marshallers_check.c\
-	gdart/function.c
+	gdart/function.c\
+	gdart/g_property.c
 libgdart_la_LDFLAGS = \
 	-shared -Wl,-soname,libgdart.so
 libgdart_la_LIBADD = $(GDART_LIBS)

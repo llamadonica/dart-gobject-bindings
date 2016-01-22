@@ -13,9 +13,10 @@ main(List<String> args) {
   });
   window.borderWidth = 10;
   var button = new Button.withLabel("Hello world");
-  button.onClicked.listen((_) {
+  button.onClicked.first.then((_) {
     print("Hello world.");
   });
+  button.xalign = 0.0;
   window.add(button);
   window.showAll();
   gtk.main();

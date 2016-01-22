@@ -37,6 +37,9 @@ FunctionLookup function_list[] = {
     {"gdart_bridge_context_register_interceptor_type_for_error_quark", gdart_bridge_context_register_interceptor_type_for_error_quark},
     {"gdart_bridge_context_lookup_error_string_from_quark", gdart_bridge_context_lookup_error_string_from_quark},
     {"gdart_bridge_context_object_info_call_method_on_receiver", gdart_bridge_context_object_info_call_method_on_receiver},
+    {"gdart_bridge_context_object_signal_disconnect", gdart_bridge_context_object_signal_disconnect},
+    {"gdart_bridge_context_object_info_get_g_property_on_receiver", gdart_bridge_context_object_info_get_g_property_on_receiver},
+    {"gdart_bridge_context_object_info_set_g_property_on_receiver", gdart_bridge_context_object_info_set_g_property_on_receiver},
     {NULL, NULL}};
 
 DART_EXPORT Dart_Handle gdart_Init(Dart_Handle parent_library) {

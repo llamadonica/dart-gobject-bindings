@@ -1003,8 +1003,8 @@ class TypeModule extends GObjectObject with TypePlugin {
 abstract class TypePlugin extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GObject', 'TypePlugin');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   void completeInterfaceInfo(int instanceType, int interfaceType, InterfaceInfo info) => _staticInfo.callMethodOnReceiver('complete_interface_info', this, [instanceType, interfaceType, info]);
   void completeTypeInfo(int gType, TypeInfo info, TypeValueTable valueTable) => _staticInfo.callMethodOnReceiver('complete_type_info', this, [gType, info, valueTable]);
   void unuse() => _staticInfo.callMethodOnReceiver('unuse', this, []);

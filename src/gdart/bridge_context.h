@@ -13,6 +13,7 @@
 #include "../include/dart_native_api.h"
 
 #include "common.h"
+#include "object_wrapper.h"
 
 G_BEGIN_DECLS
 
@@ -35,58 +36,67 @@ G_GNUC_CONST GType g_dart_compat_slist_type ();
 GType gdart_bridge_context_get_type (void) G_GNUC_CONST;
 GdartBridgeContext* gdart_bridge_context_new (void);
 void gdart_bridge_context_finalize_from_dart(void* isolate_callback_data,
-                                             Dart_WeakPersistentHandle handle,
-                                             void* peer);
+    Dart_WeakPersistentHandle handle,
+    void* peer);
 void gdart_bridge_context_set_base_library(GdartBridgeContext* self,
-					   Dart_WeakPersistentHandle value);
+    Dart_WeakPersistentHandle value);
 void gdart_bridge_context_set_isolate(GdartBridgeContext* self,
-					Dart_Isolate value);
+                                      Dart_Isolate value);
 Dart_Handle gdart_bridge_context_create_error_handle(
-    GdartBridgeContext* self, const gchar* format, ...) __attribute__ ((format (printf, 2, 3)));
+  GdartBridgeContext* self, const gchar* format, ...) __attribute__ ((format (printf, 2, 3)));
 Dart_Handle gdart_bridge_context_get_base_object_class(GdartBridgeContext* self,
-							Dart_Handle* dart_error_out,
-							GError** error);
+    Dart_Handle* dart_error_out,
+    GError** error);
 Dart_Handle gdart_bridge_context_get_base_enum_class(GdartBridgeContext* self,
-							Dart_Handle* dart_error_out,
-							GError** error);
+    Dart_Handle* dart_error_out,
+    GError** error);
 GIRepository* gdart_bridge_context_get_gi_repository(GdartBridgeContext* self);
 Dart_Handle gdart_bridge_context_wrap_internal_pointer(GdartBridgeContext* self,
-        Dart_Handle internal_container,
-        const gchar* namespace,
-        GType type,
-        GIBaseInfo *base_info,
-        Dart_Handle *dart_error_out,
-        GError **error);
+    Dart_Handle internal_container,
+    const gchar* namespace,
+    GType type,
+    GIBaseInfo *base_info,
+    Dart_Handle *dart_error_out,
+    GError **error);
 Dart_Handle gdart_bridge_context_wrap_class_for_error(
-        GdartBridgeContext* self,
-        GQuark error_domain,
-        gint code,
-        const gchar* message,
-        Dart_Handle *dart_error_out,
-        GError **error);
+  GdartBridgeContext* self,
+  GQuark error_domain,
+  gint code,
+  const gchar* message,
+  Dart_Handle *dart_error_out,
+  GError **error);
 Dart_Handle gdart_bridge_context_retrieve_wrapping_class(
-        GdartBridgeContext* self,
-        const gchar* namespace,
-        GType type,
-        GIBaseInfo *base_info,
-        gboolean is_enum,
-        Dart_Handle *dart_error_out,
-        GError **error);
+  GdartBridgeContext* self,
+  const gchar* namespace,
+  GType type,
+  GIBaseInfo *base_info,
+  gboolean is_enum,
+  Dart_Handle *dart_error_out,
+  GError **error);
 gpointer gdart_bridge_context_retrieve_copy_func(
-        GdartBridgeContext* self,
-        const gchar* namespace,
-        GIBaseInfo *base_info,
-        GType type);
+  GdartBridgeContext* self,
+  const gchar* namespace,
+  GIBaseInfo *base_info,
+  GType type);
 gpointer gdart_bridge_context_retrieve_free_func(
-        GdartBridgeContext* self,
-        const gchar* namespace,
-        GIBaseInfo *base_info,
-        GType type);
+  GdartBridgeContext* self,
+  const gchar* namespace,
+  GIBaseInfo *base_info,
+  GType type);
 Dart_Handle gdart_bridge_context_wrap_pointer(GdartBridgeContext* self,
-        gpointer raw_pointer,
-        RawPointerFinalizer finalizer,
-        Dart_Handle* dart_error_out,
-        GError** error);
+    gpointer raw_pointer,
+    RawPointerFinalizer finalizer,
+    Dart_Handle* dart_error_out,
+    GError** error);
+GIRegisteredTypeInfo* gdart_bridge_context_unwrap_object_info(GdartBridgeContext* self,
+    Dart_Handle wrapped,
+    Dart_Handle *dart_error_out,
+    GError **error);
+GdartBridgeContextWrappedObject* gdart_bridge_context_unwrap_object(
+  GdartBridgeContext* self,
+  Dart_Handle wrapped,
+  Dart_Handle *dart_error_out,
+  GError **error);
 GdartBridgeContext* gdart_bridge_context_new_from_isolate(Dart_Isolate isolate);
 void gdart_bridge_context_finalize_wrapped_gobject(void* container);
 void gdart_bridge_context_finalize_wrapped_struct(void* container);
@@ -101,6 +111,7 @@ void gdart_bridge_context_object_info_call_static(Dart_NativeArguments arguments
 void gdart_bridge_context_object_info_call_method_on_receiver(Dart_NativeArguments arguments);
 void gdart_bridge_context_object_call_method(Dart_NativeArguments arguments);
 void gdart_bridge_context_object_signal_connect(Dart_NativeArguments arguments);
+void gdart_bridge_context_object_signal_disconnect(Dart_NativeArguments arguments);
 void gdart_bridge_context_register_interceptor_type_for_error_quark(Dart_NativeArguments arguments);
 void gdart_bridge_context_call_static_global(Dart_NativeArguments arguments);
 void gdart_bridge_context_object_get_string_representation(Dart_NativeArguments arguments);
@@ -112,6 +123,11 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
 void gdart_bridge_context_lookup_error_quark_from_string(Dart_NativeArguments arguments);
 void gdart_bridge_context_register_interceptor_type_for_error_quark(Dart_NativeArguments arguments);
 void gdart_bridge_context_lookup_error_string_from_quark(Dart_NativeArguments arguments);
+
+void gdart_bridge_context_object_info_set_g_property_on_receiver(
+  Dart_NativeArguments arguments);
+void gdart_bridge_context_object_info_get_g_property_on_receiver(
+  Dart_NativeArguments arguments);
 
 G_END_DECLS
 

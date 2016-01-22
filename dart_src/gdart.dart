@@ -46,16 +46,13 @@ class GObjectBase {
   void setFieldOfObject(String giRepositoryName, int index, dynamic value) {
     throw new Exception('Not implemented yet!');
   }
-  dynamic getGProperty(String giRepositoryName) {
-    throw new Exception('Not implemented yet!');
-  }
+  // dynamic getGProperty(String giRepositoryName) {
+  //  throw new Exception('Not implemented yet!');
+  //}
   void setGProperty(String giRepositoryName, dynamic value) {
     throw new Exception('Not implemented yet!');
   }
-  void signalDisconnect(int signal) {
-    throw new Exception('Not implemented yet!');
-  }
-
+  void signalDisconnect(int signalId) native "gdart_bridge_context_object_signal_disconnect";
 }
 
 class GEnumBase {
@@ -87,5 +84,7 @@ class GIObjectInfo extends GObjectBase {
   factory GIObjectInfo(String namespace, String symbol) => _lookupObjectInfo(namespace, symbol);
   callStatic(String name, List args) native "gdart_bridge_context_object_info_call_static";
   callMethodOnReceiver(String name, dynamic receiver, List args) native "gdart_bridge_context_object_info_call_method_on_receiver";
+  getGPropertyOnReceiver(String name, dynamic receiver) native "gdart_bridge_context_object_info_get_g_property_on_receiver";
+  void setGPropertyOnReceiver(String name, dynamic receiver, dynamic value) native "gdart_bridge_context_object_info_set_g_property_on_receiver";
 }
 

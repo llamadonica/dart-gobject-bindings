@@ -12,25 +12,25 @@
 #include "bridge_context.h"
 
 gboolean gdart_marshaller_check_argument_in(GdartBridgeContext *self,
-					    GIFunctionInfo *function,
-					    Dart_Handle dart_args,
-					    gint garg_i,
-					    gint *dartarg_i,
-					    GITypeInfo *arg_type,
-					    gint* suppressed_args,
-					    gint suppressed_args_length,
-					    gintptr dart_args_length,
-					    Dart_Handle *dart_error_out,
-					    GError **error);
+    GIFunctionInfo *function,
+    Dart_Handle dart_args,
+    gint garg_i,
+    gint *dartarg_i,
+    GITypeInfo *arg_type,
+    gint* suppressed_args,
+    gint suppressed_args_length,
+    gintptr dart_args_length,
+    Dart_Handle *dart_error_out,
+    GError **error);
 
 gboolean gdart_marshaller_check_arguments(GdartBridgeContext *self,
-        GIFunctionInfo *function,
-        Dart_Handle dart_args,
-        gint garg_length,
-        gintptr dart_args_length,
-        gint** suppressed_args_out,
-        gint* suppress_args_length_out,
-        Dart_Handle *dart_error_out,
-        GError **error);
+    GIFunctionInfo *function,
+    Dart_Handle dart_args,
+    gint garg_length,
+    gintptr dart_args_length,
+    gint** suppressed_args_out,
+    gint* suppress_args_length_out,
+    Dart_Handle *dart_error_out,
+    GError **error);
 
 #endif

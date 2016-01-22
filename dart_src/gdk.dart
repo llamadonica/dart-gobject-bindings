@@ -19,7 +19,7 @@ class AppLaunchContext extends gio.AppLaunchContext {
   AppLaunchContext.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'AppLaunchContext');
 
-  Display get display => getGProperty('display');
+  Display get display => _staticInfo.getGPropertyOnReceiver('display', this);
   static const String DISPLAY_PROPERTY = 'display';
   factory AppLaunchContext() => _staticInfo.callStatic('new', []);
   void setDesktop(int desktop) => _staticInfo.callMethodOnReceiver('set_desktop', this, [desktop]);
@@ -134,9 +134,9 @@ class Cursor extends GObjectObject {
   Cursor.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'Cursor');
 
-  void set cursorType(CursorType value) => setGProperty('cursor-type', value);
+  void set cursorType(CursorType value) => _staticInfo.setGPropertyOnReceiver('cursor-type', this, value);
   static const String CURSOR_TYPE_PROPERTY = 'cursor-type';
-  void set display(Display value) => setGProperty('display', value);
+  void set display(Display value) => _staticInfo.setGPropertyOnReceiver('display', this, value);
   static const String DISPLAY_PROPERTY = 'display';
   factory Cursor(CursorType cursorType) => _staticInfo.callStatic('new', [cursorType]);
   factory Cursor.forDisplay(Display display, CursorType cursorType) => _staticInfo.callStatic('new_for_display', [display, cursorType]);
@@ -327,28 +327,28 @@ class Device extends GObjectObject {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'Device');
 
   static const String ASSOCIATED_DEVICE_PROPERTY = 'associated-device';
-  DeviceManager get deviceManager => getGProperty('device-manager');
-  void set deviceManager(DeviceManager value) => setGProperty('device-manager', value);
+  DeviceManager get deviceManager => _staticInfo.getGPropertyOnReceiver('device-manager', this);
+  void set deviceManager(DeviceManager value) => _staticInfo.setGPropertyOnReceiver('device-manager', this, value);
   static const String DEVICE_MANAGER_PROPERTY = 'device-manager';
-  void set display(Display value) => setGProperty('display', value);
+  void set display(Display value) => _staticInfo.setGPropertyOnReceiver('display', this, value);
   static const String DISPLAY_PROPERTY = 'display';
-  void set hasCursor(bool value) => setGProperty('has-cursor', value);
+  void set hasCursor(bool value) => _staticInfo.setGPropertyOnReceiver('has-cursor', this, value);
   static const String HAS_CURSOR_PROPERTY = 'has-cursor';
-  InputMode get inputMode => getGProperty('input-mode');
-  void set inputMode(InputMode value) => setGProperty('input-mode', value);
+  InputMode get inputMode => _staticInfo.getGPropertyOnReceiver('input-mode', this);
+  void set inputMode(InputMode value) => _staticInfo.setGPropertyOnReceiver('input-mode', this, value);
   static const String INPUT_MODE_PROPERTY = 'input-mode';
-  InputSource get inputSource => getGProperty('input-source');
-  void set inputSource(InputSource value) => setGProperty('input-source', value);
+  InputSource get inputSource => _staticInfo.getGPropertyOnReceiver('input-source', this);
+  void set inputSource(InputSource value) => _staticInfo.setGPropertyOnReceiver('input-source', this, value);
   static const String INPUT_SOURCE_PROPERTY = 'input-source';
   static const String N_AXES_PROPERTY = 'n-axes';
-  void set name(String value) => setGProperty('name', value);
+  void set name(String value) => _staticInfo.setGPropertyOnReceiver('name', this, value);
   static const String NAME_PROPERTY = 'name';
-  void set productId(String value) => setGProperty('product-id', value);
+  void set productId(String value) => _staticInfo.setGPropertyOnReceiver('product-id', this, value);
   static const String PRODUCT_ID_PROPERTY = 'product-id';
-  DeviceType get type => getGProperty('type');
-  void set type(DeviceType value) => setGProperty('type', value);
+  DeviceType get type => _staticInfo.getGPropertyOnReceiver('type', this);
+  void set type(DeviceType value) => _staticInfo.setGPropertyOnReceiver('type', this, value);
   static const String TYPE_PROPERTY = 'type';
-  void set vendorId(String value) => setGProperty('vendor-id', value);
+  void set vendorId(String value) => _staticInfo.setGPropertyOnReceiver('vendor-id', this, value);
   static const String VENDOR_ID_PROPERTY = 'vendor-id';
   static List grabInfoLibgtkOnly(Display display, Device device) => _staticInfo.callStatic('grab_info_libgtk_only', [display, device]);
   Device get associatedDevice => _staticInfo.callMethodOnReceiver('get_associated_device', this, []);
@@ -414,7 +414,7 @@ class DeviceManager extends GObjectObject {
   DeviceManager.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'DeviceManager');
 
-  void set display(Display value) => setGProperty('display', value);
+  void set display(Display value) => _staticInfo.setGPropertyOnReceiver('display', this, value);
   static const String DISPLAY_PROPERTY = 'display';
   Device get clientPointer => _staticInfo.callMethodOnReceiver('get_client_pointer', this, []);
   Display get display_ => _staticInfo.callMethodOnReceiver('get_display', this, []);
@@ -1855,11 +1855,11 @@ class GLContext extends GObjectObject {
   GLContext.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'GLContext');
 
-  void set display(Display value) => setGProperty('display', value);
+  void set display(Display value) => _staticInfo.setGPropertyOnReceiver('display', this, value);
   static const String DISPLAY_PROPERTY = 'display';
-  void set sharedContext(GLContext value) => setGProperty('shared-context', value);
+  void set sharedContext(GLContext value) => _staticInfo.setGPropertyOnReceiver('shared-context', this, value);
   static const String SHARED_CONTEXT_PROPERTY = 'shared-context';
-  void set window(Window value) => setGProperty('window', value);
+  void set window(Window value) => _staticInfo.setGPropertyOnReceiver('window', this, value);
   static const String WINDOW_PROPERTY = 'window';
   static void clearCurrent() => _staticInfo.callStatic('clear_current', []);
   static GLContext getCurrent() => _staticInfo.callStatic('get_current', []);

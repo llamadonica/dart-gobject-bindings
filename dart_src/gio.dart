@@ -11,8 +11,8 @@ import "gobject.dart" as gobject;
 abstract class Action extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Action');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static const String ENABLED_PROPERTY = 'enabled';
   static const String NAME_PROPERTY = 'name';
   static const String PARAMETER_TYPE_PROPERTY = 'parameter-type';
@@ -47,8 +47,8 @@ class ActionEntry extends GObjectBase {
 abstract class ActionGroup extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ActionGroup');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   void actionAdded(String actionName) => _staticInfo.callMethodOnReceiver('action_added', this, [actionName]);
   void actionEnabledChanged(String actionName, bool enabled) => _staticInfo.callMethodOnReceiver('action_enabled_changed', this, [actionName, enabled]);
   void actionRemoved(String actionName) => _staticInfo.callMethodOnReceiver('action_removed', this, [actionName]);
@@ -210,8 +210,8 @@ class ActionGroupActionStateChangedEvent {
 abstract class ActionMap extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ActionMap');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   void addAction(Action action) => _staticInfo.callMethodOnReceiver('add_action', this, [action]);
   void addActionEntries(List<ActionEntry> entries, dynamic userData /* this will fail */) => _staticInfo.callMethodOnReceiver('add_action_entries', this, [entries, userData]);
   Action lookupAction(String actionName) => _staticInfo.callMethodOnReceiver('lookup_action', this, [actionName]);
@@ -221,8 +221,8 @@ abstract class ActionMap extends GObjectBase {
 abstract class AppInfo extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'AppInfo');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static AppInfo createFromCommandline(String commandline, String applicationName, AppInfoCreateFlags flags) => _staticInfo.callStatic('create_from_commandline', [commandline, applicationName, flags]);
   static GLibList /* this will fail */ getAll() => _staticInfo.callStatic('get_all', []);
   static GLibList /* this will fail */ getAllForType(String contentType) => _staticInfo.callStatic('get_all_for_type', [contentType]);
@@ -602,12 +602,12 @@ class ApplicationCommandLine extends GObjectObject {
   ApplicationCommandLine.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ApplicationCommandLine');
 
-  void set arguments(Variant value) => setGProperty('arguments', value);
+  void set arguments(Variant value) => _staticInfo.setGPropertyOnReceiver('arguments', this, value);
   static const String ARGUMENTS_PROPERTY = 'arguments';
   static const String IS_REMOTE_PROPERTY = 'is-remote';
-  void set options(Variant value) => setGProperty('options', value);
+  void set options(Variant value) => _staticInfo.setGPropertyOnReceiver('options', this, value);
   static const String OPTIONS_PROPERTY = 'options';
-  void set platformData(Variant value) => setGProperty('platform-data', value);
+  void set platformData(Variant value) => _staticInfo.setGPropertyOnReceiver('platform-data', this, value);
   static const String PLATFORM_DATA_PROPERTY = 'platform-data';
   File createFileForArg(String arg) => _staticInfo.callMethodOnReceiver('create_file_for_arg', this, [arg]);
   List getArguments() => _staticInfo.callMethodOnReceiver('get_arguments', this, []);
@@ -711,8 +711,8 @@ class AskPasswordFlags extends GEnumBase {
 abstract class AsyncInitable extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'AsyncInitable');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static void newvAsync(int objectType, int nParameters, Parameter parameters, int ioPriority, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callStatic('newv_async', [objectType, nParameters, parameters, ioPriority, cancellable, callback]);
   void initAsync(int ioPriority, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callMethodOnReceiver('init_async', this, [ioPriority, cancellable, callback]);
   void initFinish(AsyncResult res) => _staticInfo.callMethodOnReceiver('init_finish', this, [res]);
@@ -723,8 +723,8 @@ typedef void AsyncReadyCallback(GObjectObject sourceObject, AsyncResult res);
 abstract class AsyncResult extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'AsyncResult');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   GObjectObject get sourceObject => _staticInfo.callMethodOnReceiver('get_source_object', this, []);
   void getUserData() => _staticInfo.callMethodOnReceiver('get_user_data', this, []);
   bool isTagged(dynamic sourceTag /* this will fail */) => _staticInfo.callMethodOnReceiver('is_tagged', this, [sourceTag]);
@@ -854,7 +854,7 @@ class BytesIcon extends GObjectObject with Icon, LoadableIcon {
   BytesIcon.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'BytesIcon');
 
-  void set bytes(Bytes value) => setGProperty('bytes', value);
+  void set bytes(Bytes value) => _staticInfo.setGPropertyOnReceiver('bytes', this, value);
   static const String BYTES_PROPERTY = 'bytes';
   factory BytesIcon(Bytes bytes) => _staticInfo.callStatic('new', [bytes]);
   Bytes get bytes_ => _staticInfo.callMethodOnReceiver('get_bytes', this, []);
@@ -915,11 +915,11 @@ class CharsetConverter extends GObjectObject with Converter, Initable {
   CharsetConverter.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'CharsetConverter');
 
-  String get fromCharset => getGProperty('from-charset');
-  void set fromCharset(String value) => setGProperty('from-charset', value);
+  String get fromCharset => _staticInfo.getGPropertyOnReceiver('from-charset', this);
+  void set fromCharset(String value) => _staticInfo.setGPropertyOnReceiver('from-charset', this, value);
   static const String FROM_CHARSET_PROPERTY = 'from-charset';
-  String get toCharset => getGProperty('to-charset');
-  void set toCharset(String value) => setGProperty('to-charset', value);
+  String get toCharset => _staticInfo.getGPropertyOnReceiver('to-charset', this);
+  void set toCharset(String value) => _staticInfo.setGPropertyOnReceiver('to-charset', this, value);
   static const String TO_CHARSET_PROPERTY = 'to-charset';
   static const String USE_FALLBACK_PROPERTY = 'use-fallback';
   factory CharsetConverter(String toCharset, String fromCharset) => _staticInfo.callStatic('new', [toCharset, fromCharset]);
@@ -931,8 +931,8 @@ class CharsetConverter extends GObjectObject with Converter, Initable {
 abstract class Converter extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Converter');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   List convert(List<int> inbuf, dynamic outbuf /* this will fail */, int outbufSize, ConverterFlags flags) => _staticInfo.callMethodOnReceiver('convert', this, [inbuf, outbuf, outbufSize, flags]);
   void reset() => _staticInfo.callMethodOnReceiver('reset', this, []);
 }
@@ -974,7 +974,7 @@ class ConverterInputStream extends FilterInputStream with PollableInputStream {
   ConverterInputStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ConverterInputStream');
 
-  void set converter(Converter value) => setGProperty('converter', value);
+  void set converter(Converter value) => _staticInfo.setGPropertyOnReceiver('converter', this, value);
   static const String CONVERTER_PROPERTY = 'converter';
   factory ConverterInputStream(InputStream baseStream, Converter converter) => _staticInfo.callStatic('new', [baseStream, converter]);
   Converter get converter_ => _staticInfo.callMethodOnReceiver('get_converter', this, []);
@@ -984,7 +984,7 @@ class ConverterOutputStream extends FilterOutputStream with PollableOutputStream
   ConverterOutputStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ConverterOutputStream');
 
-  void set converter(Converter value) => setGProperty('converter', value);
+  void set converter(Converter value) => _staticInfo.setGPropertyOnReceiver('converter', this, value);
   static const String CONVERTER_PROPERTY = 'converter';
   factory ConverterOutputStream(OutputStream baseStream, Converter converter) => _staticInfo.callStatic('new', [baseStream, converter]);
   Converter get converter_ => _staticInfo.callMethodOnReceiver('get_converter', this, []);
@@ -1250,19 +1250,19 @@ class DBusConnection extends GObjectObject with AsyncInitable, Initable {
   DBusConnection.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusConnection');
 
-  void set address(String value) => setGProperty('address', value);
+  void set address(String value) => _staticInfo.setGPropertyOnReceiver('address', this, value);
   static const String ADDRESS_PROPERTY = 'address';
-  void set authenticationObserver(DBusAuthObserver value) => setGProperty('authentication-observer', value);
+  void set authenticationObserver(DBusAuthObserver value) => _staticInfo.setGPropertyOnReceiver('authentication-observer', this, value);
   static const String AUTHENTICATION_OBSERVER_PROPERTY = 'authentication-observer';
   static const String CAPABILITIES_PROPERTY = 'capabilities';
-  bool get closed => getGProperty('closed');
+  bool get closed => _staticInfo.getGPropertyOnReceiver('closed', this);
   static const String CLOSED_PROPERTY = 'closed';
   static const String EXIT_ON_CLOSE_PROPERTY = 'exit-on-close';
-  void set flags(DBusConnectionFlags value) => setGProperty('flags', value);
+  void set flags(DBusConnectionFlags value) => _staticInfo.setGPropertyOnReceiver('flags', this, value);
   static const String FLAGS_PROPERTY = 'flags';
-  void set guid(String value) => setGProperty('guid', value);
+  void set guid(String value) => _staticInfo.setGPropertyOnReceiver('guid', this, value);
   static const String GUID_PROPERTY = 'guid';
-  void set stream(IOStream value) => setGProperty('stream', value);
+  void set stream(IOStream value) => _staticInfo.setGPropertyOnReceiver('stream', this, value);
   static const String STREAM_PROPERTY = 'stream';
   static const String UNIQUE_NAME_PROPERTY = 'unique-name';
   factory DBusConnection.finish(AsyncResult res) => _staticInfo.callStatic('new_finish', [res]);
@@ -1523,8 +1523,8 @@ class DBusErrorEntry extends GObjectBase {
 abstract class DBusInterface extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusInterface');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   DBusObject get object => _staticInfo.callMethodOnReceiver('get_object', this, []);
   DBusInterfaceInfo get info => _staticInfo.callMethodOnReceiver('get_info', this, []);
   void set object(DBusObject object) => _staticInfo.callMethodOnReceiver('set_object', this, [object]);
@@ -1563,8 +1563,8 @@ class DBusInterfaceSkeleton extends GObjectObject with DBusInterface {
   DBusInterfaceSkeleton.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusInterfaceSkeleton');
 
-  DBusInterfaceSkeletonFlags get gFlags => getGProperty('g-flags');
-  void set gFlags(DBusInterfaceSkeletonFlags value) => setGProperty('g-flags', value);
+  DBusInterfaceSkeletonFlags get gFlags => _staticInfo.getGPropertyOnReceiver('g-flags', this);
+  void set gFlags(DBusInterfaceSkeletonFlags value) => _staticInfo.setGPropertyOnReceiver('g-flags', this, value);
   static const String G_FLAGS_PROPERTY = 'g-flags';
   void export_(DBusConnection connection, String objectPath) => _staticInfo.callMethodOnReceiver('export', this, [connection, objectPath]);
   void flush() => _staticInfo.callMethodOnReceiver('flush', this, []);
@@ -1894,8 +1894,8 @@ class DBusNodeInfo extends GObjectBase {
 abstract class DBusObject extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObject');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   DBusInterface getInterface(String interfaceName) => _staticInfo.callMethodOnReceiver('get_interface', this, [interfaceName]);
   GLibList /* this will fail */ get interfaces => _staticInfo.callMethodOnReceiver('get_interfaces', this, []);
   String get objectPath => _staticInfo.callMethodOnReceiver('get_object_path', this, []);
@@ -1966,8 +1966,8 @@ abstract class DBusObject extends GObjectBase {
 abstract class DBusObjectManager extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObjectManager');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   DBusInterface getInterface(String objectPath, String interfaceName) => _staticInfo.callMethodOnReceiver('get_interface', this, [objectPath, interfaceName]);
   DBusObject getObject(String objectPath) => _staticInfo.callMethodOnReceiver('get_object', this, [objectPath]);
   String get objectPath => _staticInfo.callMethodOnReceiver('get_object_path', this, []);
@@ -2120,26 +2120,26 @@ class DBusObjectManagerClient extends GObjectObject with AsyncInitable, DBusObje
   DBusObjectManagerClient.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObjectManagerClient');
 
-  void set busType(BusType value) => setGProperty('bus-type', value);
+  void set busType(BusType value) => _staticInfo.setGPropertyOnReceiver('bus-type', this, value);
   static const String BUS_TYPE_PROPERTY = 'bus-type';
-  void set connection(DBusConnection value) => setGProperty('connection', value);
+  void set connection(DBusConnection value) => _staticInfo.setGPropertyOnReceiver('connection', this, value);
   static const String CONNECTION_PROPERTY = 'connection';
-  void set flags(DBusObjectManagerClientFlags value) => setGProperty('flags', value);
+  void set flags(DBusObjectManagerClientFlags value) => _staticInfo.setGPropertyOnReceiver('flags', this, value);
   static const String FLAGS_PROPERTY = 'flags';
-  dynamic /* this will fail */ get getProxyTypeDestroyNotify => getGProperty('get-proxy-type-destroy-notify');
-  void set getProxyTypeDestroyNotify(dynamic value /* this will fail */) => setGProperty('get-proxy-type-destroy-notify', value);
+  dynamic /* this will fail */ get getProxyTypeDestroyNotify => _staticInfo.getGPropertyOnReceiver('get-proxy-type-destroy-notify', this);
+  void set getProxyTypeDestroyNotify(dynamic value /* this will fail */) => _staticInfo.setGPropertyOnReceiver('get-proxy-type-destroy-notify', this, value);
   static const String GET_PROXY_TYPE_DESTROY_NOTIFY_PROPERTY = 'get-proxy-type-destroy-notify';
-  dynamic /* this will fail */ get getProxyTypeFunc => getGProperty('get-proxy-type-func');
-  void set getProxyTypeFunc(dynamic value /* this will fail */) => setGProperty('get-proxy-type-func', value);
+  dynamic /* this will fail */ get getProxyTypeFunc => _staticInfo.getGPropertyOnReceiver('get-proxy-type-func', this);
+  void set getProxyTypeFunc(dynamic value /* this will fail */) => _staticInfo.setGPropertyOnReceiver('get-proxy-type-func', this, value);
   static const String GET_PROXY_TYPE_FUNC_PROPERTY = 'get-proxy-type-func';
-  dynamic /* this will fail */ get getProxyTypeUserData => getGProperty('get-proxy-type-user-data');
-  void set getProxyTypeUserData(dynamic value /* this will fail */) => setGProperty('get-proxy-type-user-data', value);
+  dynamic /* this will fail */ get getProxyTypeUserData => _staticInfo.getGPropertyOnReceiver('get-proxy-type-user-data', this);
+  void set getProxyTypeUserData(dynamic value /* this will fail */) => _staticInfo.setGPropertyOnReceiver('get-proxy-type-user-data', this, value);
   static const String GET_PROXY_TYPE_USER_DATA_PROPERTY = 'get-proxy-type-user-data';
-  void set name(String value) => setGProperty('name', value);
+  void set name(String value) => _staticInfo.setGPropertyOnReceiver('name', this, value);
   static const String NAME_PROPERTY = 'name';
   static const String NAME_OWNER_PROPERTY = 'name-owner';
-  String get objectPath => getGProperty('object-path');
-  void set objectPath(String value) => setGProperty('object-path', value);
+  String get objectPath => _staticInfo.getGPropertyOnReceiver('object-path', this);
+  void set objectPath(String value) => _staticInfo.setGPropertyOnReceiver('object-path', this, value);
   static const String OBJECT_PATH_PROPERTY = 'object-path';
   factory DBusObjectManagerClient.finish(AsyncResult res) => _staticInfo.callStatic('new_finish', [res]);
   factory DBusObjectManagerClient.forBusFinish(AsyncResult res) => _staticInfo.callStatic('new_for_bus_finish', [res]);
@@ -2273,8 +2273,8 @@ class DBusObjectManagerServer extends GObjectObject with DBusObjectManager {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObjectManagerServer');
 
   static const String CONNECTION_PROPERTY = 'connection';
-  String get objectPath => getGProperty('object-path');
-  void set objectPath(String value) => setGProperty('object-path', value);
+  String get objectPath => _staticInfo.getGPropertyOnReceiver('object-path', this);
+  void set objectPath(String value) => _staticInfo.setGPropertyOnReceiver('object-path', this, value);
   static const String OBJECT_PATH_PROPERTY = 'object-path';
   factory DBusObjectManagerServer(String objectPath) => _staticInfo.callStatic('new', [objectPath]);
   void export_(DBusObjectSkeleton object) => _staticInfo.callMethodOnReceiver('export', this, [object]);
@@ -2289,11 +2289,11 @@ class DBusObjectProxy extends GObjectObject with DBusObject {
   DBusObjectProxy.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObjectProxy');
 
-  DBusConnection get gConnection => getGProperty('g-connection');
-  void set gConnection(DBusConnection value) => setGProperty('g-connection', value);
+  DBusConnection get gConnection => _staticInfo.getGPropertyOnReceiver('g-connection', this);
+  void set gConnection(DBusConnection value) => _staticInfo.setGPropertyOnReceiver('g-connection', this, value);
   static const String G_CONNECTION_PROPERTY = 'g-connection';
-  String get gObjectPath => getGProperty('g-object-path');
-  void set gObjectPath(String value) => setGProperty('g-object-path', value);
+  String get gObjectPath => _staticInfo.getGPropertyOnReceiver('g-object-path', this);
+  void set gObjectPath(String value) => _staticInfo.setGPropertyOnReceiver('g-object-path', this, value);
   static const String G_OBJECT_PATH_PROPERTY = 'g-object-path';
   factory DBusObjectProxy(DBusConnection connection, String objectPath) => _staticInfo.callStatic('new', [connection, objectPath]);
   DBusConnection get connection => _staticInfo.callMethodOnReceiver('get_connection', this, []);
@@ -2303,8 +2303,8 @@ class DBusObjectSkeleton extends GObjectObject with DBusObject {
   DBusObjectSkeleton.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObjectSkeleton');
 
-  String get gObjectPath => getGProperty('g-object-path');
-  void set gObjectPath(String value) => setGProperty('g-object-path', value);
+  String get gObjectPath => _staticInfo.getGPropertyOnReceiver('g-object-path', this);
+  void set gObjectPath(String value) => _staticInfo.setGPropertyOnReceiver('g-object-path', this, value);
   static const String G_OBJECT_PATH_PROPERTY = 'g-object-path';
   factory DBusObjectSkeleton(String objectPath) => _staticInfo.callStatic('new', [objectPath]);
   void addInterface(DBusInterfaceSkeleton interface_) => _staticInfo.callMethodOnReceiver('add_interface', this, [interface_]);
@@ -2414,30 +2414,30 @@ class DBusProxy extends GObjectObject with AsyncInitable, DBusInterface, Initabl
   DBusProxy.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusProxy');
 
-  void set gBusType(BusType value) => setGProperty('g-bus-type', value);
+  void set gBusType(BusType value) => _staticInfo.setGPropertyOnReceiver('g-bus-type', this, value);
   static const String G_BUS_TYPE_PROPERTY = 'g-bus-type';
-  DBusConnection get gConnection => getGProperty('g-connection');
-  void set gConnection(DBusConnection value) => setGProperty('g-connection', value);
+  DBusConnection get gConnection => _staticInfo.getGPropertyOnReceiver('g-connection', this);
+  void set gConnection(DBusConnection value) => _staticInfo.setGPropertyOnReceiver('g-connection', this, value);
   static const String G_CONNECTION_PROPERTY = 'g-connection';
-  int get gDefaultTimeout => getGProperty('g-default-timeout');
-  void set gDefaultTimeout(int value) => setGProperty('g-default-timeout', value);
+  int get gDefaultTimeout => _staticInfo.getGPropertyOnReceiver('g-default-timeout', this);
+  void set gDefaultTimeout(int value) => _staticInfo.setGPropertyOnReceiver('g-default-timeout', this, value);
   static const String G_DEFAULT_TIMEOUT_PROPERTY = 'g-default-timeout';
-  DBusProxyFlags get gFlags => getGProperty('g-flags');
-  void set gFlags(DBusProxyFlags value) => setGProperty('g-flags', value);
+  DBusProxyFlags get gFlags => _staticInfo.getGPropertyOnReceiver('g-flags', this);
+  void set gFlags(DBusProxyFlags value) => _staticInfo.setGPropertyOnReceiver('g-flags', this, value);
   static const String G_FLAGS_PROPERTY = 'g-flags';
-  DBusInterfaceInfo get gInterfaceInfo => getGProperty('g-interface-info');
-  void set gInterfaceInfo(DBusInterfaceInfo value) => setGProperty('g-interface-info', value);
+  DBusInterfaceInfo get gInterfaceInfo => _staticInfo.getGPropertyOnReceiver('g-interface-info', this);
+  void set gInterfaceInfo(DBusInterfaceInfo value) => _staticInfo.setGPropertyOnReceiver('g-interface-info', this, value);
   static const String G_INTERFACE_INFO_PROPERTY = 'g-interface-info';
-  String get gInterfaceName => getGProperty('g-interface-name');
-  void set gInterfaceName(String value) => setGProperty('g-interface-name', value);
+  String get gInterfaceName => _staticInfo.getGPropertyOnReceiver('g-interface-name', this);
+  void set gInterfaceName(String value) => _staticInfo.setGPropertyOnReceiver('g-interface-name', this, value);
   static const String G_INTERFACE_NAME_PROPERTY = 'g-interface-name';
-  String get gName => getGProperty('g-name');
-  void set gName(String value) => setGProperty('g-name', value);
+  String get gName => _staticInfo.getGPropertyOnReceiver('g-name', this);
+  void set gName(String value) => _staticInfo.setGPropertyOnReceiver('g-name', this, value);
   static const String G_NAME_PROPERTY = 'g-name';
-  String get gNameOwner => getGProperty('g-name-owner');
+  String get gNameOwner => _staticInfo.getGPropertyOnReceiver('g-name-owner', this);
   static const String G_NAME_OWNER_PROPERTY = 'g-name-owner';
-  String get gObjectPath => getGProperty('g-object-path');
-  void set gObjectPath(String value) => setGProperty('g-object-path', value);
+  String get gObjectPath => _staticInfo.getGPropertyOnReceiver('g-object-path', this);
+  void set gObjectPath(String value) => _staticInfo.setGPropertyOnReceiver('g-object-path', this, value);
   static const String G_OBJECT_PATH_PROPERTY = 'g-object-path';
   factory DBusProxy.finish(AsyncResult res) => _staticInfo.callStatic('new_finish', [res]);
   factory DBusProxy.forBusFinish(AsyncResult res) => _staticInfo.callStatic('new_for_bus_finish', [res]);
@@ -2624,18 +2624,18 @@ class DBusServer extends GObjectObject with Initable {
   DBusServer.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusServer');
 
-  bool get active => getGProperty('active');
+  bool get active => _staticInfo.getGPropertyOnReceiver('active', this);
   static const String ACTIVE_PROPERTY = 'active';
-  String get address => getGProperty('address');
-  void set address(String value) => setGProperty('address', value);
+  String get address => _staticInfo.getGPropertyOnReceiver('address', this);
+  void set address(String value) => _staticInfo.setGPropertyOnReceiver('address', this, value);
   static const String ADDRESS_PROPERTY = 'address';
-  DBusAuthObserver get authenticationObserver => getGProperty('authentication-observer');
-  void set authenticationObserver(DBusAuthObserver value) => setGProperty('authentication-observer', value);
+  DBusAuthObserver get authenticationObserver => _staticInfo.getGPropertyOnReceiver('authentication-observer', this);
+  void set authenticationObserver(DBusAuthObserver value) => _staticInfo.setGPropertyOnReceiver('authentication-observer', this, value);
   static const String AUTHENTICATION_OBSERVER_PROPERTY = 'authentication-observer';
   static const String CLIENT_ADDRESS_PROPERTY = 'client-address';
-  void set flags(DBusServerFlags value) => setGProperty('flags', value);
+  void set flags(DBusServerFlags value) => _staticInfo.setGPropertyOnReceiver('flags', this, value);
   static const String FLAGS_PROPERTY = 'flags';
-  void set guid(String value) => setGProperty('guid', value);
+  void set guid(String value) => _staticInfo.setGPropertyOnReceiver('guid', this, value);
   static const String GUID_PROPERTY = 'guid';
   factory DBusServer.sync(String address, DBusServerFlags flags, String guid, DBusAuthObserver observer, Cancellable cancellable) => _staticInfo.callStatic('new_sync', [address, flags, guid, observer, cancellable]);
   String get clientAddress => _staticInfo.callMethodOnReceiver('get_client_address', this, []);
@@ -2910,7 +2910,7 @@ class DesktopAppInfo extends GObjectObject with AppInfo {
   DesktopAppInfo.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DesktopAppInfo');
 
-  void set filename(String value) => setGProperty('filename', value);
+  void set filename(String value) => _staticInfo.setGPropertyOnReceiver('filename', this, value);
   static const String FILENAME_PROPERTY = 'filename';
   factory DesktopAppInfo(String desktopId) => _staticInfo.callStatic('new', [desktopId]);
   factory DesktopAppInfo.fromFilename(String filename) => _staticInfo.callStatic('new_from_filename', [filename]);
@@ -2938,8 +2938,8 @@ class DesktopAppInfo extends GObjectObject with AppInfo {
 abstract class DesktopAppInfoLookup extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DesktopAppInfoLookup');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   AppInfo getDefaultForUriScheme(String uriScheme) => _staticInfo.callMethodOnReceiver('get_default_for_uri_scheme', this, [uriScheme]);
 }
 
@@ -2947,8 +2947,8 @@ typedef void DesktopAppLaunchCallback(DesktopAppInfo appinfo, int pid);
 abstract class Drive extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Drive');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool canEject() => _staticInfo.callMethodOnReceiver('can_eject', this, []);
   bool canPollForMedia() => _staticInfo.callMethodOnReceiver('can_poll_for_media', this, []);
   bool canStart() => _staticInfo.callMethodOnReceiver('can_start', this, []);
@@ -3154,9 +3154,9 @@ class Emblem extends GObjectObject with Icon {
   Emblem.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Emblem');
 
-  void set icon(GObjectObject value) => setGProperty('icon', value);
+  void set icon(GObjectObject value) => _staticInfo.setGPropertyOnReceiver('icon', this, value);
   static const String ICON_PROPERTY = 'icon';
-  void set origin(EmblemOrigin value) => setGProperty('origin', value);
+  void set origin(EmblemOrigin value) => _staticInfo.setGPropertyOnReceiver('origin', this, value);
   static const String ORIGIN_PROPERTY = 'origin';
   factory Emblem(Icon icon) => _staticInfo.callStatic('new', [icon]);
   factory Emblem.withOrigin(Icon icon, EmblemOrigin origin) => _staticInfo.callStatic('new_with_origin', [icon, origin]);
@@ -3187,8 +3187,8 @@ class EmblemedIcon extends GObjectObject with Icon {
   EmblemedIcon.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'EmblemedIcon');
 
-  Icon get gicon => getGProperty('gicon');
-  void set gicon(Icon value) => setGProperty('gicon', value);
+  Icon get gicon => _staticInfo.getGPropertyOnReceiver('gicon', this);
+  void set gicon(Icon value) => _staticInfo.setGPropertyOnReceiver('gicon', this, value);
   static const String GICON_PROPERTY = 'gicon';
   factory EmblemedIcon(Icon icon, Emblem emblem) => _staticInfo.callStatic('new', [icon, emblem]);
   void addEmblem(Emblem emblem) => _staticInfo.callMethodOnReceiver('add_emblem', this, [emblem]);
@@ -3200,8 +3200,8 @@ class EmblemedIcon extends GObjectObject with Icon {
 abstract class File extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'File');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static File newForCommandlineArg(String arg) => _staticInfo.callStatic('new_for_commandline_arg', [arg]);
   static File newForCommandlineArgAndCwd(String arg, String cwd) => _staticInfo.callStatic('new_for_commandline_arg_and_cwd', [arg, cwd]);
   static File newForPath(String path) => _staticInfo.callStatic('new_for_path', [path]);
@@ -3529,8 +3529,8 @@ class FileCreateFlags extends GEnumBase {
 abstract class FileDescriptorBased extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileDescriptorBased');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   int get fd => _staticInfo.callMethodOnReceiver('get_fd', this, []);
 }
 
@@ -3538,7 +3538,7 @@ class FileEnumerator extends GObjectObject {
   FileEnumerator.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileEnumerator');
 
-  void set container(File value) => setGProperty('container', value);
+  void set container(File value) => _staticInfo.setGPropertyOnReceiver('container', this, value);
   static const String CONTAINER_PROPERTY = 'container';
   void close(Cancellable cancellable) => _staticInfo.callMethodOnReceiver('close', this, [cancellable]);
   void closeAsync(int ioPriority, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callMethodOnReceiver('close_async', this, [ioPriority, cancellable, callback]);
@@ -3568,7 +3568,7 @@ class FileIcon extends GObjectObject with Icon, LoadableIcon {
   FileIcon.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileIcon');
 
-  void set file(File value) => setGProperty('file', value);
+  void set file(File value) => _staticInfo.setGPropertyOnReceiver('file', this, value);
   static const String FILE_PROPERTY = 'file';
   factory FileIcon(File file) => _staticInfo.callStatic('new', [file]);
   File get file_ => _staticInfo.callMethodOnReceiver('get_file', this, []);
@@ -3693,9 +3693,9 @@ class FileMonitor extends GObjectObject {
   FileMonitor.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileMonitor');
 
-  bool get cancelled => getGProperty('cancelled');
+  bool get cancelled => _staticInfo.getGPropertyOnReceiver('cancelled', this);
   static const String CANCELLED_PROPERTY = 'cancelled';
-  int get rateLimit => getGProperty('rate-limit');
+  int get rateLimit => _staticInfo.getGPropertyOnReceiver('rate-limit', this);
   static const String RATE_LIMIT_PROPERTY = 'rate-limit';
   bool cancel() => _staticInfo.callMethodOnReceiver('cancel', this, []);
   void emitEvent(File child, File otherFile, FileMonitorEvent eventType) => _staticInfo.callMethodOnReceiver('emit_event', this, [child, otherFile, eventType]);
@@ -3945,7 +3945,7 @@ class FilterInputStream extends InputStream {
   FilterInputStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FilterInputStream');
 
-  void set baseStream(InputStream value) => setGProperty('base-stream', value);
+  void set baseStream(InputStream value) => _staticInfo.setGPropertyOnReceiver('base-stream', this, value);
   static const String BASE_STREAM_PROPERTY = 'base-stream';
   static const String CLOSE_BASE_STREAM_PROPERTY = 'close-base-stream';
   InputStream get baseStream_ => _staticInfo.callMethodOnReceiver('get_base_stream', this, []);
@@ -3957,7 +3957,7 @@ class FilterOutputStream extends OutputStream {
   FilterOutputStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FilterOutputStream');
 
-  void set baseStream(OutputStream value) => setGProperty('base-stream', value);
+  void set baseStream(OutputStream value) => _staticInfo.setGPropertyOnReceiver('base-stream', this, value);
   static const String BASE_STREAM_PROPERTY = 'base-stream';
   static const String CLOSE_BASE_STREAM_PROPERTY = 'close-base-stream';
   OutputStream get baseStream_ => _staticInfo.callMethodOnReceiver('get_base_stream', this, []);
@@ -4143,7 +4143,7 @@ class IOStream extends GObjectObject {
   IOStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'IOStream');
 
-  bool get closed => getGProperty('closed');
+  bool get closed => _staticInfo.getGPropertyOnReceiver('closed', this);
   static const String CLOSED_PROPERTY = 'closed';
   static const String INPUT_STREAM_PROPERTY = 'input-stream';
   static const String OUTPUT_STREAM_PROPERTY = 'output-stream';
@@ -4205,8 +4205,8 @@ class IOStreamSpliceFlags extends GEnumBase {
 abstract class Icon extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Icon');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static Icon deserialize(Variant value) => _staticInfo.callStatic('deserialize', [value]);
   static int hash(dynamic icon /* this will fail */) => _staticInfo.callStatic('hash', [icon]);
   static Icon newForString(String str) => _staticInfo.callStatic('new_for_string', [str]);
@@ -4219,10 +4219,10 @@ class InetAddress extends GObjectObject {
   InetAddress.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'InetAddress');
 
-  dynamic /* this will fail */ get bytes => getGProperty('bytes');
-  void set bytes(dynamic value /* this will fail */) => setGProperty('bytes', value);
+  dynamic /* this will fail */ get bytes => _staticInfo.getGPropertyOnReceiver('bytes', this);
+  void set bytes(dynamic value /* this will fail */) => _staticInfo.setGPropertyOnReceiver('bytes', this, value);
   static const String BYTES_PROPERTY = 'bytes';
-  void set family(SocketFamily value) => setGProperty('family', value);
+  void set family(SocketFamily value) => _staticInfo.setGPropertyOnReceiver('family', this, value);
   static const String FAMILY_PROPERTY = 'family';
   static const String IS_ANY_PROPERTY = 'is-any';
   static const String IS_LINK_LOCAL_PROPERTY = 'is-link-local';
@@ -4258,10 +4258,10 @@ class InetAddressMask extends GObjectObject with Initable {
   InetAddressMask.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'InetAddressMask');
 
-  void set address(InetAddress value) => setGProperty('address', value);
+  void set address(InetAddress value) => _staticInfo.setGPropertyOnReceiver('address', this, value);
   static const String ADDRESS_PROPERTY = 'address';
   static const String FAMILY_PROPERTY = 'family';
-  void set length(int value) => setGProperty('length', value);
+  void set length(int value) => _staticInfo.setGPropertyOnReceiver('length', this, value);
   static const String LENGTH_PROPERTY = 'length';
   factory InetAddressMask(InetAddress addr, int length) => _staticInfo.callStatic('new', [addr, length]);
   factory InetAddressMask.fromString(String maskString) => _staticInfo.callStatic('new_from_string', [maskString]);
@@ -4277,13 +4277,13 @@ class InetSocketAddress extends SocketAddress with SocketConnectable {
   InetSocketAddress.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'InetSocketAddress');
 
-  void set address(InetAddress value) => setGProperty('address', value);
+  void set address(InetAddress value) => _staticInfo.setGPropertyOnReceiver('address', this, value);
   static const String ADDRESS_PROPERTY = 'address';
-  void set flowinfo(int value) => setGProperty('flowinfo', value);
+  void set flowinfo(int value) => _staticInfo.setGPropertyOnReceiver('flowinfo', this, value);
   static const String FLOWINFO_PROPERTY = 'flowinfo';
-  void set port(int value) => setGProperty('port', value);
+  void set port(int value) => _staticInfo.setGPropertyOnReceiver('port', this, value);
   static const String PORT_PROPERTY = 'port';
-  void set scopeId(int value) => setGProperty('scope-id', value);
+  void set scopeId(int value) => _staticInfo.setGPropertyOnReceiver('scope-id', this, value);
   static const String SCOPE_ID_PROPERTY = 'scope-id';
   factory InetSocketAddress(InetAddress address, int port) => _staticInfo.callStatic('new', [address, port]);
   factory InetSocketAddress.fromString(String address, int port) => _staticInfo.callStatic('new_from_string', [address, port]);
@@ -4296,8 +4296,8 @@ class InetSocketAddress extends SocketAddress with SocketConnectable {
 abstract class Initable extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Initable');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static GObjectObject newv(int objectType, List<Parameter> parameters, Cancellable cancellable) => _staticInfo.callStatic('newv', [objectType, parameters, cancellable]);
   void init(Cancellable cancellable) => _staticInfo.callMethodOnReceiver('init', this, [cancellable]);
 }
@@ -4340,8 +4340,8 @@ class InputVector extends GObjectBase {
 abstract class ListModel extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ListModel');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   int get itemType => _staticInfo.callMethodOnReceiver('get_item_type', this, []);
   int get nItems => _staticInfo.callMethodOnReceiver('get_n_items', this, []);
   GObjectObject getItem(int position) => _staticInfo.callMethodOnReceiver('get_item', this, [position]);
@@ -4393,8 +4393,8 @@ class ListStore extends GObjectObject with ListModel {
   ListStore.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ListStore');
 
-  int get itemType => getGProperty('item-type');
-  void set itemType(int value) => setGProperty('item-type', value);
+  int get itemType => _staticInfo.getGPropertyOnReceiver('item-type', this);
+  void set itemType(int value) => _staticInfo.setGPropertyOnReceiver('item-type', this, value);
   static const String ITEM_TYPE_PROPERTY = 'item-type';
   factory ListStore(int itemType) => _staticInfo.callStatic('new', [itemType]);
   void append(GObjectObject item) => _staticInfo.callMethodOnReceiver('append', this, [item]);
@@ -4409,8 +4409,8 @@ class ListStore extends GObjectObject with ListModel {
 abstract class LoadableIcon extends GObjectBase implements Icon {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'LoadableIcon');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   List load(int size, Cancellable cancellable) => _staticInfo.callMethodOnReceiver('load', this, [size, cancellable]);
   void loadAsync(int size, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callMethodOnReceiver('load_async', this, [size, cancellable, callback]);
   List loadFinish(AsyncResult res) => _staticInfo.callMethodOnReceiver('load_finish', this, [res]);
@@ -4431,10 +4431,10 @@ class MemoryOutputStream extends OutputStream with PollableOutputStream, Seekabl
   MemoryOutputStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'MemoryOutputStream');
 
-  void set data(dynamic value /* this will fail */) => setGProperty('data', value);
+  void set data(dynamic value /* this will fail */) => _staticInfo.setGPropertyOnReceiver('data', this, value);
   static const String DATA_PROPERTY = 'data';
   static const String DATA_SIZE_PROPERTY = 'data-size';
-  void set size(int value) => setGProperty('size', value);
+  void set size(int value) => _staticInfo.setGPropertyOnReceiver('size', this, value);
   static const String SIZE_PROPERTY = 'size';
   factory MemoryOutputStream.resizable() => _staticInfo.callStatic('new_resizable', []);
   void memoryOutputStreamGetData() => _staticInfo.callMethodOnReceiver('get_data', this, []);
@@ -4563,8 +4563,8 @@ class MenuModelItemsChangedEvent {
 abstract class Mount extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Mount');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool canEject() => _staticInfo.callMethodOnReceiver('can_eject', this, []);
   bool canUnmount() => _staticInfo.callMethodOnReceiver('can_unmount', this, []);
   void eject(MountUnmountFlags flags, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callMethodOnReceiver('eject', this, [flags, cancellable, callback]);
@@ -5029,11 +5029,11 @@ class NetworkAddress extends GObjectObject with SocketConnectable {
   NetworkAddress.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'NetworkAddress');
 
-  void set hostname(String value) => setGProperty('hostname', value);
+  void set hostname(String value) => _staticInfo.setGPropertyOnReceiver('hostname', this, value);
   static const String HOSTNAME_PROPERTY = 'hostname';
-  void set port(int value) => setGProperty('port', value);
+  void set port(int value) => _staticInfo.setGPropertyOnReceiver('port', this, value);
   static const String PORT_PROPERTY = 'port';
-  void set scheme(String value) => setGProperty('scheme', value);
+  void set scheme(String value) => _staticInfo.setGPropertyOnReceiver('scheme', this, value);
   static const String SCHEME_PROPERTY = 'scheme';
   factory NetworkAddress(String hostname, int port) => _staticInfo.callStatic('new', [hostname, port]);
   factory NetworkAddress.loopback(int port) => _staticInfo.callStatic('new_loopback', [port]);
@@ -5066,8 +5066,8 @@ class NetworkConnectivity extends GEnumBase {
 abstract class NetworkMonitor extends GObjectBase implements Initable {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'NetworkMonitor');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static const String CONNECTIVITY_PROPERTY = 'connectivity';
   static const String NETWORK_AVAILABLE_PROPERTY = 'network-available';
   static const String NETWORK_METERED_PROPERTY = 'network-metered';
@@ -5115,12 +5115,12 @@ class NetworkService extends GObjectObject with SocketConnectable {
   NetworkService.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'NetworkService');
 
-  void set domain(String value) => setGProperty('domain', value);
+  void set domain(String value) => _staticInfo.setGPropertyOnReceiver('domain', this, value);
   static const String DOMAIN_PROPERTY = 'domain';
-  void set protocol(String value) => setGProperty('protocol', value);
+  void set protocol(String value) => _staticInfo.setGPropertyOnReceiver('protocol', this, value);
   static const String PROTOCOL_PROPERTY = 'protocol';
   static const String SCHEME_PROPERTY = 'scheme';
-  void set service(String value) => setGProperty('service', value);
+  void set service(String value) => _staticInfo.setGPropertyOnReceiver('service', this, value);
   static const String SERVICE_PROPERTY = 'service';
   factory NetworkService(String service, String protocol, String domain) => _staticInfo.callStatic('new', [service, protocol, domain]);
   String get domain_ => _staticInfo.callMethodOnReceiver('get_domain', this, []);
@@ -5294,8 +5294,8 @@ class Permission extends GObjectObject {
 abstract class PollableInputStream extends GObjectBase implements InputStream {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'PollableInputStream');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool canPoll() => _staticInfo.callMethodOnReceiver('can_poll', this, []);
   Source createSource(Cancellable cancellable) => _staticInfo.callMethodOnReceiver('create_source', this, [cancellable]);
   bool isReadable() => _staticInfo.callMethodOnReceiver('is_readable', this, []);
@@ -5305,8 +5305,8 @@ abstract class PollableInputStream extends GObjectBase implements InputStream {
 abstract class PollableOutputStream extends GObjectBase implements OutputStream {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'PollableOutputStream');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool canPoll() => _staticInfo.callMethodOnReceiver('can_poll', this, []);
   Source createSource(Cancellable cancellable) => _staticInfo.callMethodOnReceiver('create_source', this, [cancellable]);
   bool isWritable() => _staticInfo.callMethodOnReceiver('is_writable', this, []);
@@ -5318,23 +5318,23 @@ class PropertyAction extends GObjectObject with Action {
   PropertyAction.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'PropertyAction');
 
-  bool get enabled => getGProperty('enabled');
+  bool get enabled => _staticInfo.getGPropertyOnReceiver('enabled', this);
   static const String ENABLED_PROPERTY = 'enabled';
-  bool get invertBoolean => getGProperty('invert-boolean');
-  void set invertBoolean(bool value) => setGProperty('invert-boolean', value);
+  bool get invertBoolean => _staticInfo.getGPropertyOnReceiver('invert-boolean', this);
+  void set invertBoolean(bool value) => _staticInfo.setGPropertyOnReceiver('invert-boolean', this, value);
   static const String INVERT_BOOLEAN_PROPERTY = 'invert-boolean';
-  String get name => getGProperty('name');
-  void set name(String value) => setGProperty('name', value);
+  String get name => _staticInfo.getGPropertyOnReceiver('name', this);
+  void set name(String value) => _staticInfo.setGPropertyOnReceiver('name', this, value);
   static const String NAME_PROPERTY = 'name';
-  void set object(GObjectObject value) => setGProperty('object', value);
+  void set object(GObjectObject value) => _staticInfo.setGPropertyOnReceiver('object', this, value);
   static const String OBJECT_PROPERTY = 'object';
-  VariantType get parameterType => getGProperty('parameter-type');
+  VariantType get parameterType => _staticInfo.getGPropertyOnReceiver('parameter-type', this);
   static const String PARAMETER_TYPE_PROPERTY = 'parameter-type';
-  void set propertyName(String value) => setGProperty('property-name', value);
+  void set propertyName(String value) => _staticInfo.setGPropertyOnReceiver('property-name', this, value);
   static const String PROPERTY_NAME_PROPERTY = 'property-name';
-  Variant get state => getGProperty('state');
+  Variant get state => _staticInfo.getGPropertyOnReceiver('state', this);
   static const String STATE_PROPERTY = 'state';
-  VariantType get stateType => getGProperty('state-type');
+  VariantType get stateType => _staticInfo.getGPropertyOnReceiver('state-type', this);
   static const String STATE_TYPE_PROPERTY = 'state-type';
   factory PropertyAction(String name, GObjectObject object, String propertyName) => _staticInfo.callStatic('new', [name, object, propertyName]);
 }
@@ -5342,8 +5342,8 @@ class PropertyAction extends GObjectObject with Action {
 abstract class Proxy extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Proxy');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static Proxy getDefaultForProtocol(String protocol) => _staticInfo.callStatic('get_default_for_protocol', [protocol]);
   IOStream connect(IOStream connection, ProxyAddress proxyAddress, Cancellable cancellable) => _staticInfo.callMethodOnReceiver('connect', this, [connection, proxyAddress, cancellable]);
   void connectAsync(IOStream connection, ProxyAddress proxyAddress, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callMethodOnReceiver('connect_async', this, [connection, proxyAddress, cancellable, callback]);
@@ -5355,19 +5355,19 @@ class ProxyAddress extends InetSocketAddress with SocketConnectable {
   ProxyAddress.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ProxyAddress');
 
-  void set destinationHostname(String value) => setGProperty('destination-hostname', value);
+  void set destinationHostname(String value) => _staticInfo.setGPropertyOnReceiver('destination-hostname', this, value);
   static const String DESTINATION_HOSTNAME_PROPERTY = 'destination-hostname';
-  void set destinationPort(int value) => setGProperty('destination-port', value);
+  void set destinationPort(int value) => _staticInfo.setGPropertyOnReceiver('destination-port', this, value);
   static const String DESTINATION_PORT_PROPERTY = 'destination-port';
-  void set destinationProtocol(String value) => setGProperty('destination-protocol', value);
+  void set destinationProtocol(String value) => _staticInfo.setGPropertyOnReceiver('destination-protocol', this, value);
   static const String DESTINATION_PROTOCOL_PROPERTY = 'destination-protocol';
-  void set password(String value) => setGProperty('password', value);
+  void set password(String value) => _staticInfo.setGPropertyOnReceiver('password', this, value);
   static const String PASSWORD_PROPERTY = 'password';
-  void set protocol(String value) => setGProperty('protocol', value);
+  void set protocol(String value) => _staticInfo.setGPropertyOnReceiver('protocol', this, value);
   static const String PROTOCOL_PROPERTY = 'protocol';
-  void set uri(String value) => setGProperty('uri', value);
+  void set uri(String value) => _staticInfo.setGPropertyOnReceiver('uri', this, value);
   static const String URI_PROPERTY = 'uri';
-  void set username(String value) => setGProperty('username', value);
+  void set username(String value) => _staticInfo.setGPropertyOnReceiver('username', this, value);
   static const String USERNAME_PROPERTY = 'username';
   factory ProxyAddress(InetAddress inetaddr, int port, String protocol, String destHostname, int destPort, String username, String password) => _staticInfo.callStatic('new', [inetaddr, port, protocol, destHostname, destPort, username, password]);
   String get destinationHostname_ => _staticInfo.callMethodOnReceiver('get_destination_hostname', this, []);
@@ -5383,25 +5383,25 @@ class ProxyAddressEnumerator extends SocketAddressEnumerator {
   ProxyAddressEnumerator.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ProxyAddressEnumerator');
 
-  SocketConnectable get connectable => getGProperty('connectable');
-  void set connectable(SocketConnectable value) => setGProperty('connectable', value);
+  SocketConnectable get connectable => _staticInfo.getGPropertyOnReceiver('connectable', this);
+  void set connectable(SocketConnectable value) => _staticInfo.setGPropertyOnReceiver('connectable', this, value);
   static const String CONNECTABLE_PROPERTY = 'connectable';
-  int get defaultPort => getGProperty('default-port');
-  void set defaultPort(int value) => setGProperty('default-port', value);
+  int get defaultPort => _staticInfo.getGPropertyOnReceiver('default-port', this);
+  void set defaultPort(int value) => _staticInfo.setGPropertyOnReceiver('default-port', this, value);
   static const String DEFAULT_PORT_PROPERTY = 'default-port';
-  ProxyResolver get proxyResolver => getGProperty('proxy-resolver');
-  void set proxyResolver(ProxyResolver value) => setGProperty('proxy-resolver', value);
+  ProxyResolver get proxyResolver => _staticInfo.getGPropertyOnReceiver('proxy-resolver', this);
+  void set proxyResolver(ProxyResolver value) => _staticInfo.setGPropertyOnReceiver('proxy-resolver', this, value);
   static const String PROXY_RESOLVER_PROPERTY = 'proxy-resolver';
-  String get uri => getGProperty('uri');
-  void set uri(String value) => setGProperty('uri', value);
+  String get uri => _staticInfo.getGPropertyOnReceiver('uri', this);
+  void set uri(String value) => _staticInfo.setGPropertyOnReceiver('uri', this, value);
   static const String URI_PROPERTY = 'uri';
 }
 
 abstract class ProxyResolver extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ProxyResolver');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static ProxyResolver getDefault() => _staticInfo.callStatic('get_default', []);
   bool isSupported() => _staticInfo.callMethodOnReceiver('is_supported', this, []);
   List<String> lookup(String uri, Cancellable cancellable) => _staticInfo.callMethodOnReceiver('lookup', this, [uri, cancellable]);
@@ -5412,8 +5412,8 @@ abstract class ProxyResolver extends GObjectBase {
 abstract class RemoteActionGroup extends GObjectBase implements ActionGroup {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'RemoteActionGroup');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   void activateActionFull(String actionName, Variant parameter, Variant platformData) => _staticInfo.callMethodOnReceiver('activate_action_full', this, [actionName, parameter, platformData]);
   void changeActionStateFull(String actionName, Variant value, Variant platformData) => _staticInfo.callMethodOnReceiver('change_action_state_full', this, [actionName, value, platformData]);
 }
@@ -5612,8 +5612,8 @@ class ResourceLookupFlags extends GEnumBase {
 abstract class Seekable extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Seekable');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool canSeek() => _staticInfo.callMethodOnReceiver('can_seek', this, []);
   bool canTruncate() => _staticInfo.callMethodOnReceiver('can_truncate', this, []);
   void seek(int offset, SeekType type, Cancellable cancellable) => _staticInfo.callMethodOnReceiver('seek', this, [offset, type, cancellable]);
@@ -5625,20 +5625,20 @@ class Settings extends GObjectObject {
   Settings.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Settings');
 
-  bool get delayApply => getGProperty('delay-apply');
+  bool get delayApply => _staticInfo.getGPropertyOnReceiver('delay-apply', this);
   static const String DELAY_APPLY_PROPERTY = 'delay-apply';
   static const String HAS_UNAPPLIED_PROPERTY = 'has-unapplied';
-  String get path => getGProperty('path');
-  void set path(String value) => setGProperty('path', value);
+  String get path => _staticInfo.getGPropertyOnReceiver('path', this);
+  void set path(String value) => _staticInfo.setGPropertyOnReceiver('path', this, value);
   static const String PATH_PROPERTY = 'path';
-  String get schema => getGProperty('schema');
-  void set schema(String value) => setGProperty('schema', value);
+  String get schema => _staticInfo.getGPropertyOnReceiver('schema', this);
+  void set schema(String value) => _staticInfo.setGPropertyOnReceiver('schema', this, value);
   static const String SCHEMA_PROPERTY = 'schema';
-  String get schemaId => getGProperty('schema-id');
-  void set schemaId(String value) => setGProperty('schema-id', value);
+  String get schemaId => _staticInfo.getGPropertyOnReceiver('schema-id', this);
+  void set schemaId(String value) => _staticInfo.setGPropertyOnReceiver('schema-id', this, value);
   static const String SCHEMA_ID_PROPERTY = 'schema-id';
-  SettingsSchema get settingsSchema => getGProperty('settings-schema');
-  void set settingsSchema(SettingsSchema value) => setGProperty('settings-schema', value);
+  SettingsSchema get settingsSchema => _staticInfo.getGPropertyOnReceiver('settings-schema', this);
+  void set settingsSchema(SettingsSchema value) => _staticInfo.setGPropertyOnReceiver('settings-schema', this, value);
   static const String SETTINGS_SCHEMA_PROPERTY = 'settings-schema';
   factory Settings(String schemaId) => _staticInfo.callStatic('new', [schemaId]);
   factory Settings.full(SettingsSchema schema, SettingsBackend backend, String path) => _staticInfo.callStatic('new_full', [schema, backend, path]);
@@ -5932,17 +5932,17 @@ class SimpleAction extends GObjectObject with Action {
   SimpleAction.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SimpleAction');
 
-  bool get enabled => getGProperty('enabled');
+  bool get enabled => _staticInfo.getGPropertyOnReceiver('enabled', this);
   static const String ENABLED_PROPERTY = 'enabled';
-  String get name => getGProperty('name');
-  void set name(String value) => setGProperty('name', value);
+  String get name => _staticInfo.getGPropertyOnReceiver('name', this);
+  void set name(String value) => _staticInfo.setGPropertyOnReceiver('name', this, value);
   static const String NAME_PROPERTY = 'name';
-  VariantType get parameterType => getGProperty('parameter-type');
-  void set parameterType(VariantType value) => setGProperty('parameter-type', value);
+  VariantType get parameterType => _staticInfo.getGPropertyOnReceiver('parameter-type', this);
+  void set parameterType(VariantType value) => _staticInfo.setGPropertyOnReceiver('parameter-type', this, value);
   static const String PARAMETER_TYPE_PROPERTY = 'parameter-type';
-  Variant get state => getGProperty('state');
+  Variant get state => _staticInfo.getGPropertyOnReceiver('state', this);
   static const String STATE_PROPERTY = 'state';
-  VariantType get stateType => getGProperty('state-type');
+  VariantType get stateType => _staticInfo.getGPropertyOnReceiver('state-type', this);
   static const String STATE_TYPE_PROPERTY = 'state-type';
   factory SimpleAction(String name, VariantType parameterType) => _staticInfo.callStatic('new', [name, parameterType]);
   factory SimpleAction.stateful(String name, VariantType parameterType, Variant state) => _staticInfo.callStatic('new_stateful', [name, parameterType, state]);
@@ -6048,11 +6048,11 @@ class SimpleIOStream extends IOStream {
   SimpleIOStream.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SimpleIOStream');
 
-  InputStream get inputStream => getGProperty('input-stream');
-  void set inputStream(InputStream value) => setGProperty('input-stream', value);
+  InputStream get inputStream => _staticInfo.getGPropertyOnReceiver('input-stream', this);
+  void set inputStream(InputStream value) => _staticInfo.setGPropertyOnReceiver('input-stream', this, value);
   static const String INPUT_STREAM_PROPERTY = 'input-stream';
-  OutputStream get outputStream => getGProperty('output-stream');
-  void set outputStream(OutputStream value) => setGProperty('output-stream', value);
+  OutputStream get outputStream => _staticInfo.getGPropertyOnReceiver('output-stream', this);
+  void set outputStream(OutputStream value) => _staticInfo.setGPropertyOnReceiver('output-stream', this, value);
   static const String OUTPUT_STREAM_PROPERTY = 'output-stream';
   factory SimpleIOStream(InputStream inputStream, OutputStream outputStream) => _staticInfo.callStatic('new', [inputStream, outputStream]);
 }
@@ -6068,9 +6068,9 @@ class SimpleProxyResolver extends GObjectObject with ProxyResolver {
   SimpleProxyResolver.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SimpleProxyResolver');
 
-  String get defaultProxy => getGProperty('default-proxy');
+  String get defaultProxy => _staticInfo.getGPropertyOnReceiver('default-proxy', this);
   static const String DEFAULT_PROXY_PROPERTY = 'default-proxy';
-  List<String> get ignoreHosts => getGProperty('ignore-hosts');
+  List<String> get ignoreHosts => _staticInfo.getGPropertyOnReceiver('ignore-hosts', this);
   static const String IGNORE_HOSTS_PROPERTY = 'ignore-hosts';
   static ProxyResolver new_(String defaultProxy, String ignoreHosts) => _staticInfo.callStatic('new', [defaultProxy, ignoreHosts]);
   void set defaultProxy(String defaultProxy) => _staticInfo.callMethodOnReceiver('set_default_proxy', this, [defaultProxy]);
@@ -6084,22 +6084,22 @@ class Socket extends GObjectObject with Initable {
 
   static const String BLOCKING_PROPERTY = 'blocking';
   static const String BROADCAST_PROPERTY = 'broadcast';
-  void set family(SocketFamily value) => setGProperty('family', value);
+  void set family(SocketFamily value) => _staticInfo.setGPropertyOnReceiver('family', this, value);
   static const String FAMILY_PROPERTY = 'family';
-  void set fd(int value) => setGProperty('fd', value);
+  void set fd(int value) => _staticInfo.setGPropertyOnReceiver('fd', this, value);
   static const String FD_PROPERTY = 'fd';
   static const String KEEPALIVE_PROPERTY = 'keepalive';
   static const String LISTEN_BACKLOG_PROPERTY = 'listen-backlog';
   static const String LOCAL_ADDRESS_PROPERTY = 'local-address';
   static const String MULTICAST_LOOPBACK_PROPERTY = 'multicast-loopback';
   static const String MULTICAST_TTL_PROPERTY = 'multicast-ttl';
-  void set protocol(SocketProtocol value) => setGProperty('protocol', value);
+  void set protocol(SocketProtocol value) => _staticInfo.setGPropertyOnReceiver('protocol', this, value);
   static const String PROTOCOL_PROPERTY = 'protocol';
   static const String REMOTE_ADDRESS_PROPERTY = 'remote-address';
   static const String TIMEOUT_PROPERTY = 'timeout';
   static const String TTL_PROPERTY = 'ttl';
-  SocketType get type => getGProperty('type');
-  void set type(SocketType value) => setGProperty('type', value);
+  SocketType get type => _staticInfo.getGPropertyOnReceiver('type', this);
+  void set type(SocketType value) => _staticInfo.setGPropertyOnReceiver('type', this, value);
   static const String TYPE_PROPERTY = 'type';
   factory Socket(SocketFamily family, SocketType type, SocketProtocol protocol) => _staticInfo.callStatic('new', [family, type, protocol]);
   factory Socket.fromFd(int fd) => _staticInfo.callStatic('new_from_fd', [fd]);
@@ -6188,8 +6188,8 @@ class SocketClient extends GObjectObject {
   static const String TIMEOUT_PROPERTY = 'timeout';
   static const String TLS_PROPERTY = 'tls';
   static const String TLS_VALIDATION_FLAGS_PROPERTY = 'tls-validation-flags';
-  SocketType get type => getGProperty('type');
-  void set type(SocketType value) => setGProperty('type', value);
+  SocketType get type => _staticInfo.getGPropertyOnReceiver('type', this);
+  void set type(SocketType value) => _staticInfo.setGPropertyOnReceiver('type', this, value);
   static const String TYPE_PROPERTY = 'type';
   factory SocketClient() => _staticInfo.callStatic('new', []);
   void addApplicationProxy(String protocol) => _staticInfo.callMethodOnReceiver('add_application_proxy', this, [protocol]);
@@ -6298,8 +6298,8 @@ class SocketClientEvent extends GEnumBase {
 abstract class SocketConnectable extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SocketConnectable');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   SocketAddressEnumerator enumerate() => _staticInfo.callMethodOnReceiver('enumerate', this, []);
   SocketAddressEnumerator proxyEnumerate() => _staticInfo.callMethodOnReceiver('proxy_enumerate', this, []);
 }
@@ -6308,7 +6308,7 @@ class SocketConnection extends IOStream {
   SocketConnection.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SocketConnection');
 
-  void set socket(Socket value) => setGProperty('socket', value);
+  void set socket(Socket value) => _staticInfo.setGPropertyOnReceiver('socket', this, value);
   static const String SOCKET_PROPERTY = 'socket';
   static int factoryLookupType(SocketFamily family, SocketType type, int protocolId) => _staticInfo.callStatic('factory_lookup_type', [family, type, protocolId]);
   static void factoryRegisterType(int gType, SocketFamily family, SocketType type, int protocol) => _staticInfo.callStatic('factory_register_type', [gType, family, type, protocol]);
@@ -6355,8 +6355,8 @@ class SocketListener extends GObjectObject {
   SocketListener.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SocketListener');
 
-  int get listenBacklog => getGProperty('listen-backlog');
-  void set listenBacklog(int value) => setGProperty('listen-backlog', value);
+  int get listenBacklog => _staticInfo.getGPropertyOnReceiver('listen-backlog', this);
+  void set listenBacklog(int value) => _staticInfo.setGPropertyOnReceiver('listen-backlog', this, value);
   static const String LISTEN_BACKLOG_PROPERTY = 'listen-backlog';
   factory SocketListener() => _staticInfo.callStatic('new', []);
   List accept(Cancellable cancellable) => _staticInfo.callMethodOnReceiver('accept', this, [cancellable]);
@@ -6493,8 +6493,8 @@ class SocketService extends SocketListener {
   SocketService.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SocketService');
 
-  bool get active => getGProperty('active');
-  void set active(bool value) => setGProperty('active', value);
+  bool get active => _staticInfo.getGPropertyOnReceiver('active', this);
+  void set active(bool value) => _staticInfo.setGPropertyOnReceiver('active', this, value);
   static const String ACTIVE_PROPERTY = 'active';
   factory SocketService() => _staticInfo.callStatic('new', []);
   bool isActive() => _staticInfo.callMethodOnReceiver('is_active', this, []);
@@ -6597,9 +6597,9 @@ class Subprocess extends GObjectObject with Initable {
   Subprocess.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Subprocess');
 
-  void set argv(List<String> value) => setGProperty('argv', value);
+  void set argv(List<String> value) => _staticInfo.setGPropertyOnReceiver('argv', this, value);
   static const String ARGV_PROPERTY = 'argv';
-  void set flags(SubprocessFlags value) => setGProperty('flags', value);
+  void set flags(SubprocessFlags value) => _staticInfo.setGPropertyOnReceiver('flags', this, value);
   static const String FLAGS_PROPERTY = 'flags';
   factory Subprocess(List<String> argv, SubprocessFlags flags) => _staticInfo.callStatic('new', [argv, flags]);
   List communicate(Bytes stdinBuf, Cancellable cancellable) => _staticInfo.callMethodOnReceiver('communicate', this, [stdinBuf, cancellable]);
@@ -6749,7 +6749,7 @@ class TcpWrapperConnection extends TcpConnection {
   TcpWrapperConnection.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TcpWrapperConnection');
 
-  void set baseIoStream(IOStream value) => setGProperty('base-io-stream', value);
+  void set baseIoStream(IOStream value) => _staticInfo.setGPropertyOnReceiver('base-io-stream', this, value);
   static const String BASE_IO_STREAM_PROPERTY = 'base-io-stream';
   factory TcpWrapperConnection(IOStream baseIoStream, Socket socket) => _staticInfo.callStatic('new', [baseIoStream, socket]);
   IOStream get baseIoStream_ => _staticInfo.callMethodOnReceiver('get_base_io_stream', this, []);
@@ -6759,7 +6759,7 @@ class TestDBus extends GObjectObject {
   TestDBus.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TestDBus');
 
-  void set flags(TestDBusFlags value) => setGProperty('flags', value);
+  void set flags(TestDBusFlags value) => _staticInfo.setGPropertyOnReceiver('flags', this, value);
   static const String FLAGS_PROPERTY = 'flags';
   factory TestDBus(TestDBusFlags flags) => _staticInfo.callStatic('new', [flags]);
   static void unset() => _staticInfo.callStatic('unset', []);
@@ -6802,12 +6802,12 @@ class ThemedIcon extends GObjectObject with Icon {
   ThemedIcon.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ThemedIcon');
 
-  void set name(String value) => setGProperty('name', value);
+  void set name(String value) => _staticInfo.setGPropertyOnReceiver('name', this, value);
   static const String NAME_PROPERTY = 'name';
-  void set names(List<String> value) => setGProperty('names', value);
+  void set names(List<String> value) => _staticInfo.setGPropertyOnReceiver('names', this, value);
   static const String NAMES_PROPERTY = 'names';
-  bool get useDefaultFallbacks => getGProperty('use-default-fallbacks');
-  void set useDefaultFallbacks(bool value) => setGProperty('use-default-fallbacks', value);
+  bool get useDefaultFallbacks => _staticInfo.getGPropertyOnReceiver('use-default-fallbacks', this);
+  void set useDefaultFallbacks(bool value) => _staticInfo.setGPropertyOnReceiver('use-default-fallbacks', this, value);
   static const String USE_DEFAULT_FALLBACKS_PROPERTY = 'use-default-fallbacks';
   factory ThemedIcon(String iconname) => _staticInfo.callStatic('new', [iconname]);
   factory ThemedIcon.fromNames(List<String> iconnames) => _staticInfo.callStatic('new_from_names', [iconnames]);
@@ -6821,8 +6821,8 @@ class ThreadedSocketService extends SocketService {
   ThreadedSocketService.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ThreadedSocketService');
 
-  int get maxThreads => getGProperty('max-threads');
-  void set maxThreads(int value) => setGProperty('max-threads', value);
+  int get maxThreads => _staticInfo.getGPropertyOnReceiver('max-threads', this);
+  void set maxThreads(int value) => _staticInfo.setGPropertyOnReceiver('max-threads', this, value);
   static const String MAX_THREADS_PROPERTY = 'max-threads';
   factory ThreadedSocketService(int maxThreads) => _staticInfo.callStatic('new', [maxThreads]);
   int _connectToRun(bool after, bool func(SocketConnection connection, GObjectObject sourceObject)) => signalConnect('run', func, after);
@@ -6892,8 +6892,8 @@ class TlsAuthenticationMode extends GEnumBase {
 abstract class TlsBackend extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsBackend');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static TlsBackend getDefault() => _staticInfo.callStatic('get_default', []);
   int get certificateType => _staticInfo.callMethodOnReceiver('get_certificate_type', this, []);
   int get clientConnectionType => _staticInfo.callMethodOnReceiver('get_client_connection_type', this, []);
@@ -6907,17 +6907,17 @@ class TlsCertificate extends GObjectObject {
   TlsCertificate.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsCertificate');
 
-  List<dynamic /* this will fail */> get certificate => getGProperty('certificate');
-  void set certificate(List<dynamic /* this will fail */> value) => setGProperty('certificate', value);
+  List<dynamic /* this will fail */> get certificate => _staticInfo.getGPropertyOnReceiver('certificate', this);
+  void set certificate(List<dynamic /* this will fail */> value) => _staticInfo.setGPropertyOnReceiver('certificate', this, value);
   static const String CERTIFICATE_PROPERTY = 'certificate';
-  String get certificatePem => getGProperty('certificate-pem');
-  void set certificatePem(String value) => setGProperty('certificate-pem', value);
+  String get certificatePem => _staticInfo.getGPropertyOnReceiver('certificate-pem', this);
+  void set certificatePem(String value) => _staticInfo.setGPropertyOnReceiver('certificate-pem', this, value);
   static const String CERTIFICATE_PEM_PROPERTY = 'certificate-pem';
-  void set issuer(TlsCertificate value) => setGProperty('issuer', value);
+  void set issuer(TlsCertificate value) => _staticInfo.setGPropertyOnReceiver('issuer', this, value);
   static const String ISSUER_PROPERTY = 'issuer';
-  void set privateKey(List<dynamic /* this will fail */> value) => setGProperty('private-key', value);
+  void set privateKey(List<dynamic /* this will fail */> value) => _staticInfo.setGPropertyOnReceiver('private-key', this, value);
   static const String PRIVATE_KEY_PROPERTY = 'private-key';
-  void set privateKeyPem(String value) => setGProperty('private-key-pem', value);
+  void set privateKeyPem(String value) => _staticInfo.setGPropertyOnReceiver('private-key-pem', this, value);
   static const String PRIVATE_KEY_PEM_PROPERTY = 'private-key-pem';
   factory TlsCertificate.fromFile(String file) => _staticInfo.callStatic('new_from_file', [file]);
   factory TlsCertificate.fromFiles(String certFile, String keyFile) => _staticInfo.callStatic('new_from_files', [certFile, keyFile]);
@@ -6993,8 +6993,8 @@ class TlsCertificateRequestFlags extends GEnumBase {
 abstract class TlsClientConnection extends GObjectBase implements TlsConnection {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsClientConnection');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   static const String ACCEPTED_CAS_PROPERTY = 'accepted-cas';
   static const String SERVER_IDENTITY_PROPERTY = 'server-identity';
   static const String USE_SSL3_PROPERTY = 'use-ssl3';
@@ -7014,8 +7014,8 @@ class TlsConnection extends IOStream {
   TlsConnection.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsConnection');
 
-  IOStream get baseIoStream => getGProperty('base-io-stream');
-  void set baseIoStream(IOStream value) => setGProperty('base-io-stream', value);
+  IOStream get baseIoStream => _staticInfo.getGPropertyOnReceiver('base-io-stream', this);
+  void set baseIoStream(IOStream value) => _staticInfo.setGPropertyOnReceiver('base-io-stream', this, value);
   static const String BASE_IO_STREAM_PROPERTY = 'base-io-stream';
   static const String CERTIFICATE_PROPERTY = 'certificate';
   static const String DATABASE_PROPERTY = 'database';
@@ -7186,10 +7186,10 @@ class TlsError extends GErrorBase {
 abstract class TlsFileDatabase extends GObjectBase implements TlsDatabase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsFileDatabase');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
-  String get anchors => getGProperty('anchors');
-  void set anchors(String value) => setGProperty('anchors', value);
+
+
+  String get anchors => _staticInfo.getGPropertyOnReceiver('anchors', this);
+  void set anchors(String value) => _staticInfo.setGPropertyOnReceiver('anchors', this, value);
   static const String ANCHORS_PROPERTY = 'anchors';
   static TlsFileDatabase new_(String anchors) => _staticInfo.callStatic('new', [anchors]);
 }
@@ -7300,10 +7300,10 @@ class TlsRehandshakeMode extends GEnumBase {
 abstract class TlsServerConnection extends GObjectBase implements TlsConnection {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsServerConnection');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
-  TlsAuthenticationMode get authenticationMode => getGProperty('authentication-mode');
-  void set authenticationMode(TlsAuthenticationMode value) => setGProperty('authentication-mode', value);
+
+
+  TlsAuthenticationMode get authenticationMode => _staticInfo.getGPropertyOnReceiver('authentication-mode', this);
+  void set authenticationMode(TlsAuthenticationMode value) => _staticInfo.setGPropertyOnReceiver('authentication-mode', this, value);
   static const String AUTHENTICATION_MODE_PROPERTY = 'authentication-mode';
   static TlsServerConnection new_(IOStream baseIoStream, TlsCertificate certificate) => _staticInfo.callStatic('new', [baseIoStream, certificate]);
 }
@@ -7326,7 +7326,7 @@ class UnixCredentialsMessage extends SocketControlMessage {
   UnixCredentialsMessage.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'UnixCredentialsMessage');
 
-  void set credentials(Credentials value) => setGProperty('credentials', value);
+  void set credentials(Credentials value) => _staticInfo.setGPropertyOnReceiver('credentials', this, value);
   static const String CREDENTIALS_PROPERTY = 'credentials';
   factory UnixCredentialsMessage() => _staticInfo.callStatic('new', []);
   factory UnixCredentialsMessage.withCredentials(Credentials credentials) => _staticInfo.callStatic('new_with_credentials', [credentials]);
@@ -7351,7 +7351,7 @@ class UnixFDMessage extends SocketControlMessage {
   UnixFDMessage.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'UnixFDMessage');
 
-  void set fdList(UnixFDList value) => setGProperty('fd-list', value);
+  void set fdList(UnixFDList value) => _staticInfo.setGPropertyOnReceiver('fd-list', this, value);
   static const String FD_LIST_PROPERTY = 'fd-list';
   factory UnixFDMessage() => _staticInfo.callStatic('new', []);
   factory UnixFDMessage.withFdList(UnixFDList fdList) => _staticInfo.callStatic('new_with_fd_list', [fdList]);
@@ -7365,7 +7365,7 @@ class UnixInputStream extends InputStream with FileDescriptorBased, PollableInpu
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'UnixInputStream');
 
   static const String CLOSE_FD_PROPERTY = 'close-fd';
-  void set fd(int value) => setGProperty('fd', value);
+  void set fd(int value) => _staticInfo.setGPropertyOnReceiver('fd', this, value);
   static const String FD_PROPERTY = 'fd';
   factory UnixInputStream(int fd, bool closeFd) => _staticInfo.callStatic('new', [fd, closeFd]);
   bool get closeFd => _staticInfo.callMethodOnReceiver('get_close_fd', this, []);
@@ -7474,7 +7474,7 @@ class UnixOutputStream extends OutputStream with FileDescriptorBased, PollableOu
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'UnixOutputStream');
 
   static const String CLOSE_FD_PROPERTY = 'close-fd';
-  void set fd(int value) => setGProperty('fd', value);
+  void set fd(int value) => _staticInfo.setGPropertyOnReceiver('fd', this, value);
   static const String FD_PROPERTY = 'fd';
   factory UnixOutputStream(int fd, bool closeFd) => _staticInfo.callStatic('new', [fd, closeFd]);
   bool get closeFd => _staticInfo.callMethodOnReceiver('get_close_fd', this, []);
@@ -7486,15 +7486,15 @@ class UnixSocketAddress extends SocketAddress with SocketConnectable {
   UnixSocketAddress.fromNative() : super.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'UnixSocketAddress');
 
-  bool get abstract_ => getGProperty('abstract');
-  void set abstract_(bool value) => setGProperty('abstract', value);
+  bool get abstract_ => _staticInfo.getGPropertyOnReceiver('abstract', this);
+  void set abstract_(bool value) => _staticInfo.setGPropertyOnReceiver('abstract', this, value);
   static const String ABSTRACT_PROPERTY = 'abstract';
-  void set addressType(UnixSocketAddressType value) => setGProperty('address-type', value);
+  void set addressType(UnixSocketAddressType value) => _staticInfo.setGPropertyOnReceiver('address-type', this, value);
   static const String ADDRESS_TYPE_PROPERTY = 'address-type';
-  void set path(String value) => setGProperty('path', value);
+  void set path(String value) => _staticInfo.setGPropertyOnReceiver('path', this, value);
   static const String PATH_PROPERTY = 'path';
-  List<dynamic /* this will fail */> get pathAsArray => getGProperty('path-as-array');
-  void set pathAsArray(List<dynamic /* this will fail */> value) => setGProperty('path-as-array', value);
+  List<dynamic /* this will fail */> get pathAsArray => _staticInfo.getGPropertyOnReceiver('path-as-array', this);
+  void set pathAsArray(List<dynamic /* this will fail */> value) => _staticInfo.setGPropertyOnReceiver('path-as-array', this, value);
   static const String PATH_AS_ARRAY_PROPERTY = 'path-as-array';
   factory UnixSocketAddress(String path) => _staticInfo.callStatic('new', [path]);
   factory UnixSocketAddress.fromAbstract_(List<int> path) => _staticInfo.callStatic('new_abstract', [path]);
@@ -7543,8 +7543,8 @@ class Vfs extends GObjectObject {
 abstract class Volume extends GObjectBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'Volume');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
+
+
   bool canEject() => _staticInfo.callMethodOnReceiver('can_eject', this, []);
   bool canMount() => _staticInfo.callMethodOnReceiver('can_mount', this, []);
   void eject(MountUnmountFlags flags, Cancellable cancellable, AsyncReadyCallback callback) => _staticInfo.callMethodOnReceiver('eject', this, [flags, cancellable, callback]);
@@ -8018,11 +8018,11 @@ class ZlibCompressor extends GObjectObject with Converter {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ZlibCompressor');
 
   static const String FILE_INFO_PROPERTY = 'file-info';
-  ZlibCompressorFormat get format => getGProperty('format');
-  void set format(ZlibCompressorFormat value) => setGProperty('format', value);
+  ZlibCompressorFormat get format => _staticInfo.getGPropertyOnReceiver('format', this);
+  void set format(ZlibCompressorFormat value) => _staticInfo.setGPropertyOnReceiver('format', this, value);
   static const String FORMAT_PROPERTY = 'format';
-  int get level => getGProperty('level');
-  void set level(int value) => setGProperty('level', value);
+  int get level => _staticInfo.getGPropertyOnReceiver('level', this);
+  void set level(int value) => _staticInfo.setGPropertyOnReceiver('level', this, value);
   static const String LEVEL_PROPERTY = 'level';
   factory ZlibCompressor(ZlibCompressorFormat format, int level) => _staticInfo.callStatic('new', [format, level]);
   FileInfo get fileInfo => _staticInfo.callMethodOnReceiver('get_file_info', this, []);
@@ -8051,8 +8051,8 @@ class ZlibDecompressor extends GObjectObject with Converter {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ZlibDecompressor');
 
   static const String FILE_INFO_PROPERTY = 'file-info';
-  ZlibCompressorFormat get format => getGProperty('format');
-  void set format(ZlibCompressorFormat value) => setGProperty('format', value);
+  ZlibCompressorFormat get format => _staticInfo.getGPropertyOnReceiver('format', this);
+  void set format(ZlibCompressorFormat value) => _staticInfo.setGPropertyOnReceiver('format', this, value);
   static const String FORMAT_PROPERTY = 'format';
   factory ZlibDecompressor(ZlibCompressorFormat format) => _staticInfo.callStatic('new', [format]);
   FileInfo get fileInfo => _staticInfo.callMethodOnReceiver('get_file_info', this, []);

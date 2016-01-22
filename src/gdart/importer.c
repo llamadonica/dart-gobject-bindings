@@ -5,7 +5,8 @@
 #include "importer.h"
 #include "bridge_context.h"
 
-void import_native_file(Dart_NativeArguments arguments) {
+void import_native_file(Dart_NativeArguments arguments)
+{
   Dart_EnterScope();
   g_assert(gdart_bridge_context_new_from_isolate(Dart_CurrentIsolate()) != NULL);
   Dart_Handle result = handle_error(Dart_NewStringFromCString("Hello world!"));

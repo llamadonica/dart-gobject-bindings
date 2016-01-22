@@ -4,12 +4,14 @@
 
 #include "common.h"
 
-GQuark gdart_error_quark(void) {
+GQuark gdart_error_quark(void)
+{
 
   return g_quark_from_static_string ("gdart-error-quark");
 }
 
-Dart_Handle handle_error(Dart_Handle handle) {
+Dart_Handle handle_error(Dart_Handle handle)
+{
   if (Dart_IsError(handle)) {
     Dart_PropagateError(handle);
   }
