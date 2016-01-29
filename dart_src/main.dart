@@ -482,8 +482,6 @@ class $className $extendsClause {
 abstract class $className $extendsClause$withClause {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('${info.namespace}', '${info.name}');
 
-  dynamic getGProperty(String name);
-  void setGProperty(String name, dynamic value);
 ''');
     var objectNamespace = new Set();
     Set<String> overridenGetters = new Set();
@@ -726,7 +724,7 @@ $tagResult
       var typeName = loadTypeName(property.type, null);
       if (methodHolder.findMethod('get_' + giPropertyName) == null) {
         buffer.write("  $typeName get $propertyName => "
-            "getGProperty('${property.name}');\n");
+            "_staticInfo.getGPropertyOnReceiver('${property.name}', this);\n");
         takesNamespace = true;
       } else {
         overridenGetters.add('get_' + giPropertyName);
@@ -736,7 +734,7 @@ $tagResult
       var typeName = loadTypeName(property.type, 'value');
       if (methodHolder.findMethod('set_' + giPropertyName) == null) {
         buffer.write("  void set $propertyName($typeName) => "
-            "setGProperty('${property.name}', value);\n");
+            "_staticInfo.setGPropertyOnReceiver('${property.name}', this, value);\n");
         takesNamespace = true;
       } else {
         overridenSetters.add('set_' + giPropertyName);

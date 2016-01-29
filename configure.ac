@@ -15,5 +15,5 @@ PKG_CHECK_MODULES(GDART, [gee-0.8, glib-2.0, gobject-2.0, gobject-introspection-
 AC_OUTPUT([
 Makefile
 src/Makefile
-
+src/gdart/Makefile
 ])

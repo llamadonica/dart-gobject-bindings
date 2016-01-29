@@ -14,10 +14,10 @@
 
 #include "common.h"
 #include "object_wrapper.h"
+#include "bridge_context_forward.h"
 
 G_BEGIN_DECLS
 
-typedef struct _GdartBridgeContext GdartBridgeContext;
 typedef struct _GdartBridgeContextClass GdartBridgeContextClass;
 typedef struct _GdartBridgeContextWrappedObjectInfo GdartBridgeContextWrappedObjectInfo;
 
@@ -55,7 +55,8 @@ Dart_Handle gdart_bridge_context_wrap_internal_pointer(GdartBridgeContext* self,
     Dart_Handle internal_container,
     const gchar* namespace,
     GType type,
-    GIBaseInfo *base_info,
+    gpointer base_info,
+    const RegisteredTypeInfoKlass* base_info_klass,
     Dart_Handle *dart_error_out,
     GError **error);
 Dart_Handle gdart_bridge_context_wrap_class_for_error(
@@ -69,19 +70,22 @@ Dart_Handle gdart_bridge_context_retrieve_wrapping_class(
   GdartBridgeContext* self,
   const gchar* namespace,
   GType type,
-  GIBaseInfo *base_info,
+  gpointer base_info,
+  const RegisteredTypeInfoKlass* base_info_klass,
   gboolean is_enum,
   Dart_Handle *dart_error_out,
   GError **error);
 gpointer gdart_bridge_context_retrieve_copy_func(
   GdartBridgeContext* self,
   const gchar* namespace,
-  GIBaseInfo *base_info,
+  gpointer base_info,
+  const RegisteredTypeInfoKlass* base_info_klass,
   GType type);
 gpointer gdart_bridge_context_retrieve_free_func(
   GdartBridgeContext* self,
   const gchar* namespace,
-  GIBaseInfo *base_info,
+  gpointer base_info,
+  const RegisteredTypeInfoKlass* base_info_klass,
   GType type);
 Dart_Handle gdart_bridge_context_wrap_pointer(GdartBridgeContext* self,
     gpointer raw_pointer,

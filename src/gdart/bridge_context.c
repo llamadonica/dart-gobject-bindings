@@ -53,7 +53,8 @@ struct _GdartBridgeContextClass {
 
 struct _GdartBridgeContextNamespaceGtype {
   const gchar* namespace;
-  GIBaseInfo* base_info;
+  gpointer base_info;
+  RegisteredTypeInfoKlass base_info_klass;
   GType gtype;
 };
 typedef struct _GdartBridgeContextNamespaceGtype GdartBridgeContextNamespaceGtype;
@@ -64,11 +65,11 @@ struct _GdartBridgeContextNamespaceGquark {
 typedef struct _GdartBridgeContextNamespaceGquark GdartBridgeContextNamespaceGquark;
 
 
-gpointer _g_dart_compat_list_boxed_copy(gpointer _)
+static gpointer _g_dart_compat_list_boxed_copy(gpointer _)
 {
   g_assert_not_reached();
 }
-void _g_dart_compat_list_boxed_free(gpointer _)
+static void _g_dart_compat_list_boxed_free(gpointer _)
 {
   g_assert_not_reached();
 }
@@ -100,27 +101,28 @@ G_GNUC_CONST GType g_dart_compat_slist_type (void)
 }
 
 
-gpointer _gdart_bridge_context_namespace_gtype_copy(gpointer boxed)
+static gpointer _gdart_bridge_context_namespace_gtype_copy(gpointer boxed)
 {
   GdartBridgeContextNamespaceGtype *src, *dest;
   src = (GdartBridgeContextNamespaceGtype*) boxed;
   dest = g_slice_new(GdartBridgeContextNamespaceGtype);
   dest->namespace = src->namespace;
   dest->gtype = src->gtype;
-  dest->base_info = g_base_info_ref(src->base_info);
+  dest->base_info =src->base_info_klass.copy(src->base_info);
+  dest->base_info_klass = src->base_info_klass;
   return (gpointer) dest;
 }
 
-void _gdart_bridge_context_namespace_gtype_free(gpointer boxed)
+static void _gdart_bridge_context_namespace_gtype_free(gpointer boxed)
 {
   GdartBridgeContextNamespaceGtype *src;
   src = (GdartBridgeContextNamespaceGtype*) boxed;
-  g_base_info_unref(src->base_info);
+  src->base_info_klass.free(src->base_info);
 
   g_slice_free(GdartBridgeContextNamespaceGtype, boxed);
 }
 
-gpointer _gdart_bridge_context_namespace_gquark_copy(gpointer boxed)
+static gpointer _gdart_bridge_context_namespace_gquark_copy(gpointer boxed)
 {
   GdartBridgeContextNamespaceGquark *src, *dest;
   src = (GdartBridgeContextNamespaceGquark*) boxed;
@@ -129,43 +131,67 @@ gpointer _gdart_bridge_context_namespace_gquark_copy(gpointer boxed)
   return (gpointer) dest;
 }
 
-void _gdart_bridge_context_namespace_gquark_free(gpointer boxed)
+static void _gdart_bridge_context_namespace_gquark_free(gpointer boxed)
 {
   g_slice_free(GdartBridgeContextNamespaceGquark, boxed);
 }
 
 
-guint _gdart_bridge_context_namespace_gtype_hash(gconstpointer boxed, void* userdata)
+static guint _gdart_bridge_context_namespace_gtype_hash(gconstpointer boxed, void* userdata)
 {
+  GdartBridgeContext* self;
   const GdartBridgeContextNamespaceGtype *src;
-  const gchar* type_name;
-  guint intermediate;
+  guint intermediate, base_info_hash;
+  Dart_Handle set_on_error;
+  GError *error = NULL;
+  self = userdata;
+  
+  src = (const GdartBridgeContextNamespaceGtype *) boxed;
+  if (!src->base_info_klass.get_hash_code(src->base_info,
+                                          self,
+					  &base_info_hash,
+					  &set_on_error,
+					  &error))
+    g_assert_not_reached();
   src = (const GdartBridgeContextNamespaceGtype*) boxed;
   intermediate = g_str_hash((gconstpointer) src->namespace);
-  type_name = g_base_info_get_name(src->base_info);
-  intermediate = intermediate * 33 + g_str_hash((gconstpointer) type_name);
-  return intermediate * 33 + src->gtype;
+  intermediate = intermediate * 63 + base_info_hash;
+  return intermediate * 63 + src->gtype;
 }
 
-gboolean _gdart_bridge_context_namespace_gtype_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
+static gboolean _gdart_bridge_context_namespace_gtype_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
 {
   const GdartBridgeContextNamespaceGtype *a, *b;
+  GdartBridgeContext* self;
+  Dart_Handle set_on_error;
+  GError *error = NULL;
+  gboolean result;
+  
+  self = userdata;
   a = (const GdartBridgeContextNamespaceGtype*) a_boxed;
   b = (const GdartBridgeContextNamespaceGtype*) b_boxed;
+  if (!a->base_info_klass.equals(
+    a->base_info,
+    self,
+    b->base_info,
+    &b->base_info_klass,
+    &result,
+    &set_on_error,
+    &error))
+    g_assert_not_reached();
   return g_str_equal((gconstpointer) a->namespace, (gconstpointer) b->namespace) &&
-         g_base_info_equal(a->base_info, b->base_info) &&
-         a->gtype == b->gtype;
+         result;
 }
 
 
-guint _gdart_bridge_context_namespace_gquark_hash(gconstpointer boxed, void* userdata)
+static guint _gdart_bridge_context_namespace_gquark_hash(gconstpointer boxed, void* userdata)
 {
   const GdartBridgeContextNamespaceGquark *src;
   src = (const GdartBridgeContextNamespaceGquark*) boxed;
   return src->quark;
 }
 
-gboolean _gdart_bridge_context_namespace_gquark_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
+static gboolean _gdart_bridge_context_namespace_gquark_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
 {
   const GdartBridgeContextNamespaceGquark *a, *b;
   a = (const GdartBridgeContextNamespaceGquark*) a_boxed;
@@ -173,7 +199,7 @@ gboolean _gdart_bridge_context_namespace_gquark_eq(gconstpointer a_boxed, gconst
   return a->quark == b->quark;
 }
 
-gpointer _gdart_bridge_context_persistent_handle_copy(gpointer boxed)
+static gpointer _gdart_bridge_context_persistent_handle_copy(gpointer boxed)
 {
   Dart_PersistentHandle src, dest;
   src = (Dart_PersistentHandle) boxed;
@@ -183,28 +209,28 @@ gpointer _gdart_bridge_context_persistent_handle_copy(gpointer boxed)
   return (gpointer) dest;
 }
 
-void _gdart_bridge_context_persistent_handle_free(gpointer boxed)
+static void _gdart_bridge_context_persistent_handle_free(gpointer boxed)
 {
   Dart_PersistentHandle src;
   src = (Dart_PersistentHandle) boxed;
   Dart_DeletePersistentHandle(src);
 }
 
-gpointer _gdart_bridge_context_external_func_copy(gpointer boxed)
+static gpointer _gdart_bridge_context_external_func_copy(gpointer boxed)
 {
   return boxed;
 }
 
-void _gdart_bridge_context_external_func_free(gpointer boxed)
+static void _gdart_bridge_context_external_func_free(gpointer boxed)
 {
 }
 
-gboolean _gdart_bridge_context_external_func_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
+static gboolean _gdart_bridge_context_external_func_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
 {
   return (a_boxed == b_boxed);
 }
 
-gboolean _gdart_bridge_context_persistent_handle_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
+static gboolean _gdart_bridge_context_persistent_handle_eq(gconstpointer a_boxed, gconstpointer b_boxed, void* userdata)
 {
   Dart_PersistentHandle a, b;
   Dart_Handle a_temp, b_temp;
@@ -247,24 +273,24 @@ static void gdart_bridge_context_init(GdartBridgeContext *self)
                                 _gdart_bridge_context_namespace_gtype_free, G_TYPE_NONE,
                                 _gdart_bridge_context_persistent_handle_copy,
                                 _gdart_bridge_context_persistent_handle_free,
-                                _gdart_bridge_context_namespace_gtype_hash, NULL,
-                                NULL, _gdart_bridge_context_namespace_gtype_eq, NULL,
+                                _gdart_bridge_context_namespace_gtype_hash, self,
+                                NULL, _gdart_bridge_context_namespace_gtype_eq, self,
                                 NULL, _gdart_bridge_context_persistent_handle_eq, NULL,
                                 NULL);
   self->dart_copy_funcs_by_gtype = gee_hash_map_new(G_TYPE_NONE, _gdart_bridge_context_namespace_gtype_copy,
                                    _gdart_bridge_context_namespace_gtype_free, G_TYPE_NONE,
                                    _gdart_bridge_context_external_func_copy,
                                    _gdart_bridge_context_external_func_free,
-                                   _gdart_bridge_context_namespace_gtype_hash, NULL,
-                                   NULL, _gdart_bridge_context_namespace_gtype_eq, NULL,
+                                   _gdart_bridge_context_namespace_gtype_hash, self,
+                                   NULL, _gdart_bridge_context_namespace_gtype_eq, self,
                                    NULL, _gdart_bridge_context_external_func_eq, NULL,
                                    NULL);
   self->dart_free_funcs_by_gtype = gee_hash_map_new(G_TYPE_NONE, _gdart_bridge_context_namespace_gtype_copy,
                                    _gdart_bridge_context_namespace_gtype_free, G_TYPE_NONE,
                                    _gdart_bridge_context_external_func_copy,
                                    _gdart_bridge_context_external_func_free,
-                                   _gdart_bridge_context_namespace_gtype_hash, NULL,
-                                   NULL, _gdart_bridge_context_namespace_gtype_eq, NULL,
+                                   _gdart_bridge_context_namespace_gtype_hash, self,
+                                   NULL, _gdart_bridge_context_namespace_gtype_eq, self,
                                    NULL, _gdart_bridge_context_external_func_eq, NULL,
                                    NULL);
   self->dart_classes_by_gerror_quark = gee_hash_map_new(G_TYPE_NONE, _gdart_bridge_context_namespace_gquark_copy,
@@ -380,7 +406,7 @@ GdartBridgeContext* gdart_bridge_context_new_from_isolate(Dart_Isolate isolate)
   return NULL;
 }
 
-gboolean _gdart_bridge_context_ensure_encapsulation_class_created(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_encapsulation_class_created(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -410,7 +436,7 @@ out_error:
   return FALSE;
 }
 
-gboolean _gdart_bridge_context_ensure_loaded_gdart_internal_error_class(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_loaded_gdart_internal_error_class(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -440,7 +466,7 @@ out_error:
   return FALSE;
 }
 
-gboolean _gdart_bridge_context_ensure_loaded_unknown_object_class(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_loaded_unknown_object_class(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -472,7 +498,7 @@ out_error:
 }
 
 
-gboolean _gdart_bridge_context_ensure_loaded_unknown_error_class(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_loaded_unknown_error_class(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -504,7 +530,7 @@ out_error:
 }
 
 
-gboolean _gdart_bridge_context_ensure_loaded_base_object_class(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_loaded_base_object_class(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -535,7 +561,7 @@ out_error:
 }
 
 
-gboolean _gdart_bridge_context_ensure_loaded_base_enum_class(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_loaded_base_enum_class(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -587,7 +613,7 @@ Dart_Handle gdart_bridge_context_get_base_enum_class(GdartBridgeContext* self,
   return NULL;
 }
 
-gboolean _gdart_bridge_context_ensure_loaded_object_info_class(GdartBridgeContext* self,
+static gboolean _gdart_bridge_context_ensure_loaded_object_info_class(GdartBridgeContext* self,
     Dart_Handle* dart_error_out,
     GError** error)
 {
@@ -652,7 +678,7 @@ Dart_Handle gdart_bridge_context_create_error_handle(
   return result;
 }
 
-void _gdart_bridge_context_finalize_wrapped_pointer(void* isolate_callback_data,
+static void _gdart_bridge_context_finalize_wrapped_pointer(void* isolate_callback_data,
     Dart_WeakPersistentHandle handle,
     void* peer)
 {
@@ -1040,6 +1066,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
   namespace_context->namespace = namespace_str_const;
   namespace_context->gtype = gtype_as_gtype;
   namespace_context->base_info = base_info;
+  namespace_context->base_info_klass = gi_registered_type_info_registered_type_info;
 
   dart_persistent_type = Dart_NewPersistentHandle(dart_type);
   if (gee_abstract_map_has_key(GEE_ABSTRACT_MAP(self->dart_classes_by_gtype),
@@ -1205,6 +1232,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
   namespace_context->namespace = namespace_str_const;
   namespace_context->gtype = gtype_as_gtype;
   namespace_context->base_info = base_info;
+  namespace_context->base_info_klass = gi_registered_type_info_registered_type_info;
 
   if (gee_abstract_map_has_key(GEE_ABSTRACT_MAP(self->dart_copy_funcs_by_gtype),
                                (gconstpointer) namespace_context)) {
@@ -1375,6 +1403,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
   namespace_context->namespace = namespace_str_const;
   namespace_context->gtype = gtype_as_gtype;
   namespace_context->base_info = base_info;
+  namespace_context->base_info_klass = gi_registered_type_info_registered_type_info;
 
   if (gee_abstract_map_has_key(GEE_ABSTRACT_MAP(self->dart_free_funcs_by_gtype),
                                (gconstpointer) namespace_context)) {
@@ -1534,11 +1563,20 @@ void gdart_bridge_context_finalize_wrapped_gobject(void* container)
 {
   GdartBridgeContextWrappedObject* wrapper = (GdartBridgeContextWrappedObject*) container;
   GIObjectInfoUnrefFunction unrefer;
+  
   unrefer = g_object_info_get_unref_function_pointer(wrapper->object_info);
+  wrapper->object_info_klass.cast_to_object_info(wrapper->object_info)
+    ->get_unref_function_pointer(wrapper->object_info,
+				 NULL,
+				 &unrefer,
+			         NULL,
+				 NULL);
   if (unrefer != NULL) {
     unrefer(wrapper->object);
+  } else {
+    g_object_unref(wrapper->object);
   }
-  g_base_info_unref((GIBaseInfo*) wrapper->object_info);
+  wrapper->object_info_klass.free(wrapper->object_info);
   g_slice_free(GdartBridgeContextWrappedObject, wrapper);
 }
 
@@ -1547,21 +1585,21 @@ void gdart_bridge_context_finalize_wrapped_struct(void* container)
 {
   GdartBridgeContextWrappedObject* wrapper = (GdartBridgeContextWrappedObject*) container;
   g_free(wrapper->object);
-  g_base_info_unref((GIBaseInfo*) wrapper->object_info);
+  wrapper->object_info_klass.free(wrapper->object_info);
   g_slice_free(GdartBridgeContextWrappedObject, wrapper);
 }
 
 void gdart_bridge_context_finalize_wrapped_unowned_struct(void* container)
 {
   GdartBridgeContextWrappedObject* wrapper = (GdartBridgeContextWrappedObject*) container;
-  g_base_info_unref((GIBaseInfo*) wrapper->object_info);
+  wrapper->object_info_klass.free(wrapper->object_info);
   g_slice_free(GdartBridgeContextWrappedObject, wrapper);
 }
 
 void gdart_bridge_context_finalize_wrapped_custom_struct(void* container)
 {
   GdartBridgeContextWrappedObject* wrapper = (GdartBridgeContextWrappedObject*) container;
-  g_base_info_unref((GIBaseInfo*) wrapper->object_info);
+  wrapper->object_info_klass.free(wrapper->object_info);
   if (wrapper->copy_func != NULL && wrapper->free_func != NULL) {
     wrapper->free_func(wrapper->object);
   }
@@ -1573,14 +1611,15 @@ void gdart_bridge_context_finalize_wrapped_boxed(void* container)
 {
   GdartBridgeContextWrappedObject* wrapper = (GdartBridgeContextWrappedObject*) container;
   g_boxed_free(wrapper->type, wrapper->object);
-  g_base_info_unref((GIBaseInfo*) wrapper->object_info);
+  wrapper->object_info_klass.free(wrapper->object_info);
   g_slice_free(GdartBridgeContextWrappedObject, wrapper);
 }
 
 gpointer gdart_bridge_context_retrieve_free_func(
   GdartBridgeContext* self,
   const gchar* namespace,
-  GIBaseInfo *base_info,
+  gpointer base_info,
+  const RegisteredTypeInfoKlass* base_info_klass,
   GType type)
 {
   GdartBridgeContextNamespaceGtype* namespace_context;
@@ -1588,6 +1627,7 @@ gpointer gdart_bridge_context_retrieve_free_func(
   namespace_context->namespace = namespace;
   namespace_context->gtype = type;
   namespace_context->base_info = base_info;
+  namespace_context->base_info_klass = *base_info_klass;
   return gee_abstract_map_get(GEE_ABSTRACT_MAP(self->dart_free_funcs_by_gtype),
                               (gconstpointer) namespace_context);
 }
@@ -1595,7 +1635,8 @@ gpointer gdart_bridge_context_retrieve_free_func(
 gpointer gdart_bridge_context_retrieve_copy_func(
   GdartBridgeContext* self,
   const gchar* namespace,
-  GIBaseInfo *base_info,
+  gpointer base_info,
+  const RegisteredTypeInfoKlass* base_info_klass,
   GType type)
 {
   GdartBridgeContextNamespaceGtype* namespace_context;
@@ -1603,6 +1644,7 @@ gpointer gdart_bridge_context_retrieve_copy_func(
   namespace_context->namespace = namespace;
   namespace_context->gtype = type;
   namespace_context->base_info = base_info;
+  namespace_context->base_info_klass = *base_info_klass;
   return gee_abstract_map_get(GEE_ABSTRACT_MAP(self->dart_copy_funcs_by_gtype),
                               (gconstpointer) namespace_context);
 }
@@ -1611,7 +1653,8 @@ Dart_Handle gdart_bridge_context_retrieve_wrapping_class(
   GdartBridgeContext* self,
   const gchar* namespace,
   GType type,
-  GIBaseInfo *base_info,
+  gpointer base_info,
+  const RegisteredTypeInfoKlass* base_info_klass,
   gboolean is_enum,
   Dart_Handle *dart_error_out,
   GError **error)
@@ -1626,6 +1669,7 @@ Dart_Handle gdart_bridge_context_retrieve_wrapping_class(
   namespace_context->namespace = namespace;
   namespace_context->gtype = type;
   namespace_context->base_info = base_info;
+  namespace_context->base_info_klass = *base_info_klass;
   type_handle_as_pointer = gee_abstract_map_get(
                              GEE_ABSTRACT_MAP(self->dart_classes_by_gtype),
                              (gconstpointer) namespace_context);
@@ -1720,7 +1764,8 @@ Dart_Handle gdart_bridge_context_wrap_class_for_error(
                  self,
                  error_domain_namespace,
                  gtype,
-                 (GIBaseInfo*) enum_info,
+                 enum_info,
+		 &gi_registered_type_info_registered_type_info,
                  TRUE,
                  dart_error_out,
                  error);
@@ -1764,7 +1809,8 @@ Dart_Handle gdart_bridge_context_wrap_internal_pointer(GdartBridgeContext* self,
     Dart_Handle internal_container,
     const gchar* namespace,
     GType type,
-    GIBaseInfo *base_info,
+    gpointer base_info,
+    const RegisteredTypeInfoKlass* base_info_klass,
     Dart_Handle *dart_error_out,
     GError **error)
 {
@@ -1776,6 +1822,7 @@ Dart_Handle gdart_bridge_context_wrap_internal_pointer(GdartBridgeContext* self,
                 namespace,
                 type,
                 base_info,
+		base_info_klass,
                 FALSE,
                 dart_error_out,
                 error);
@@ -1896,7 +1943,7 @@ struct _GdartBridgeContextWrappedObjectInfo {
   GIRegisteredTypeInfo* object_info;
 };
 
-void _gdart_bridge_context_finalize_wrapped_object_info(void* container)
+static void _gdart_bridge_context_finalize_wrapped_object_info(void* container)
 {
   GdartBridgeContextWrappedObjectInfo* wrapper = (GdartBridgeContextWrappedObjectInfo*) container;
   g_base_info_unref((GIBaseInfo*) wrapper->object_info);
@@ -2128,7 +2175,7 @@ error_native:
 }
 
 
-gboolean _gdart_bridge_context_invoke_static(GdartBridgeContext *self,
+static gboolean _gdart_bridge_context_invoke_static(GdartBridgeContext *self,
     const gchar *function_name,
     GIFunctionInfo *function,
     Dart_Handle dart_args,
@@ -2171,7 +2218,9 @@ gboolean _gdart_bridge_context_invoke_static(GdartBridgeContext *self,
   if (!gdart_function_invoke(self,
                              function_name,
                              function,
+                             &gi_callable_info_callable_info,
                              NULL,
+			     &null_registered_type_info,
                              0,
                              NULL,
                              dart_args,
@@ -2186,7 +2235,7 @@ gboolean _gdart_bridge_context_invoke_static(GdartBridgeContext *self,
 }
 
 
-gboolean _gdart_bridge_context_invoke_method(GdartBridgeContext *self,
+static gboolean _gdart_bridge_context_invoke_method(GdartBridgeContext *self,
     const gchar* method_name,
     GIFunctionInfo *function,
     Dart_Handle dart_receiver,
@@ -2232,7 +2281,9 @@ gboolean _gdart_bridge_context_invoke_method(GdartBridgeContext *self,
   if (!gdart_function_invoke(self,
                              method_name,
                              function,
+                             &gi_callable_info_callable_info,
                              registered_type_info,
+			     &gi_registered_type_info_registered_type_info,
                              gtype,
                              dart_receiver,
                              dart_args,

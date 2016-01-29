@@ -10,34 +10,40 @@
 #include "bridge_context.h"
 
 #define _GDART_FUNCTION_FILL_BUFFER_AND_ADVANCE(t, x, y) do {\
-	*((t*) *x) = y; \
-	*x = (gpointer) (((t*) *x) + 1);\
+    *((t*) *x) = y; \
+    *x = (gpointer) (((t*) *x) + 1);\
 } while (FALSE)
 #define _GDART_FUNCTION_READ_BUFFER_AND_ADVANCE(t, x, y) do {\
-	y = *((t*) *x);\
-	*x = (gpointer) (((t*) *x) + 1);\
+    y = *((t*) *x);\
+    *x = (gpointer) (((t*) *x) + 1);\
 } while (FALSE)
 #define _GDART_FUNCTION_READ_BUFFER_AND_ADVANCE_WITH_CAST(t, x, y, s) do {\
-	y = (s) *((t*) *x);\
-	*x = (gpointer) (((t*) *x) + 1);\
+    y = (s) *((t*) *x);\
+    *x = (gpointer) (((t*) *x) + 1);\
 } while (FALSE)
 
 typedef struct _GdartCallbackTrampoline GdartCallbackTrampoline;
 
-gboolean _gdart_function_remove_array_element(GdartBridgeContext *self,
-    GITypeInfo *arg_type,
-    gpointer *buffer);
-static void gdart_callback_closure_notify(gpointer data);
-static void _gdart_callback_closure(ffi_cif *cif,
-                                    void *result,
-                                    void **args,
-                                    void *data);
-void _gdart_callback_closure_free_trampoline(GdartCallbackTrampoline* trampoline);
+///{{{ Forward definitions
 
+static void gdart_callback_closure_notify (gpointer data);
+static void _gdart_callback_closure (ffi_cif *cif,
+                                     void *result,
+                                     void **args,
+                                     void *data);
+static void _gdart_callback_closure_free_trampoline (GdartCallbackTrampoline *trampoline);
+
+///}}}
+
+///{{{ Interface-like stuff
+
+///}}}
 
 struct _GdartCallbackTrampoline {
+  GdartBridgeContext *self;
   Dart_PersistentHandle closure_dart;
-  GICallableInfo *signal_info;
+  gpointer signal_info;
+  CallableInfoKlass signal_info_klass;
   ffi_cif cif;
   ffi_closure *closure;
   gboolean user_data_present;
@@ -45,9 +51,7 @@ struct _GdartCallbackTrampoline {
   gchar *closure_name;
 };
 
-
-
-gboolean _gdart_function_argument_fill_boolean(
+static gboolean _gdart_function_argument_fill_boolean (
   Dart_Handle element,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
@@ -58,24 +62,24 @@ gboolean _gdart_function_argument_fill_boolean(
 {
   bool result;
   Dart_Handle temp_result;
-  temp_result = Dart_BooleanValue(element, &result);
-  if (Dart_IsError(temp_result)) {
+  temp_result = Dart_BooleanValue (element, &result);
+  if (Dart_IsError (temp_result)) {
     *dart_error_out = temp_result;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
   main_argument->v_boolean = (gboolean) result;
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = main_argument;
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
   return TRUE;
 error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_in_boolean(
+static gboolean _gdart_function_argument_fill_in_boolean (
   Dart_Handle dart_args,
   gint *dart_arg_pos,
   GArgument *main_argument,
@@ -86,13 +90,13 @@ gboolean _gdart_function_argument_fill_in_boolean(
   GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_boolean(
+  return _gdart_function_argument_fill_boolean (
            element,
            main_argument,
            in_arg_cvalues,
@@ -104,10 +108,9 @@ error:
   return FALSE;
 }
 
-
-gboolean _gdart_function_argument_fill_int_raw(
+static gboolean _gdart_function_argument_fill_int_raw (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   int64_t raw_result,
   uint64_t raw_result_64,
   GArgument *main_argument,
@@ -120,49 +123,49 @@ gboolean _gdart_function_argument_fill_int_raw(
   switch (type_tag) {
   case GI_TYPE_TAG_INT8:
     if (raw_result > G_MAXINT8 || raw_result < G_MININT8) {
-      g_warning("%s: Integer was out of bounds. Result will be clamped.",
-                name_prefix);
-      raw_result = CLAMP(raw_result, G_MININT8, G_MAXINT8);
+      g_warning ("%s: Integer was out of bounds. Result will be clamped.",
+                 name_prefix);
+      raw_result = CLAMP (raw_result, G_MININT8, G_MAXINT8);
     }
     main_argument->v_int8 = (gint8) raw_result;
     break;
   case GI_TYPE_TAG_UINT8:
     if (raw_result > G_MAXUINT8 || raw_result < 0) {
-      g_warning("%s: Integer was out of bounds. Result will be clamped.",
-                name_prefix);
-      raw_result = CLAMP(raw_result, 0, G_MAXUINT8);
+      g_warning ("%s: Integer was out of bounds. Result will be clamped.",
+                 name_prefix);
+      raw_result = CLAMP (raw_result, 0, G_MAXUINT8);
     }
     main_argument->v_uint8 = (guint8) raw_result;
     break;
   case GI_TYPE_TAG_INT16:
     if (raw_result > G_MAXINT16 || raw_result < G_MININT16) {
-      g_warning("%s: Integer was out of bounds. Result will be clamped.",
-                name_prefix);
-      raw_result = CLAMP(raw_result, G_MININT16, G_MAXINT16);
+      g_warning ("%s: Integer was out of bounds. Result will be clamped.",
+                 name_prefix);
+      raw_result = CLAMP (raw_result, G_MININT16, G_MAXINT16);
     }
     main_argument->v_int16 = (gint16) raw_result;
     break;
   case GI_TYPE_TAG_UINT16:
     if (raw_result > G_MAXUINT16 || raw_result < 0) {
-      g_warning("%s: Integer was out of bounds. Result will be clamped.",
-                name_prefix);
-      raw_result = CLAMP(raw_result, 0, G_MAXUINT16);
+      g_warning ("%s: Integer was out of bounds. Result will be clamped.",
+                 name_prefix);
+      raw_result = CLAMP (raw_result, 0, G_MAXUINT16);
     }
     main_argument->v_uint16 = (guint16) raw_result;
     break;
   case GI_TYPE_TAG_INT32:
     if (raw_result > G_MAXINT32 || raw_result < G_MININT32) {
-      g_warning("%s: Integer was out of bounds. Result will be clamped.",
-                name_prefix);
-      raw_result = CLAMP(raw_result, G_MININT32, G_MAXINT32);
+      g_warning ("%s: Integer was out of bounds. Result will be clamped.",
+                 name_prefix);
+      raw_result = CLAMP (raw_result, G_MININT32, G_MAXINT32);
     }
     main_argument->v_int32 = (gint32) raw_result;
     break;
   case GI_TYPE_TAG_UINT32:
     if (raw_result > G_MAXUINT32 || raw_result < 0) {
-      g_warning("%s: Integer was out of bounds. Result will be clamped.",
-                name_prefix);
-      raw_result = CLAMP(raw_result, 0, G_MAXUINT32);
+      g_warning ("%s: Integer was out of bounds. Result will be clamped.",
+                 name_prefix);
+      raw_result = CLAMP (raw_result, 0, G_MAXUINT32);
     }
     main_argument->v_uint32 = (guint32) raw_result;
     break;
@@ -176,11 +179,11 @@ gboolean _gdart_function_argument_fill_int_raw(
     main_argument->v_size = raw_result_64;
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an integer-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an integer-like type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an integer-like type", G_STRFUNC);
     goto error;
   }
   return TRUE;
@@ -188,9 +191,9 @@ error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_int(
+static gboolean _gdart_function_argument_fill_int (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle element,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
@@ -204,16 +207,16 @@ gboolean _gdart_function_argument_fill_int(
   uint64_t raw_result_64;
   Dart_Handle temp_result;
   if (type_tag == GI_TYPE_TAG_UINT64 || type_tag == GI_TYPE_TAG_GTYPE) {
-    temp_result = Dart_IntegerToUint64(element, &raw_result_64);
+    temp_result = Dart_IntegerToUint64 (element, &raw_result_64);
   } else {
-    temp_result = Dart_IntegerToInt64(element, &raw_result);
+    temp_result = Dart_IntegerToInt64 (element, &raw_result);
   }
-  if (Dart_IsError(temp_result)) {
+  if (Dart_IsError (temp_result)) {
     *dart_error_out = temp_result;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  if (!_gdart_function_argument_fill_int_raw(self,
+  if (!_gdart_function_argument_fill_int_raw (self,
       name_prefix,
       raw_result,
       raw_result_64,
@@ -226,18 +229,18 @@ gboolean _gdart_function_argument_fill_int(
     return FALSE;
   }
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = main_argument;
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
   return TRUE;
 error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_in_int(
+static gboolean _gdart_function_argument_fill_in_int (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
   gint *dart_arg_pos,
   GArgument *main_argument,
@@ -249,13 +252,13 @@ gboolean _gdart_function_argument_fill_in_int(
   GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_int(self,
+  return _gdart_function_argument_fill_int (self,
          name_prefix,
          element,
          main_argument,
@@ -269,9 +272,9 @@ error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_num(
+static gboolean _gdart_function_argument_fill_num (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle element,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
@@ -285,20 +288,20 @@ gboolean _gdart_function_argument_fill_num(
   gfloat float_result;
   gdouble double_result;
 
-  if (Dart_IsInteger(element)) {
+  if (Dart_IsInteger (element)) {
     int64_t raw_result;
-    temp_result = Dart_IntegerToInt64(element, &raw_result);
-    if (Dart_IsError(temp_result)) {
+    temp_result = Dart_IntegerToInt64 (element, &raw_result);
+    if (Dart_IsError (temp_result)) {
       *dart_error_out = temp_result;
-      g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+      g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       goto error;
     }
     double_result = (gdouble) raw_result;
   } else { // Double
-    temp_result = Dart_DoubleValue(element, &double_result);
-    if (Dart_IsError(temp_result)) {
+    temp_result = Dart_DoubleValue (element, &double_result);
+    if (Dart_IsError (temp_result)) {
       *dart_error_out = temp_result;
-      g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+      g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       goto error;
     }
   }
@@ -311,26 +314,26 @@ gboolean _gdart_function_argument_fill_num(
     main_argument->v_double = double_result;
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an number-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an number-like type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an number-like type", G_STRFUNC);
     goto error;
   }
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = main_argument;
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
   return TRUE;
 error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_in_num(
+static gboolean _gdart_function_argument_fill_in_num (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
   gint *dart_arg_pos,
   GArgument *main_argument,
@@ -342,13 +345,13 @@ gboolean _gdart_function_argument_fill_in_num(
   GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_num(self,
+  return _gdart_function_argument_fill_num (self,
          name_prefix,
          element,
          main_argument,
@@ -362,21 +365,18 @@ error:
   return FALSE;
 }
 
-
-
-void _gdart_function_argument_unfill_in_string(
+static void _gdart_function_argument_unfill_in_string (
   GdartBridgeContext *self,
   GArgument *in_arg_cvalues,
   gint *c_arg_pos)
 {
-  g_free(in_arg_cvalues[*c_arg_pos].v_string);
-  (*c_arg_pos)++;
-
+  g_free (in_arg_cvalues[*c_arg_pos].v_string);
+  (*c_arg_pos) ++;
 }
 
-gboolean _gdart_function_argument_fill_string(
+static gboolean _gdart_function_argument_fill_string (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle element,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
@@ -393,64 +393,64 @@ gboolean _gdart_function_argument_fill_string(
   gsize bytes_read, bytes_written;
   GError *inner_error = NULL;
 
-  if (Dart_IsNull(element)) {
+  if (Dart_IsNull (element)) {
     main_argument->v_pointer = NULL;
     if (ffi_arg_pointers != NULL) {
-      g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+      g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
       ffi_arg_pointers[*c_arg_pos] = main_argument;
-      (*c_arg_pos)++;
+      (*c_arg_pos) ++;
     }
     return TRUE;
   }
-  temp_result = Dart_StringToUTF8(element, &original_string, &string_length);
-  if (Dart_IsError(temp_result)) {
+  temp_result = Dart_StringToUTF8 (element, &original_string, &string_length);
+  if (Dart_IsError (temp_result)) {
     *dart_error_out = temp_result;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
   switch (type_tag) {
   case GI_TYPE_TAG_UTF8:
-    resulting_string = g_new(gchar, string_length + 1);
-    memmove(resulting_string, original_string, string_length);
+    resulting_string = g_new (gchar, string_length + 1);
+    memmove (resulting_string, original_string, string_length);
     resulting_string[string_length] = '\0';
     break;
   case GI_TYPE_TAG_FILENAME:
-    resulting_string = g_filename_from_utf8((gchar*) original_string,
-                                            string_length,
-                                            &bytes_read,
-                                            &bytes_written,
-                                            &inner_error);
+    resulting_string = g_filename_from_utf8 ( (gchar *) original_string,
+                       string_length,
+                       &bytes_read,
+                       &bytes_written,
+                       &inner_error);
     if (resulting_string == NULL) {
-      *dart_error_out = gdart_bridge_context_create_error_handle(
+      *dart_error_out = gdart_bridge_context_create_error_handle (
                           self,
                           "%s",
                           inner_error->message);
-      g_propagate_error(error, inner_error);
+      g_propagate_error (error, inner_error);
       return FALSE;
     }
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an string-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an string-like type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an string-like type", G_STRFUNC);
     goto error;
   }
   main_argument->v_string = resulting_string;
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = main_argument;
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
   return TRUE;
 error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_in_string(
+static gboolean _gdart_function_argument_fill_in_string (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
   gint *dart_arg_pos,
   GArgument *main_argument,
@@ -462,13 +462,13 @@ gboolean _gdart_function_argument_fill_in_string(
   GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_string(self,
+  return _gdart_function_argument_fill_string (self,
          name_prefix,
          element,
          main_argument,
@@ -482,9 +482,10 @@ error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_wrapped_pointer(
+static gboolean _gdart_function_argument_fill_wrapped_pointer (
+  GdartBridgeContext* self,
   Dart_Handle element,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   gboolean is_transfer_full,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
@@ -495,60 +496,99 @@ gboolean _gdart_function_argument_fill_wrapped_pointer(
 {
   Dart_Handle temp_result, inner_container, name_handle;
   RawPointerContainer *raw_pointer;
-  GIRegisteredTypeInfo* type_info;
+  
+  gpointer type_info;
+  const RegisteredTypeInfoKlass* type_info_klass;
+  
   GdartBridgeContextWrappedObject *object_info;
   void *object;
+  
+  GIInfoType info_type_tag;
 
-  if (Dart_IsNull(element)) {
+  if (Dart_IsNull (element)) {
     main_argument->v_pointer = NULL;
     if (ffi_arg_pointers != NULL) {
-      g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+      g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
       ffi_arg_pointers[*c_arg_pos] = main_argument;
-      (*c_arg_pos)++;
+      (*c_arg_pos) ++;
     }
     return TRUE;
   }
-  name_handle = Dart_NewStringFromCString("_internal");
-  if (Dart_IsError(name_handle)) {
+  name_handle = Dart_NewStringFromCString ("_internal");
+  if (Dart_IsError (name_handle)) {
     *dart_error_out = name_handle;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  inner_container = Dart_GetField(element, name_handle);
-  if (Dart_IsError(inner_container)) {
+  inner_container = Dart_GetField (element, name_handle);
+  if (Dart_IsError (inner_container)) {
     *dart_error_out = inner_container;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  temp_result = Dart_GetNativeInstanceField(inner_container, 0, (intptr_t*) &raw_pointer);
-  if (Dart_IsError(temp_result)) {
+  temp_result = Dart_GetNativeInstanceField (inner_container, 0, (intptr_t *) &raw_pointer);
+  if (Dart_IsError (temp_result)) {
     *dart_error_out = temp_result;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  object_info = (GdartBridgeContextWrappedObject*) raw_pointer->raw_pointer;
+  object_info = (GdartBridgeContextWrappedObject *) raw_pointer->raw_pointer;
   object = object_info->object;
+  
   type_info = object_info->object_info;
+  type_info_klass = &object_info->object_info_klass;
+  
+  if (!type_info_klass->get_type(type_info,
+                                 self,
+				 &info_type_tag,
+				 dart_error_out,
+				 error))
+    return FALSE;
+  
   if (is_transfer_full) {
-    switch(g_base_info_get_type((GIBaseInfo*) type_info)) {
+    switch (info_type_tag) {
     case GI_INFO_TYPE_OBJECT: {
-      GIObjectInfoRefFunction refer =
-        g_object_info_get_ref_function_pointer((GIObjectInfo*) type_info);
-      object = refer(object);
+      const ObjectInfoKlass* klass;
+      GIObjectInfoRefFunction refer;
+      
+      klass = type_info_klass->cast_to_object_info(type_info);
+      if (!klass->get_ref_function_pointer(type_info,
+				      self,
+				      &refer,
+				      dart_error_out,
+				      error))
+	return FALSE;
+      object = refer (object);
       break;
     }
     case GI_INFO_TYPE_BOXED:
-      object = g_boxed_copy(object_info->type, object);
+      object = g_boxed_copy (object_info->type, object);
       break;
     case GI_INFO_TYPE_STRUCT:
-    case GI_INFO_TYPE_UNION:
-      g_warning("%s: The GI type of an object leaving dart was an [owned %s.%s] "
-                "but there's no copy function registered. "
-                "This can be unsafe if the object is used after it has "
-                "been invalidated by external code.",
-                name_prefix,
-                g_base_info_get_namespace(type_info),
-                g_base_info_get_name(type_info));
+    case GI_INFO_TYPE_UNION: {
+      const gchar *namespace_;
+      const gchar *name;
+      if (!type_info_klass->get_name(type_info,
+	                             self,
+				     &name,
+				     dart_error_out,
+				     error))
+	return FALSE;
+      if (!type_info_klass->get_namespace(type_info,
+	                             self,
+				     &namespace_,
+				     dart_error_out,
+				     error))
+	return FALSE;
+      
+      g_warning ("%s: The GI type of an object leaving dart was an [owned %s.%s] "
+                 "but there's no copy function registered. "
+                 "This can be unsafe if the object is used after it has "
+                 "been invalidated by external code.",
+                 name_prefix,
+                 namespace_,
+                 name);
+    }
     default:
       break;
     }
@@ -556,16 +596,15 @@ gboolean _gdart_function_argument_fill_wrapped_pointer(
 
   main_argument->v_pointer = object;
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = main_argument;
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
   return TRUE;
 }
 
-
-void _gdart_function_argument_fill_raw_pointer(
-  const gchar* name_prefix,
+static void _gdart_function_argument_fill_raw_pointer (
+  const gchar *name_prefix,
   gpointer object,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
@@ -574,19 +613,20 @@ void _gdart_function_argument_fill_raw_pointer(
 {
   main_argument->v_pointer = object;
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = main_argument;
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
 }
 
-
-gboolean _gdart_function_argument_fill_callback(GdartBridgeContext *self,
+static gboolean _gdart_function_argument_fill_callback (GdartBridgeContext *self,
     const gchar *name_prefix,
     Dart_Handle element,
-    GICallbackInfo *callback_info,
+    gpointer callback_info,
+    const CallableInfoKlass *callback_info_klass,
     gboolean is_method,
-    GIArgInfo *arg_info,
+    gpointer arg_info,
+    const ArgInfoKlass *arg_info_klass,
     GIScopeType scope,
     GdartCallbackTrampoline **trampolines,
     gint trampolines_length,
@@ -602,14 +642,20 @@ gboolean _gdart_function_argument_fill_callback(GdartBridgeContext *self,
 
   is_one_shot = scope == GI_SCOPE_TYPE_ASYNC;
 
+  GdartCallbackTrampoline *trampoline;
+  trampoline = g_slice_new (GdartCallbackTrampoline);
 
-  GdartCallbackTrampoline* trampoline;
-  trampoline = g_slice_new(GdartCallbackTrampoline);
-
-  user_data = g_arg_info_get_closure(arg_info);
+  if (!arg_info_klass->get_closure (arg_info,
+                                    self,
+                                    &user_data,
+                                    dart_error_out,
+                                    error)) {
+    g_slice_free (GdartCallbackTrampoline, trampoline);
+    return FALSE;
+  }
   if (user_data != -1) {
     gint user_data_c_pos = is_method ? user_data + 1 : user_data;
-    _gdart_function_argument_fill_raw_pointer(
+    _gdart_function_argument_fill_raw_pointer (
       name_prefix,
       trampoline,
       &in_arg_cvalues[user_data_c_pos],
@@ -617,29 +663,43 @@ gboolean _gdart_function_argument_fill_callback(GdartBridgeContext *self,
       ffi_arg_pointers,
       &user_data_c_pos);
   }
-  trampoline->closure = g_callable_info_prepare_closure(callback_info,
-                        &trampoline->cif,
-                        _gdart_callback_closure,
-                        trampoline);
-  trampoline->closure_dart = Dart_NewPersistentHandle(element);
-  trampoline->signal_info = g_base_info_ref((GIBaseInfo*) callback_info);
+  if (!callback_info_klass->prepare_closure (callback_info,
+      self,
+      &trampoline->cif,
+      _gdart_callback_closure,
+      trampoline,
+      &trampoline->closure,
+      dart_error_out,
+      error)) {
+    g_slice_free (GdartCallbackTrampoline, trampoline);
+    return FALSE;
+  }
+
+  trampoline->closure_dart = Dart_NewPersistentHandle (element);
+  trampoline->signal_info = callback_info_klass->copy (callback_info);
+  if (trampoline->signal_info == NULL) {
+    g_slice_free (GdartCallbackTrampoline, trampoline);
+    return FALSE;
+  }
+  trampoline->self = (GdartBridgeContext *) g_object_ref (G_OBJECT (self));
+  trampoline->signal_info_klass = *callback_info_klass;
   trampoline->user_data_present = user_data != -1;
   trampoline->is_one_shot = is_one_shot;
-  trampoline->closure_name = g_strdup(name_prefix);
+  trampoline->closure_name = g_strdup (name_prefix);
 
   if (scope == GI_SCOPE_TYPE_CALL) {
     gint trampolines_pos = 0;
 
     if (trampolines_length == 0) {
-      *dart_error_out = gdart_bridge_context_create_error_handle(self,
+      *dart_error_out = gdart_bridge_context_create_error_handle (self,
                         "%s: the callback was call allocated, but it wasn"
                         "'t clear when the callback should be deallocated",
                         G_STRFUNC);
-      g_set_error(error, GDART_ERROR, 1,
-                  "%s: the callback was call allocated, but it wasn"
-                  "'t clear when the callback should be deallocated",
-                  G_STRFUNC);
-      g_slice_free(GdartCallbackTrampoline, trampoline);
+      g_set_error (error, GDART_ERROR, 1,
+                   "%s: the callback was call allocated, but it wasn"
+                   "'t clear when the callback should be deallocated",
+                   G_STRFUNC);
+      g_slice_free (GdartCallbackTrampoline, trampoline);
       return FALSE;
     }
     for (; trampolines_pos < trampolines_length; trampolines_pos++) {
@@ -651,10 +711,16 @@ gboolean _gdart_function_argument_fill_callback(GdartBridgeContext *self,
   } else if (scope == GI_SCOPE_TYPE_ASYNC) {
   } else if (scope == GI_SCOPE_TYPE_NOTIFIED) {
     gint destroy_notify, destroy_notify_c_pos;
-
-    destroy_notify = g_arg_info_get_destroy(arg_info);
+    if (!arg_info_klass->get_destroy (arg_info,
+                                      self,
+                                      &destroy_notify,
+                                      dart_error_out,
+                                      error)) {
+      g_slice_free (GdartCallbackTrampoline, trampoline);
+      return FALSE;
+    }
     destroy_notify_c_pos = is_method ? destroy_notify + 1 : destroy_notify;
-    _gdart_function_argument_fill_raw_pointer(
+    _gdart_function_argument_fill_raw_pointer (
       name_prefix,
       gdart_callback_closure_notify,
       &in_arg_cvalues[destroy_notify_c_pos],
@@ -662,9 +728,9 @@ gboolean _gdart_function_argument_fill_callback(GdartBridgeContext *self,
       ffi_arg_pointers,
       &destroy_notify_c_pos);
   }
-  _gdart_function_argument_fill_raw_pointer(
+  _gdart_function_argument_fill_raw_pointer (
     name_prefix,
-    trampoline->closure ,
+    trampoline->closure,
     main_argument,
     in_arg_cvalues,
     ffi_arg_pointers,
@@ -672,15 +738,17 @@ gboolean _gdart_function_argument_fill_callback(GdartBridgeContext *self,
   return TRUE;
 }
 
-gboolean _gdart_function_argument_fill_in_callback(GdartBridgeContext *self,
-    const gchar* name_prefix,
+static gboolean _gdart_function_argument_fill_in_callback (GdartBridgeContext *self,
+    const gchar *name_prefix,
     Dart_Handle dart_args,
     gint *dart_arg_pos,
     gboolean is_method,
-    GICallbackInfo* callback_info,
-    GIArgInfo *arg_info,
+    gpointer callback_info,
+    const CallableInfoKlass *callback_info_klass,
+    gpointer arg_info,
+    const ArgInfoKlass *arg_info_klass,
     GIScopeType scope,
-    GdartCallbackTrampoline** trampolines,
+    GdartCallbackTrampoline **trampolines,
     gint trampolines_length,
     GArgument *main_argument,
     GArgument *in_arg_cvalues,
@@ -690,19 +758,21 @@ gboolean _gdart_function_argument_fill_in_callback(GdartBridgeContext *self,
     GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_callback(
+  return _gdart_function_argument_fill_callback (
            self,
            name_prefix,
            element,
            callback_info,
+           callback_info_klass,
            is_method,
            arg_info,
+           arg_info_klass,
            scope,
            trampolines,
            trampolines_length,
@@ -716,8 +786,8 @@ error:
   return FALSE;
 }
 
-gboolean _gdart_function_argument_fill_in_wrapped_pointer(GdartBridgeContext *self,
-    const gchar* name_prefix,
+static gboolean _gdart_function_argument_fill_in_wrapped_pointer (GdartBridgeContext *self,
+    const gchar *name_prefix,
     Dart_Handle dart_args,
     gint *dart_arg_pos,
     gboolean is_transfer_full,
@@ -729,13 +799,14 @@ gboolean _gdart_function_argument_fill_in_wrapped_pointer(GdartBridgeContext *se
     GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_wrapped_pointer(
+  return _gdart_function_argument_fill_wrapped_pointer (
+           self,
            element,
            name_prefix,
            is_transfer_full,
@@ -750,35 +821,38 @@ error:
 
 }
 
-gboolean _gdart_function_argument_fill_flags(
+static gboolean _gdart_function_argument_fill_flags (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle element,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
   gpointer  *ffi_arg_pointers,
   gint *c_arg_pos,
-  GIEnumInfo* enum_info,
+  gpointer enum_info,
+  const EnumInfoKlass *enum_info_klass,
   Dart_Handle *dart_error_out,
   GError **error)
 {
   Dart_Handle inner_container, name_handle;
   GITypeTag storage_type;
 
-  storage_type = g_enum_info_get_storage_type(enum_info);
-  name_handle = Dart_NewStringFromCString("value");
-  if (Dart_IsError(name_handle)) {
+  if (!enum_info_klass->get_storage_type (enum_info, self, &storage_type, dart_error_out, error)) {
+    return FALSE;
+  }
+  name_handle = Dart_NewStringFromCString ("value");
+  if (Dart_IsError (name_handle)) {
     *dart_error_out = name_handle;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  inner_container = Dart_GetField(element, name_handle);
-  if (Dart_IsError(inner_container)) {
+  inner_container = Dart_GetField (element, name_handle);
+  if (Dart_IsError (inner_container)) {
     *dart_error_out = inner_container;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  return _gdart_function_argument_fill_int(self,
+  return _gdart_function_argument_fill_int (self,
          name_prefix,
          inner_container,
          main_argument,
@@ -790,26 +864,27 @@ gboolean _gdart_function_argument_fill_flags(
          error);
 }
 
-gboolean _gdart_function_argument_fill_in_flags(GdartBridgeContext *self,
-    const gchar* name_prefix,
+static gboolean _gdart_function_argument_fill_in_flags (GdartBridgeContext *self,
+    const gchar *name_prefix,
     Dart_Handle dart_args,
     gint *dart_arg_pos,
     GArgument *main_argument,
     GArgument *in_arg_cvalues,
     gpointer *ffi_arg_pointers,
     gint *c_arg_pos,
-    GIEnumInfo* enum_info,
+    gpointer enum_info,
+    const EnumInfoKlass *enum_info_klass,
     Dart_Handle *dart_error_out,
     GError **error)
 {
   Dart_Handle element;
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
   }
-  return _gdart_function_argument_fill_flags(self,
+  return _gdart_function_argument_fill_flags (self,
          name_prefix,
          element,
          main_argument,
@@ -817,13 +892,14 @@ gboolean _gdart_function_argument_fill_in_flags(GdartBridgeContext *self,
          ffi_arg_pointers,
          c_arg_pos,
          enum_info,
+         enum_info_klass,
          dart_error_out,
          error);
 error:
   return FALSE;
 }
 /*
-gboolean _gdart_function_argument_fill_interface(
+static gboolean _gdart_function_argument_fill_interface(
     GdartBridgeContext *self,
     Dart_Handle element,
     GITypeInfo *arg_type,
@@ -882,38 +958,73 @@ error:
 }
 */
 
-gboolean _gdart_function_argument_fill_in_interface(
+static gboolean _gdart_function_argument_fill_in_interface (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
   gint *dart_arg_pos,
   gboolean is_method,
-  GIArgInfo *arg_info,
-  GITypeInfo *arg_type,
+  gpointer arg_info,
+  const ArgInfoKlass *arg_info_klass,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
   gboolean is_transfer_full,
   GArgument *main_argument,
-  GArgument* in_arg_cvalues,
-  gpointer* ffi_arg_pointers,
-  GdartCallbackTrampoline** trampolines,
+  GArgument *in_arg_cvalues,
+  gpointer *ffi_arg_pointers,
+  GdartCallbackTrampoline **trampolines,
   gint trampolines_length,
-  gint* c_arg_pos,
+  gint *c_arg_pos,
   Dart_Handle *dart_error_out,
   GError **error)
 {
-  GIBaseInfo* base_info;
+  gpointer interface_info;
+  const InterfaceInfoKlass *interface_info_klass;
+
   gboolean result;
-  base_info = g_type_info_get_interface(arg_type);
-  switch (g_base_info_get_type(base_info)) {
-  case GI_INFO_TYPE_CALLBACK:
-    result = _gdart_function_argument_fill_in_callback(
+  GIScopeType scope;
+  
+  GIInfoType info_type;
+
+  if (!arg_type_klass->get_interface (arg_type,
+                                      self,
+                                      &interface_info,
+                                      &interface_info_klass,
+                                      dart_error_out,
+                                      error)) {
+    return FALSE;
+  }
+  if (!arg_info_klass->get_scope (arg_info,
+                                  self,
+                                  &scope,
+                                  dart_error_out,
+                                  error)) {
+    interface_info_klass->free (interface_info);
+    return FALSE;
+  }
+  if (!interface_info_klass->get_type(interface_info,
+                                      self,
+				      &info_type,
+				      dart_error_out,
+				      error)) {
+    interface_info_klass->free (interface_info);
+    return FALSE;
+  }
+  switch (info_type) {
+  case GI_INFO_TYPE_CALLBACK: {
+    const CallableInfoKlass* klass;
+    klass = interface_info_klass->cast_to_callable_info (interface_info);
+    result = _gdart_function_argument_fill_in_callback (
                self,
                name_prefix,
                dart_args,
                dart_arg_pos,
                is_method,
-               (GICallbackInfo*) base_info,
+               interface_info,
+	       klass,
                arg_info,
-               g_arg_info_get_scope(arg_info),
+               arg_info_klass,
+               scope,
                trampolines,
                trampolines_length,
                main_argument,
@@ -923,12 +1034,13 @@ gboolean _gdart_function_argument_fill_in_interface(
                dart_error_out,
                error);
     goto out;
+  }
   case GI_INFO_TYPE_STRUCT:
   case GI_INFO_TYPE_BOXED:
   case GI_INFO_TYPE_UNION:
   case GI_INFO_TYPE_OBJECT:
   case GI_INFO_TYPE_INTERFACE:
-    result = _gdart_function_argument_fill_in_wrapped_pointer(self,
+    result = _gdart_function_argument_fill_in_wrapped_pointer (self,
              name_prefix,
              dart_args,
              dart_arg_pos,
@@ -941,8 +1053,10 @@ gboolean _gdart_function_argument_fill_in_interface(
              error);
     goto out;
   case GI_INFO_TYPE_ENUM:
-  case GI_INFO_TYPE_FLAGS:
-    result = _gdart_function_argument_fill_in_flags(self,
+  case GI_INFO_TYPE_FLAGS: {
+    const EnumInfoKlass* klass;
+    klass = interface_info_klass->cast_to_enum_info (interface_info);
+    result = _gdart_function_argument_fill_in_flags (self,
              name_prefix,
              dart_args,
              dart_arg_pos,
@@ -950,28 +1064,32 @@ gboolean _gdart_function_argument_fill_in_interface(
              in_arg_cvalues,
              ffi_arg_pointers,
              c_arg_pos,
-             (GIEnumInfo*) base_info,
+             interface_info,
+	     klass,
              dart_error_out,
              error);
     goto out;
+  }
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: received an unexpected base info type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: received an unexpected base info type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: received an unexpected base info type", G_STRFUNC);
     goto error;
   }
 out:
-  g_base_info_unref(base_info);
+  if (!result) goto error;
+  interface_info_klass->free (interface_info);
   return result;
 error:
-  g_base_info_unref(base_info);
+
+  interface_info_klass->free (interface_info);
   return FALSE;
 }
 
 
 /*
-gboolean _gdart_function_argument_fill_array(GdartBridgeContext *self,
+static gboolean _gdart_function_argument_fill_array(GdartBridgeContext *self,
         Dart_Handle element,
         GITypeInfo *arg_type,
         Dart_Handle *dart_error_out,
@@ -1006,9 +1124,22 @@ error:
 }
 */
 
-gsize _gdart_function_get_array_size_multiplier_out(GITypeInfo *param_type)
+static gsize _gdart_function_get_array_size_multiplier_out (
+  GdartBridgeContext *self,
+  gpointer param_type,
+  const TypeInfoKlass *param_type_klass,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
-  switch (g_type_info_get_tag(param_type)) {
+  GITypeTag type_tag;
+  if (!param_type_klass->get_tag (param_type,
+                                  self,
+                                  &type_tag,
+                                  dart_error_out,
+                                  error)) {
+    return 0;
+  }
+  switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
   case GI_TYPE_TAG_INT8:
   case GI_TYPE_TAG_UINT8:
@@ -1027,44 +1158,74 @@ gsize _gdart_function_get_array_size_multiplier_out(GITypeInfo *param_type)
   case GI_TYPE_TAG_GLIST:
   case GI_TYPE_TAG_GSLIST:
   case GI_TYPE_TAG_GHASH:
-    return gdart_array_get_size_multiplier(param_type);
+    return gdart_array_get_size_multiplier (self,
+                                            param_type,
+                                            param_type_klass,
+                                            dart_error_out,
+                                            error);
   case GI_TYPE_TAG_INTERFACE: {
-    GIBaseInfo* base_info;
-    base_info = g_type_info_get_interface(param_type);
-    switch (g_base_info_get_type(base_info)) {
+    gpointer base_info;
+    const InterfaceInfoKlass* base_info_klass;
+    GIInfoType base_info_type;
+    
+    if (!param_type_klass->get_interface(param_type,
+				    self,
+				    &base_info,
+				    &base_info_klass,
+				    dart_error_out,
+				    error))
+      return 0;
+    if (!base_info_klass->get_type(base_info,
+                                   self,
+				   &base_info_type,
+				   dart_error_out,
+				   error)) {
+      base_info_klass->free(base_info);
+      return 0;
+    }
+				   
+    switch (base_info_type) {
     case GI_INFO_TYPE_CALLBACK:
     case GI_INFO_TYPE_BOXED:
     case GI_INFO_TYPE_OBJECT:
     case GI_INFO_TYPE_INTERFACE:
-      g_base_info_unref(base_info);
-      return sizeof(gpointer);
+      base_info_klass->free(base_info);
+      return sizeof (gpointer);
+    case GI_INFO_TYPE_UNION:
     case GI_INFO_TYPE_STRUCT: {
       gsize result;
-      result = g_struct_info_get_size((GIStructInfo*) base_info);
-      g_base_info_unref(base_info);
-      return result;
-    }
-    case GI_INFO_TYPE_UNION: {
-      gsize result;
-      result = g_union_info_get_size((GIUnionInfo*) base_info);
-      g_base_info_unref(base_info);
+      const StructUnionInfoKlass* klass;
+      klass = base_info_klass->cast_to_struct_union_info(base_info);
+      
+      if (!klass->get_size(base_info,
+	                   self,
+			   &result,
+			   dart_error_out,
+			   error)) {
+	base_info_klass->free(base_info);
+      }
+      base_info_klass->free(base_info);
       return result;
     }
     case GI_INFO_TYPE_ENUM:
     case GI_INFO_TYPE_FLAGS: {
       gsize result;
-      result = gdart_array_get_size_multiplier(param_type);
-      g_base_info_unref(base_info);
+      result = gdart_array_get_size_multiplier (self,
+               param_type,
+               param_type_klass,
+               dart_error_out,
+               error);
+      base_info_klass->free(base_info);
       return result;
     }
     default:
-      g_base_info_unref(base_info);
+      base_info_klass->free(base_info);
       return 0;
     }
   }
 
   case GI_TYPE_TAG_ERROR:
-    return sizeof(gpointer);
+    return sizeof (gpointer);
   default:
     return 0;
   }
@@ -1072,22 +1233,53 @@ gsize _gdart_function_get_array_size_multiplier_out(GITypeInfo *param_type)
 
 
 
-gint _gdart_function_result_load_int_raw_from_in(
+static gboolean _gdart_function_result_load_int_raw_from_in (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo *function_info,
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
   gint gi_arg_pos,
   GIArgument *in_arg_cvalues,
-  gint c_arg_pos)
+  gint c_arg_pos,
+  gint *result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
-  GIArgInfo arg_info;
-  GITypeInfo type_info;
+  gpointer arg_info;
+  const ArgInfoKlass *arg_info_klass;
+  gpointer type_info;
+  const TypeInfoKlass *type_info_klass;
   GITypeTag return_tag;
   gint64 result;
   GIArgument *gi_return_value = &in_arg_cvalues[c_arg_pos];
-  g_callable_info_load_arg(function_info, gi_arg_pos, &arg_info);
-  g_arg_info_load_type(&arg_info, &type_info);
-  return_tag = g_type_info_get_tag(&type_info);
+
+  if (!function_info_klass->get_arg (function_info,
+                                     self,
+                                     gi_arg_pos,
+                                     &arg_info,
+                                     &arg_info_klass,
+                                     dart_error_out,
+                                     error)) {
+    return FALSE;
+  }
+  if (!arg_info_klass->get_type (arg_info,
+                                 self,
+                                 &type_info,
+                                 &type_info_klass,
+                                 dart_error_out,
+                                 error)) {
+    arg_info_klass->free (arg_info);
+    return FALSE;
+  }
+  if (!type_info_klass->get_tag (type_info,
+                                 self,
+                                 &return_tag,
+                                 dart_error_out,
+                                 error)) {
+    type_info_klass->free (type_info);
+    arg_info_klass->free (arg_info);
+    return FALSE;
+  }
   switch (return_tag) {
   case GI_TYPE_TAG_BOOLEAN:
     result = (gint64) (gi_return_value->v_int);
@@ -1116,119 +1308,214 @@ gint _gdart_function_result_load_int_raw_from_in(
   case GI_TYPE_TAG_UINT64:
     result = (gint64) (gi_return_value->v_uint64);
     break;
-  default:
-    goto error;
+  default: {
+    type_info_klass->free (type_info);
+    arg_info_klass->free (arg_info);
+    return FALSE;
   }
-  return result;
-error:
-  return -1;
+  }
+  type_info_klass->free (type_info);
+  arg_info_klass->free (arg_info);
+  *result_out = result;
+  return TRUE;
 }
 
-void _gdart_function_argument_unfill_in_array(
+static gboolean _gdart_function_argument_unfill_in_array (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GITypeInfo *arg_type,
-  GICallableInfo *function_info,
-  GArgument* in_arg_cvalues,
+  const gchar *name_prefix,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
+  GArgument *in_arg_cvalues,
   gboolean is_method,
-  gint* c_arg_pos)
+  gint *c_arg_pos,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
   gint arg_to_suppress, length = 0;
-  arg_to_suppress = g_type_info_get_array_length(arg_type);
+  if (!arg_type_klass->get_array_length(arg_type,
+                                        self,
+					&arg_to_suppress,
+					dart_error_out,
+					error))
+    return FALSE;
   gboolean is_null_terminated;
   gpointer buffer;
 
-  is_null_terminated = g_type_info_is_zero_terminated(arg_type);
-  GITypeInfo *param_type;
-  param_type = g_type_info_get_param_type(arg_type, 0);
+  gpointer param_type;
+  const TypeInfoKlass *param_type_klass;
+  gboolean result;
 
-  length = g_type_info_get_array_fixed_size(arg_type);
+  if (!arg_type_klass->is_zero_terminated (arg_type,
+      self,
+      &is_null_terminated,
+      dart_error_out,
+      error))
+    return FALSE;
+  if (!arg_type_klass->get_array_fixed_size (arg_type,
+      self,
+      &length,
+      dart_error_out,
+      error))
+    return FALSE;
+  if (!arg_type_klass->get_param_type (arg_type,
+                                       self,
+                                       0,
+                                       &param_type,
+                                       &param_type_klass,
+                                       dart_error_out,
+                                       error))
+    return FALSE;
   if (arg_to_suppress != -1) {
-    length = _gdart_function_result_load_int_raw_from_in(
-               self,
-               name_prefix,
-               function_info,
-               arg_to_suppress,
-               in_arg_cvalues,
-               is_method ? arg_to_suppress + 1 : arg_to_suppress);
+    if (!_gdart_function_result_load_int_raw_from_in (
+          self,
+          name_prefix,
+          function_info,
+          function_info_klass,
+          arg_to_suppress,
+          in_arg_cvalues,
+          is_method ? arg_to_suppress + 1 : arg_to_suppress,
+          &length,
+          dart_error_out,
+          error)) {
+      param_type_klass->free (param_type);
+      return FALSE;
+    }
   }
   buffer = in_arg_cvalues[*c_arg_pos].v_pointer;
-  gdart_array_unfill_in_array_parameters(self,
-                                         param_type,
-                                         length,
-                                         is_null_terminated,
-                                         buffer);
-  g_free(buffer);
+  result = gdart_array_unfill_in_array_parameters (self,
+           param_type,
+           param_type_klass,
+           length,
+           is_null_terminated,
+           buffer,
+           dart_error_out,
+           error);
+  g_free (buffer);
+  return result;
 }
 
-gboolean _gdart_function_argument_fill_in_array(
+static gboolean _gdart_function_argument_fill_in_array (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
   gint *dart_arg_pos,
-  GITypeInfo *arg_type,
-  GICallableInfo *function_info,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
   gboolean is_method,
   GArgument *main_argument,
-  GArgument* in_arg_cvalues,
-  gpointer* ffi_arg_pointers,
-  gint* c_arg_pos,
+  GArgument *in_arg_cvalues,
+  gpointer *ffi_arg_pointers,
+  gint *c_arg_pos,
   Dart_Handle *dart_error_out,
   GError **error)
 {
   Dart_Handle element, temp_result;
   gint arg_to_suppress, fixed_length = 0;
-  arg_to_suppress = g_type_info_get_array_length(arg_type);
   gboolean is_null_terminated;
-  is_null_terminated = g_type_info_is_zero_terminated(arg_type);
   gpointer buffer, buffer_after;
   intptr_t list_length;
   gintptr allocation_length;
-  GITypeInfo *param_type;
 
-  fixed_length = g_type_info_get_array_fixed_size(arg_type);
+  gpointer param_type;
+  const TypeInfoKlass *param_type_klass;
+
+  gsize size_per_cell;
+
+  if (!arg_type_klass->get_array_length (arg_type,
+                                         self,
+                                         &arg_to_suppress,
+                                         dart_error_out,
+                                         error))
+    return FALSE;
+  if (!arg_type_klass->is_zero_terminated (arg_type,
+      self,
+      &is_null_terminated,
+      dart_error_out,
+      error))
+    return FALSE;
+  if (!arg_type_klass->get_array_fixed_size (arg_type,
+      self,
+      &fixed_length,
+      dart_error_out,
+      error))
+    return FALSE;
   if (arg_to_suppress == -1 && fixed_length == -1 && !is_null_terminated) {
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: the array did not have a length, a fixed size or a null termination so I can't handle it", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: the array did not have a length, a fixed size or a null termination so I can't handle it", G_STRFUNC);
-    goto error;
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: the array did not have a length, a fixed size or a null termination so I can't handle it", G_STRFUNC);
+    return FALSE;
   }
-  element = Dart_ListGetAt(dart_args, (*dart_arg_pos)++);
-  if (Dart_IsError(element)) {
+  element = Dart_ListGetAt (dart_args, (*dart_arg_pos) ++);
+  if (Dart_IsError (element)) {
     *dart_error_out = element;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
-    goto error;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
+    return FALSE;
   }
-  if (!Dart_IsList(element) && !Dart_IsNull(element)) {
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+  if (!Dart_IsList (element) && !Dart_IsNull (element)) {
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: expected string or null", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected string or null", G_STRFUNC);
-    goto error;
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected string or null", G_STRFUNC);
+    return FALSE;
   }
-  if (Dart_IsNull(element)) {
+  if (Dart_IsNull (element)) {
     list_length = 0;
   } else {
-    temp_result = Dart_ListLength(element, &list_length);
-    if (Dart_IsError(temp_result)) {
+    temp_result = Dart_ListLength (element, &list_length);
+    if (Dart_IsError (temp_result)) {
       *dart_error_out = temp_result;
-      g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
-      goto error;
+      g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
+      return FALSE;
     }
   }
   allocation_length = list_length;
   if (is_null_terminated) {
     allocation_length++;
   } else if (arg_to_suppress != -1) {
-    GIArgInfo arg_info_length;
-    GITypeInfo arg_type_length;
+    gpointer arg_info_length;
+    const ArgInfoKlass *arg_info_length_klass;
+
+    gpointer arg_type_length;
+    const TypeInfoKlass *arg_type_length_klass;
+
     GITypeTag type_tag_length;
     gint arg_offset = is_method ? 1 : 0;
-    g_callable_info_load_arg(function_info, arg_to_suppress, &arg_info_length);
-    g_arg_info_load_type(&arg_info_length, &arg_type_length);
-    type_tag_length = g_type_info_get_tag(&arg_type_length);
-    if (!_gdart_function_argument_fill_int_raw(self,
+
+    if (!function_info_klass->get_arg (function_info,
+                                       self,
+                                       arg_to_suppress,
+                                       &arg_info_length,
+                                       &arg_info_length_klass,
+                                       dart_error_out,
+                                       error))
+      return FALSE;
+    if (!arg_info_length_klass->get_type (arg_info_length,
+                                          self,
+                                          &arg_type_length,
+                                          &arg_type_length_klass,
+                                          dart_error_out,
+                                          error)) {
+      arg_info_length_klass->free (arg_info_length);
+      return FALSE;
+    }
+    if (!arg_type_length_klass->get_tag (arg_type_length,
+                                         self,
+                                         &type_tag_length,
+                                         dart_error_out,
+                                         error)) {
+      arg_info_length_klass->free (arg_info_length);
+      arg_type_length_klass->free (arg_type_length);
+      return FALSE;
+    }
+    arg_info_length_klass->free (arg_info_length);
+    arg_type_length_klass->free (arg_type_length);
+
+    if (!_gdart_function_argument_fill_int_raw (self,
         name_prefix,
         list_length,
         list_length,
@@ -1244,108 +1531,124 @@ gboolean _gdart_function_argument_fill_in_array(
   if (allocation_length == 0) {
     in_arg_cvalues[*c_arg_pos].v_pointer = NULL;
     if (ffi_arg_pointers != NULL) {
-      g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+      g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
       ffi_arg_pointers[*c_arg_pos] = &in_arg_cvalues[*c_arg_pos];
-      (*c_arg_pos)++;
+      (*c_arg_pos) ++;
     }
     return TRUE;
   }
-  param_type = g_type_info_get_param_type(arg_type, 0);
-  buffer = g_malloc(allocation_length * gdart_array_get_size_multiplier(param_type));
+  if (!arg_type_klass->get_param_type (arg_type,
+                                       self,
+                                       0,
+                                       &param_type,
+                                       &param_type_klass,
+                                       dart_error_out,
+                                       error))
+    return FALSE;
+  size_per_cell = gdart_array_get_size_multiplier (self,
+                  param_type,
+                  param_type_klass,
+                  dart_error_out,
+                  error);
+  if (size_per_cell == 0) {
+    param_type_klass->free (param_type);
+    return FALSE;
+  }
+  buffer = g_malloc (allocation_length * size_per_cell);
 
-  if (!gdart_array_fill_in_parameters(self,
-                                      name_prefix,
-                                      element,
-                                      param_type,
-                                      fixed_length,
-                                      list_length,
-                                      buffer,
-                                      &buffer_after,
-                                      dart_error_out,
-                                      error)) {
-    g_base_info_unref((GIBaseInfo*) param_type);
-    g_free(buffer);
+  if (!gdart_array_fill_in_parameters (self,
+                                       name_prefix,
+                                       element,
+                                       param_type,
+                                       param_type_klass,
+                                       fixed_length,
+                                       list_length,
+                                       buffer,
+                                       &buffer_after,
+                                       dart_error_out,
+                                       error)) {
+    param_type_klass->free (param_type);
+    g_free (buffer);
     return FALSE;
   }
   if (is_null_terminated) {
-    if (!gdart_array_zero_element(self,
-                                  name_prefix,
-                                  param_type,
-                                  &buffer_after,
-                                  dart_error_out,
-                                  error)) {
-      g_base_info_unref((GIBaseInfo*) param_type);
-      g_free(buffer);
+    if (!gdart_array_zero_element (self,
+                                   name_prefix,
+                                   param_type,
+                                   param_type_klass,
+                                   &buffer_after,
+                                   dart_error_out,
+                                   error)) {
+      param_type_klass->free(param_type);
+      g_free (buffer);
       return FALSE;
     }
   }
   in_arg_cvalues[*c_arg_pos].v_pointer = buffer;
   if (ffi_arg_pointers != NULL) {
-    g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+    g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
     ffi_arg_pointers[*c_arg_pos] = &in_arg_cvalues[*c_arg_pos];
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
   }
   return TRUE;
-error:
-  return FALSE;
 }
 
-gboolean gdart_function_prep_invoke(GdartBridgeContext *self,
-                                    const gchar* name_prefix,
-                                    GICallableInfo *function_info,
-                                    GType type,
-                                    GIFunctionInvoker *invoker,
-                                    Dart_Handle *dart_error_out,
-                                    GError **error)
+gboolean gdart_function_prep_invoke (GdartBridgeContext *self,
+                                     const gchar *name_prefix,
+				     gpointer function_info,
+				     const CallableInfoKlass* function_info_klass,
+                                     GType type,
+                                     GIFunctionInvoker *invoker,
+                                     Dart_Handle *dart_error_out,
+                                     GError **error)
 {
   GIInfoType info_type;
   GError *inner_error = NULL;
   gpointer addr;
-  info_type = g_base_info_get_type((GIBaseInfo*) function_info);
+  if (!function_info_klass->get_type(function_info,
+				self,
+				&info_type,
+				dart_error_out,
+				error))
+    return FALSE;
   if (info_type == GI_INFO_TYPE_FUNCTION) {
-    if (!g_function_info_prep_invoker((GIFunctionInfo*) function_info,
-                                      invoker,
-                                      &inner_error)) {
-      *dart_error_out = gdart_bridge_context_create_error_handle(
-                          self,
-                          "%s",
-                          inner_error->message);
-      g_propagate_error(error, inner_error);
+    const FunctionInfoKlass* klass;
+    klass = function_info_klass->cast_to_function_info(function_info);
+    if (!klass->prep_invoker(function_info,
+                             self,
+			     invoker,
+			     dart_error_out,
+			     error))
       return FALSE;
-    }
   } else if (info_type == GI_INFO_TYPE_VFUNC) {
-    addr = g_vfunc_info_get_address((GIVFuncInfo*) function_info,
-                                    type,
-                                    &inner_error);
-    if (inner_error != NULL) {
-      if (inner_error->code != G_INVOKE_ERROR_SYMBOL_NOT_FOUND) {
-        *dart_error_out = gdart_bridge_context_create_error_handle(
+    const VFuncInfoKlass* klass;
+    
+    klass = function_info_klass->cast_to_v_func_info(function_info);
+    if (!klass->get_address(function_info,
                             self,
-                            "%s",
-                            inner_error->message);
-        g_propagate_error(error, inner_error);
-        return FALSE;
-      }
-      g_clear_error(&inner_error);
+			    type,
+			    &addr,
+			    dart_error_out,
+			    error))
       return FALSE;
-    }
-    if (!g_function_invoker_new_for_address(addr,
-                                            function_info,
-                                            invoker,
-                                            &inner_error)) {
-      *dart_error_out = gdart_bridge_context_create_error_handle(
+    //TODO: rewrite this using generics.
+    if (!g_function_invoker_new_for_address (addr,
+        function_info,
+        invoker,
+        &inner_error)) {
+      *dart_error_out = gdart_bridge_context_create_error_handle (
                           self,
                           "%s",
                           inner_error->message);
-      g_propagate_error(error, inner_error);
+      g_propagate_error (error, inner_error);
       return FALSE;
     }
   }
   return TRUE;
 }
 
-gboolean _gdart_function_invoke_fill_receiver(GdartBridgeContext *self,
-    const gchar* name_prefix,
+static gboolean _gdart_function_invoke_fill_receiver (GdartBridgeContext *self,
+    const gchar *name_prefix,
     Dart_Handle dart_receiver,
     GArgument *main_argument,
     GArgument *in_arg_cvalues,
@@ -1355,19 +1658,19 @@ gboolean _gdart_function_invoke_fill_receiver(GdartBridgeContext *self,
 {
   gint c_arg_pos = 0, dart_arg_pos = 0;
   Dart_Handle dart_args, temp_result;
-  dart_args = Dart_NewList(1);
-  if (Dart_IsError(dart_args)) {
+  dart_args = Dart_NewList (1);
+  if (Dart_IsError (dart_args)) {
     *dart_error_out = dart_args;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  temp_result = Dart_ListSetAt(dart_args, 0, dart_receiver);
-  if (Dart_IsError(temp_result)) {
+  temp_result = Dart_ListSetAt (dart_args, 0, dart_receiver);
+  if (Dart_IsError (temp_result)) {
     *dart_error_out = temp_result;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  return _gdart_function_argument_fill_in_wrapped_pointer(self,
+  return _gdart_function_argument_fill_in_wrapped_pointer (self,
          name_prefix,
          dart_args,
          &dart_arg_pos,
@@ -1380,13 +1683,14 @@ gboolean _gdart_function_invoke_fill_receiver(GdartBridgeContext *self,
          error);
 }
 
-gboolean _gdart_function_fill_argument_out(
+static gboolean _gdart_function_fill_argument_out (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   gboolean is_caller_allocates,
   gint *c_arg_pos,
   gint gi_arg_pos,
-  GITypeInfo *arg_type,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
   GArgument *in_arg_cvalues,
   GArgument *out_arg_cvalues,
   gpointer  *ffi_arg_pointers,
@@ -1394,22 +1698,32 @@ gboolean _gdart_function_fill_argument_out(
   GError **error)
 {
   GITypeTag return_tag;
-  GIArgument* gi_return_value;
+  GIArgument *gi_return_value;
 
   if (is_caller_allocates) {
     gsize size_of_slot;
     gpointer slot;
-    size_of_slot = _gdart_function_get_array_size_multiplier_out(arg_type);
-    slot = g_slice_alloc0(size_of_slot);
+    size_of_slot = _gdart_function_get_array_size_multiplier_out (self,
+                   arg_type,
+                   arg_type_klass,
+                   dart_error_out,
+                   error);
+    if (size_of_slot == 0) return FALSE;
+    slot = g_slice_alloc0 (size_of_slot);
     in_arg_cvalues[*c_arg_pos].v_pointer = slot;
     if (ffi_arg_pointers != NULL) {
       ffi_arg_pointers[*c_arg_pos] = &in_arg_cvalues[*c_arg_pos];
-      (*c_arg_pos)++;
+      (*c_arg_pos) ++;
     }
     return TRUE;
   }
   gi_return_value = &out_arg_cvalues[*c_arg_pos];
-  return_tag = g_type_info_get_tag(arg_type);
+  if (!arg_type_klass->get_tag(arg_type,
+                               self,
+			       &return_tag,
+			       dart_error_out,
+			       error))
+    return FALSE;
   if (return_tag == GI_TYPE_TAG_FLOAT) {
     in_arg_cvalues[*c_arg_pos].v_pointer = &gi_return_value->v_float;
     gi_return_value->v_float = 0.0;
@@ -1424,30 +1738,33 @@ gboolean _gdart_function_fill_argument_out(
     gi_return_value->v_uint64 = 0;
   }
   ffi_arg_pointers[*c_arg_pos] = &in_arg_cvalues[*c_arg_pos];
-  (*c_arg_pos)++;
+  (*c_arg_pos) ++;
   return TRUE;
 }
 
 
-gboolean _gdart_function_fill_argument_inout(
+static gboolean _gdart_function_fill_argument_inout (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
-  GICallableInfo *function_info,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
   gboolean is_transfer_full,
   gboolean is_method,
   gint *c_arg_pos,
   gint *dart_arg_pos,
   gint gi_arg_pos,
-  GIArgInfo* arg_info,
-  GITypeInfo *arg_type,
-  gint* suppressed_args,
+  gpointer arg_info,
+  const ArgInfoKlass *arg_info_klass,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
+  gint *suppressed_args,
   gint suppressed_args_length,
   GArgument *in_arg_cvalues,
   GArgument *out_arg_cvalues,
   GArgument *inout_original_arg_cvalues,
   gpointer  *ffi_arg_pointers,
-  GdartCallbackTrampoline** trampolines,
+  GdartCallbackTrampoline **trampolines,
   gint trampolines_length,
   Dart_Handle *dart_error_out,
   GError **error)
@@ -1461,10 +1778,15 @@ gboolean _gdart_function_fill_argument_inout(
     }
     if (suppressed_args[arg_i] == -1) break;
   }
-  type_tag = g_type_info_get_tag(arg_type);
+  if (!arg_type_klass->get_tag (arg_type,
+                                self,
+                                &type_tag,
+                                dart_error_out,
+                                error))
+    return FALSE;
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
-    result = _gdart_function_argument_fill_in_boolean(
+    result = _gdart_function_argument_fill_in_boolean (
                dart_args,
                dart_arg_pos,
                &out_arg_cvalues[*c_arg_pos],
@@ -1483,7 +1805,7 @@ gboolean _gdart_function_fill_argument_inout(
   case GI_TYPE_TAG_INT64:
   case GI_TYPE_TAG_UINT64:
   case GI_TYPE_TAG_GTYPE:
-    result =  _gdart_function_argument_fill_in_int(self,
+    result =  _gdart_function_argument_fill_in_int (self,
               name_prefix,
               dart_args,
               dart_arg_pos,
@@ -1497,7 +1819,7 @@ gboolean _gdart_function_fill_argument_inout(
     break;
   case GI_TYPE_TAG_FLOAT:
   case GI_TYPE_TAG_DOUBLE:
-    result =  _gdart_function_argument_fill_in_num(self,
+    result =  _gdart_function_argument_fill_in_num (self,
               name_prefix,
               dart_args,
               dart_arg_pos,
@@ -1511,7 +1833,7 @@ gboolean _gdart_function_fill_argument_inout(
     break;
   case GI_TYPE_TAG_UTF8:
   case GI_TYPE_TAG_FILENAME:
-    result =  _gdart_function_argument_fill_in_string(self,
+    result =  _gdart_function_argument_fill_in_string (self,
               name_prefix,
               dart_args,
               dart_arg_pos,
@@ -1524,12 +1846,14 @@ gboolean _gdart_function_fill_argument_inout(
               error);
     break;
   case GI_TYPE_TAG_ARRAY:
-    result =  _gdart_function_argument_fill_in_array(self,
+    result =  _gdart_function_argument_fill_in_array (self,
               name_prefix,
               dart_args,
               dart_arg_pos,
               arg_type,
+              arg_type_klass,
               function_info,
+              function_info_klass,
               is_method,
               &out_arg_cvalues[*c_arg_pos],
               out_arg_cvalues,
@@ -1539,13 +1863,15 @@ gboolean _gdart_function_fill_argument_inout(
               error);
     break;
   case GI_TYPE_TAG_INTERFACE:
-    result =  _gdart_function_argument_fill_in_interface(self,
+    result =  _gdart_function_argument_fill_in_interface (self,
               name_prefix,
               dart_args,
               dart_arg_pos,
               is_method,
               arg_info,
+              arg_info_klass,
               arg_type,
+              arg_type_klass,
               is_transfer_full,
               &out_arg_cvalues[*c_arg_pos],
               out_arg_cvalues,
@@ -1560,7 +1886,7 @@ gboolean _gdart_function_fill_argument_inout(
   case GI_TYPE_TAG_GSLIST:
   case GI_TYPE_TAG_GHASH:
   case GI_TYPE_TAG_ERROR:
-    result = _gdart_function_argument_fill_in_wrapped_pointer(self,
+    result = _gdart_function_argument_fill_in_wrapped_pointer (self,
              name_prefix,
              dart_args,
              dart_arg_pos,
@@ -1573,10 +1899,10 @@ gboolean _gdart_function_fill_argument_inout(
              error);
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: got an unexpected type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: got an unexpected type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: got an unexpected type", G_STRFUNC);
     return FALSE;
   }
   if (!result) return FALSE;
@@ -1584,28 +1910,31 @@ out:
   inout_original_arg_cvalues[*c_arg_pos] = out_arg_cvalues[*c_arg_pos];
   in_arg_cvalues[*c_arg_pos].v_pointer = &out_arg_cvalues[*c_arg_pos];
   ffi_arg_pointers[*c_arg_pos] = &in_arg_cvalues[*c_arg_pos];
-  (*c_arg_pos)++;
+  (*c_arg_pos) ++;
   return TRUE;
 }
 
-gboolean _gdart_function_fill_argument_in(
+static gboolean _gdart_function_fill_argument_in (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   Dart_Handle dart_args,
-  GICallableInfo *function_info,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
   gboolean is_transfer_full,
   gboolean is_method,
   gint *c_arg_pos,
   gint *dart_arg_pos,
   gint gi_arg_pos,
-  GIArgInfo *arg_info,
-  GITypeInfo *arg_type,
-  gint* suppressed_args,
+  gpointer arg_info,
+  const ArgInfoKlass *arg_info_klass,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
+  gint *suppressed_args,
   gint suppressed_args_length,
   GArgument *main_argument,
   GArgument *in_arg_cvalues,
   gpointer  *ffi_arg_pointers,
-  GdartCallbackTrampoline** trampolines,
+  GdartCallbackTrampoline **trampolines,
   gint trampolines_length,
   Dart_Handle *dart_error_out,
   GError **error)
@@ -1615,16 +1944,21 @@ gboolean _gdart_function_fill_argument_in(
   for (; arg_i < suppressed_args_length; arg_i++) {
     if (suppressed_args[arg_i] == -1) break;
     if (suppressed_args[arg_i] == gi_arg_pos) {
-      g_assert(main_argument == &in_arg_cvalues[*c_arg_pos]);
+      g_assert (main_argument == &in_arg_cvalues[*c_arg_pos]);
       ffi_arg_pointers[*c_arg_pos] = main_argument;
-      (*c_arg_pos)++;
+      (*c_arg_pos) ++;
       return TRUE;
     }
   }
-  type_tag = g_type_info_get_tag(arg_type);
+  if (!arg_type_klass->get_tag (arg_type,
+                                self,
+                                &type_tag,
+                                dart_error_out,
+                                error))
+    return FALSE;
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
-    return _gdart_function_argument_fill_in_boolean(
+    return _gdart_function_argument_fill_in_boolean (
              dart_args,
              dart_arg_pos,
              main_argument,
@@ -1642,7 +1976,7 @@ gboolean _gdart_function_fill_argument_in(
   case GI_TYPE_TAG_INT64:
   case GI_TYPE_TAG_UINT64:
   case GI_TYPE_TAG_GTYPE:
-    return _gdart_function_argument_fill_in_int(self,
+    return _gdart_function_argument_fill_in_int (self,
            name_prefix,
            dart_args,
            dart_arg_pos,
@@ -1655,7 +1989,7 @@ gboolean _gdart_function_fill_argument_in(
            error);
   case GI_TYPE_TAG_FLOAT:
   case GI_TYPE_TAG_DOUBLE:
-    return _gdart_function_argument_fill_in_num(self,
+    return _gdart_function_argument_fill_in_num (self,
            name_prefix,
            dart_args,
            dart_arg_pos,
@@ -1668,7 +2002,7 @@ gboolean _gdart_function_fill_argument_in(
            error);
   case GI_TYPE_TAG_UTF8:
   case GI_TYPE_TAG_FILENAME:
-    return _gdart_function_argument_fill_in_string(self,
+    return _gdart_function_argument_fill_in_string (self,
            name_prefix,
            dart_args,
            dart_arg_pos,
@@ -1680,12 +2014,14 @@ gboolean _gdart_function_fill_argument_in(
            dart_error_out,
            error);
   case GI_TYPE_TAG_ARRAY:
-    return _gdart_function_argument_fill_in_array(self,
+    return _gdart_function_argument_fill_in_array (self,
            name_prefix,
            dart_args,
            dart_arg_pos,
            arg_type,
+           arg_type_klass,
            function_info,
+           function_info_klass,
            is_method,
            main_argument,
            in_arg_cvalues,
@@ -1694,13 +2030,15 @@ gboolean _gdart_function_fill_argument_in(
            dart_error_out,
            error);
   case GI_TYPE_TAG_INTERFACE:
-    return _gdart_function_argument_fill_in_interface(self,
+    return _gdart_function_argument_fill_in_interface (self,
            name_prefix,
            dart_args,
            dart_arg_pos,
            is_method,
            arg_info,
+           arg_info_klass,
            arg_type,
+           arg_type_klass,
            is_transfer_full,
            main_argument,
            in_arg_cvalues,
@@ -1715,7 +2053,7 @@ gboolean _gdart_function_fill_argument_in(
   case GI_TYPE_TAG_GHASH:
   case GI_TYPE_TAG_ERROR:
     //TODO: Handle GErrors better.
-    return _gdart_function_argument_fill_in_wrapped_pointer(self,
+    return _gdart_function_argument_fill_in_wrapped_pointer (self,
            name_prefix,
            dart_args,
            dart_arg_pos,
@@ -1727,37 +2065,46 @@ gboolean _gdart_function_fill_argument_in(
            dart_error_out,
            error);
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: got an unexpected type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: got an unexpected type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: got an unexpected type", G_STRFUNC);
     return FALSE;
   }
 }
 
-void _gdart_function_unfill_argument_in(
+static gboolean _gdart_function_unfill_argument_in (
   GdartBridgeContext *self,
   const gchar *name_prefix,
   gboolean is_method,
-  GICallableInfo *function_info,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
   gint *c_arg_pos,
   gint gi_arg_pos,
-  GITypeInfo *arg_type,
-  gint* suppressed_args,
+  gpointer arg_type,
+  const TypeInfoKlass *arg_type_klass,
+  gint *suppressed_args,
   gint suppressed_args_length,
   GArgument *in_arg_cvalues,
-  GdartCallbackTrampoline** trampolines)
+  GdartCallbackTrampoline **trampolines,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
   gint arg_i = 0;
   GITypeTag type_tag;
   for (; arg_i < suppressed_args_length; arg_i++) {
     if (suppressed_args[arg_i] == gi_arg_pos) {
-      (*c_arg_pos)++;
-      return;
+      (*c_arg_pos) ++;
+      return TRUE;
     }
     if (suppressed_args[arg_i] == -1) break;
   }
-  type_tag = g_type_info_get_tag(arg_type);
+  if (!arg_type_klass->get_tag (arg_type,
+                                self,
+                                &type_tag,
+                                dart_error_out,
+                                error))
+    return FALSE;
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
   case GI_TYPE_TAG_INT8:
@@ -1778,31 +2125,39 @@ void _gdart_function_unfill_argument_in(
   case GI_TYPE_TAG_ERROR:
     //No need to do anything for these types. Interfaces may need to be
     //revisited for functions.
-    (*c_arg_pos)++;
+    (*c_arg_pos) ++;
     break;
   case GI_TYPE_TAG_UTF8:
   case GI_TYPE_TAG_FILENAME:
-    _gdart_function_argument_unfill_in_string(self,
+    _gdart_function_argument_unfill_in_string (self,
         in_arg_cvalues,
         c_arg_pos);
     break;
   case GI_TYPE_TAG_ARRAY:
-    _gdart_function_argument_unfill_in_array(self,
+    if (!_gdart_function_argument_unfill_in_array (self,
         name_prefix,
         arg_type,
+        arg_type_klass,
         function_info,
+        function_info_klass,
         in_arg_cvalues,
         is_method,
-        c_arg_pos);
+        c_arg_pos,
+        dart_error_out,
+        error)) {
+      return FALSE;
+    }
     break;
   default:
     g_assert_not_reached();
   }
+  return TRUE;
 }
 
-gboolean _gdart_function_invoke_fill_arguments(GdartBridgeContext *self,
-    const gchar* name_prefix,
-    GICallableInfo *function_info,
+static gboolean _gdart_function_invoke_fill_arguments (GdartBridgeContext *self,
+    const gchar *name_prefix,
+    gpointer function_info,
+    const CallableInfoKlass *function_info_klass,
     GIRegisteredTypeInfo *base_info, //or NULL if there is no receiver
     GType type, //or 0 if there is no receiver
     Dart_Handle dart_receiver,
@@ -1813,10 +2168,10 @@ gboolean _gdart_function_invoke_fill_arguments(GdartBridgeContext *self,
     GArgument *out_arg_cvalues,
     GArgument *inout_original_arg_cvalues,
     gpointer  *ffi_arg_pointers,
-    GdartCallbackTrampoline** trampolines,
+    GdartCallbackTrampoline **trampolines,
     gint c_argc,
     gint gi_argc,
-    gint* suppressed_args,
+    gint *suppressed_args,
     gint suppressed_args_length,
     Dart_Handle *dart_error_out,
     GError **error)
@@ -1824,10 +2179,10 @@ gboolean _gdart_function_invoke_fill_arguments(GdartBridgeContext *self,
   gint c_arg_pos = 0, gi_arg_pos = 0, dart_arg_pos = 0;
 
   if (is_method) {
-    gchar* arg_name;
-    arg_name = g_strdup_printf("%s.this",
-                               name_prefix);
-    if (!_gdart_function_invoke_fill_receiver(self,
+    gchar *arg_name;
+    arg_name = g_strdup_printf ("%s.this",
+                                name_prefix);
+    if (!_gdart_function_invoke_fill_receiver (self,
         arg_name,
         dart_receiver,
         &in_arg_cvalues[c_arg_pos],
@@ -1835,88 +2190,190 @@ gboolean _gdart_function_invoke_fill_arguments(GdartBridgeContext *self,
         ffi_arg_pointers,
         dart_error_out,
         error)) {
-      g_free(arg_name);
+      g_free (arg_name);
       return FALSE;
     }
-    g_free(arg_name);
+    g_free (arg_name);
     c_arg_pos++;
   }
 
   for (gi_arg_pos = 0; gi_arg_pos < gi_argc; gi_arg_pos++) {
     GIDirection direction;
-    GIArgInfo arg_info;
-    gchar* arg_name;
+    gpointer arg_info;
+    const ArgInfoKlass *arg_info_klass;
+    gchar *arg_name;
+    const gchar *arg_name_const;
 
-    g_callable_info_load_arg(function_info, gi_arg_pos, &arg_info);
-    arg_name = g_strdup_printf("%s.%s",
-                               name_prefix,
-                               g_base_info_get_name((GIBaseInfo*) &arg_info));
-    direction = g_arg_info_get_direction(&arg_info);
+    if (!function_info_klass->get_arg (function_info,
+                                       self,
+                                       gi_arg_pos,
+                                       &arg_info,
+                                       &arg_info_klass,
+                                       dart_error_out,
+                                       error)) {
+      return FALSE;
+    }
+    if (!arg_info_klass->get_name (arg_info,
+                                   self,
+                                   &arg_name_const,
+                                   dart_error_out,
+                                   error)) {
+      arg_info_klass->free (arg_info);
+      return FALSE;
+    }
+    arg_name = g_strdup_printf ("%s.%s",
+                                name_prefix,
+                                arg_name_const);
+    if (!arg_info_klass->get_direction (arg_info,
+                                        self,
+                                        &direction,
+                                        dart_error_out,
+                                        error)) {
+      g_free (arg_name);
+      arg_info_klass->free (arg_info);
+      return FALSE;
+    }
     switch (direction) {
     case GI_DIRECTION_IN: {
-      GITypeInfo arg_type;
-      g_arg_info_load_type(&arg_info, &arg_type);
-      if (!_gdart_function_fill_argument_in(self,
-                                            arg_name,
-                                            dart_args,
-                                            function_info,
-                                            g_arg_info_get_ownership_transfer(&arg_info) != GI_TRANSFER_NOTHING,
-                                            is_method,
-                                            &c_arg_pos,
-                                            &dart_arg_pos,
-                                            gi_arg_pos,
-                                            &arg_info,
-                                            &arg_type,
-                                            suppressed_args,
-                                            gi_argc,
-                                            &in_arg_cvalues[c_arg_pos],
-                                            in_arg_cvalues,
-                                            ffi_arg_pointers,
-                                            trampolines,
-                                            c_argc,
-                                            dart_error_out,
-                                            error)) {
-        g_free(arg_name);
+      gpointer arg_type;
+      const TypeInfoKlass *arg_type_klass;
+      GITransfer transfer;
+
+      if (!arg_info_klass->get_type (arg_info,
+                                     self,
+                                     &arg_type,
+                                     &arg_type_klass,
+                                     dart_error_out,
+                                     error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
         return FALSE;
       }
+      if (!arg_info_klass->get_ownership_transfer (arg_info,
+                                     self,
+                                     &transfer,
+                                     dart_error_out,
+                                     error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        return FALSE;
+      }
+      if (!_gdart_function_fill_argument_in (self,
+                                             arg_name,
+                                             dart_args,
+                                             function_info,
+                                             function_info_klass,
+                                             transfer != GI_TRANSFER_NOTHING,
+                                             is_method,
+                                             &c_arg_pos,
+                                             &dart_arg_pos,
+                                             gi_arg_pos,
+                                             arg_info,
+                                             arg_info_klass,
+                                             arg_type,
+                                             arg_type_klass,
+                                             suppressed_args,
+                                             gi_argc,
+                                             &in_arg_cvalues[c_arg_pos],
+                                             in_arg_cvalues,
+                                             ffi_arg_pointers,
+                                             trampolines,
+                                             c_argc,
+                                             dart_error_out,
+                                             error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        return FALSE;
+      }
+      arg_type_klass->free (arg_type);
       break;
     }
     case GI_DIRECTION_OUT: {
       gboolean is_caller_allocates;
-      is_caller_allocates = g_arg_info_is_caller_allocates(&arg_info);
-
-      GITypeInfo arg_type;
-      g_arg_info_load_type(&arg_info, &arg_type);
-      if (!_gdart_function_fill_argument_out(self,
-                                             arg_name,
-                                             is_caller_allocates,
-                                             &c_arg_pos,
-                                             gi_arg_pos,
-                                             &arg_type,
-                                             in_arg_cvalues,
-                                             out_arg_cvalues,
-                                             ffi_arg_pointers,
-                                             dart_error_out,
-                                             error)) {
-        g_free(arg_name);
+      //TODO: Move this to the interface
+      if (!arg_info_klass->is_caller_allocates(arg_info,
+	                                       self,
+					       &is_caller_allocates,
+					       dart_error_out,
+					       error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
         return FALSE;
       }
+      gpointer arg_type;
+      const TypeInfoKlass *arg_type_klass;
+
+      if (!arg_info_klass->get_type (arg_info,
+                                     self,
+                                     &arg_type,
+                                     &arg_type_klass,
+                                     dart_error_out,
+                                     error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        return FALSE;
+      }
+      if (!_gdart_function_fill_argument_out (self,
+                                              arg_name,
+                                              is_caller_allocates,
+                                              &c_arg_pos,
+                                              gi_arg_pos,
+                                              arg_type,
+                                              arg_type_klass,
+                                              in_arg_cvalues,
+                                              out_arg_cvalues,
+                                              ffi_arg_pointers,
+                                              dart_error_out,
+                                              error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        return FALSE;
+      }
+      arg_type_klass->free (arg_type);
       break;
     }
     case GI_DIRECTION_INOUT: {
-      GITypeInfo arg_type;
-      g_arg_info_load_type(&arg_info, &arg_type);
-      if (!_gdart_function_fill_argument_inout(self,
+      gpointer arg_type;
+      const TypeInfoKlass *arg_type_klass;
+      GITransfer transfer;
+      
+      if (!arg_info_klass->get_ownership_transfer (arg_info,
+	                                  self,
+					  &transfer,
+					  dart_error_out,
+					  error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        return FALSE;
+      }
+      
+      if (!arg_info_klass->get_type (arg_info,
+                                     self,
+                                     &arg_type,
+                                     &arg_type_klass,
+                                     dart_error_out,
+                                     error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        return FALSE;
+      }
+      if (!_gdart_function_fill_argument_inout (self,
           arg_name,
           dart_args,
           function_info,
-          g_arg_info_get_ownership_transfer(&arg_info) != GI_TRANSFER_NOTHING,
+          function_info_klass,
+          transfer != GI_TRANSFER_NOTHING,
           is_method,
           &c_arg_pos,
           &dart_arg_pos,
           gi_arg_pos,
-          &arg_info,
-          &arg_type,
+          arg_info,
+          arg_info_klass,
+          arg_type,
+          arg_type_klass,
           suppressed_args,
           gi_argc,
           in_arg_cvalues,
@@ -1927,14 +2384,17 @@ gboolean _gdart_function_invoke_fill_arguments(GdartBridgeContext *self,
           c_argc,
           dart_error_out,
           error)) {
-        g_free(arg_name);
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
         return FALSE;
       }
+      arg_type_klass->free (arg_type);
       break;
     }
-    g_free(arg_name);
     }
-
+    g_free (arg_name);
+    arg_info_klass->free (arg_info);
   }
   if (can_throw_gerror) {
     out_arg_cvalues[c_arg_pos].v_pointer = NULL;
@@ -1943,19 +2403,20 @@ gboolean _gdart_function_invoke_fill_arguments(GdartBridgeContext *self,
     c_arg_pos++;
   }
   if (c_arg_pos != c_argc) {
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: didn't fill all the arguments. What's up?", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: didn't fill all the arguments. What's up?", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: didn't fill all the arguments. What's up?", G_STRFUNC);
     return FALSE;
   }
   return TRUE;
 }
 
 
-gboolean _gdart_function_invoke_unfill_arguments(GdartBridgeContext *self,
+static gboolean _gdart_function_invoke_unfill_arguments (GdartBridgeContext *self,
     const gchar *name_prefix,
-    GICallableInfo *function_info,
+    gpointer function_info,
+    const CallableInfoKlass *function_info_klass,
     gboolean is_method,
     gboolean can_throw_gerror,
     gboolean was_uncaught_error, //if TRUE clear all out parameters.
@@ -1964,11 +2425,13 @@ gboolean _gdart_function_invoke_unfill_arguments(GdartBridgeContext *self,
     GArgument *in_arg_cvalues,
     GArgument *out_arg_cvalues,
     GArgument *inout_original_arg_cvalues,
-    GdartCallbackTrampoline** trampolines,
+    GdartCallbackTrampoline **trampolines,
     gint c_argc,
     gint gi_argc,
-    gint* suppressed_args,
-    gint suppressed_args_length)
+    gint *suppressed_args,
+    gint suppressed_args_length,
+    Dart_Handle *dart_error_out,
+    GError **error)
 {
   gint c_arg_pos = 0, gi_arg_pos = 0;
 
@@ -1978,41 +2441,101 @@ gboolean _gdart_function_invoke_unfill_arguments(GdartBridgeContext *self,
 
   for (gi_arg_pos = 0; gi_arg_pos < gi_argc; gi_arg_pos++) {
     GIDirection direction;
-    GIArgInfo arg_info;
-    g_callable_info_load_arg(function_info, gi_arg_pos, &arg_info);
-    direction = g_arg_info_get_direction(&arg_info);
+    gpointer arg_info;
+    const ArgInfoKlass *arg_info_klass;
+
+    if (!function_info_klass->get_arg (function_info,
+                                       self,
+                                       gi_arg_pos,
+                                       &arg_info,
+                                       &arg_info_klass,
+                                       dart_error_out,
+                                       error)) {
+      return FALSE;
+    }
+    if (!arg_info_klass->get_direction (arg_info,
+                                        self,
+                                        &direction,
+                                        dart_error_out,
+                                        error)) {
+      arg_info_klass->free (arg_info);
+      return FALSE;
+    }
     switch (direction) {
     case GI_DIRECTION_IN: {
-      GITypeInfo arg_type;
-      gchar *arg_name;
+      gpointer arg_type;
+      const TypeInfoKlass *arg_type_klass;
+      GITransfer transfer;
 
-      g_arg_info_load_type(&arg_info, &arg_type);
-      arg_name = g_strdup_printf("%s.%s",
-                                 name_prefix,
-                                 g_base_info_get_name((GIBaseInfo*) &arg_info));
-      if (g_arg_info_get_ownership_transfer(&arg_info) == GI_TRANSFER_NOTHING) {
+      gchar *arg_name;
+      const gchar *arg_name_inner;
+
+      if (!arg_info_klass->get_type (arg_info,
+                                     self,
+                                     &arg_type,
+                                     &arg_type_klass,
+                                     dart_error_out,
+                                     error)) {
+        arg_info_klass->free (arg_info);
+        return FALSE;
+      }
+
+      if (!arg_info_klass->get_name (arg_info,
+                                     self,
+                                     &arg_name_inner,
+                                     dart_error_out,
+                                     error)) {
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        return FALSE;
+      }
+
+      arg_name = g_strdup_printf ("%s.%s",
+                                  name_prefix,
+                                  arg_name_inner);
+      if (!arg_info_klass->get_ownership_transfer (arg_info,
+          self,
+          &transfer,
+          dart_error_out,
+          error)) {
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        g_free (arg_name);
+        return FALSE;
+      }
+      if (transfer == GI_TRANSFER_NOTHING) {
         // We only have to deallocate arguments if they aren't
         // transfered.
-        _gdart_function_unfill_argument_in(self,
-                                           arg_name,
-                                           is_method,
-                                           function_info,
-                                           &c_arg_pos,
-                                           gi_arg_pos,
-                                           &arg_type,
-                                           suppressed_args,
-                                           gi_argc,
-                                           in_arg_cvalues,
-                                           trampolines);
+        if (!_gdart_function_unfill_argument_in (self,
+            arg_name,
+            is_method,
+            function_info,
+            function_info_klass,
+            &c_arg_pos,
+            gi_arg_pos,
+            arg_type,
+            arg_type_klass,
+            suppressed_args,
+            gi_argc,
+            in_arg_cvalues,
+            trampolines,
+            dart_error_out,
+            error)) {
+          arg_info_klass->free (arg_info);
+          arg_type_klass->free (arg_type);
+          g_free (arg_name);
+          return FALSE;
+        }
       }
+      g_free (arg_name);
+      arg_type_klass->free (arg_type);
       break;
-      g_free(arg_name);
     }
     case GI_DIRECTION_OUT: {
       /*
-      	if (!was_uncaught_error) {
-      		break;
-      	}
+        if (!was_uncaught_error) {
+            break;
+        }
           gboolean is_caller_allocates;
           is_caller_allocates = g_arg_info_is_caller_allocates(&arg_info);
 
@@ -2047,6 +2570,7 @@ gboolean _gdart_function_invoke_unfill_arguments(GdartBridgeContext *self,
       //TODO: Figure out what to do if anything
     }
     }
+    arg_info_klass->free(arg_info);
   }
   if (can_throw_gerror) {
     gpointer slot;
@@ -2057,21 +2581,30 @@ gboolean _gdart_function_invoke_unfill_arguments(GdartBridgeContext *self,
 }
 
 
-void _gdart_prep_results(GdartBridgeContext *self,
-                         const gchar* name_prefix,
-                         GICallableInfo *function,
-                         GITypeInfo* return_type,
-                         gint* suppressed_args,
-                         gint suppressed_args_length,
-                         gint* out_argc_out,
-                         gint garg_length,
-                         gboolean can_throw_gerror)
+static gboolean _gdart_prep_results (GdartBridgeContext *self,
+                                 const gchar *name_prefix,
+                                 gpointer function,
+				 const CallableInfoKlass* function_klass,
+                                 gpointer return_type,
+				 const TypeInfoKlass* return_type_klass,
+                                 gint *suppressed_args,
+                                 gint suppressed_args_length,
+                                 gint *out_argc_out,
+                                 gint garg_length,
+                                 gboolean can_throw_gerror,
+				 Dart_Handle *dart_error_out,
+				 GError **error)
 {
   gint garg_i = 0;
   gint out_argc = 0;
 
   GITypeTag return_tag;
-  return_tag = g_type_info_get_tag(return_type);
+  if (!return_type_klass->get_tag(return_type,
+                                  self,
+				  &return_tag,
+				  dart_error_out,
+				  error))
+    return FALSE;
   if (return_tag == GI_TYPE_TAG_BOOLEAN && can_throw_gerror) {
     ;
   } else if (return_tag != GI_TYPE_TAG_VOID) {
@@ -2079,16 +2612,65 @@ void _gdart_prep_results(GdartBridgeContext *self,
   }
 
   for (garg_i = 0; garg_i < garg_length; garg_i++) {
-    GIArgInfo arg_info;
-    GITypeInfo type_info;
-    g_callable_info_load_arg((GICallableInfo*) function, garg_i, &arg_info);
-    if (g_arg_info_get_direction(&arg_info) == GI_DIRECTION_OUT) {
+    gpointer arg_info;
+    const ArgInfoKlass* arg_info_klass;
+    
+    gpointer type_info;
+    const TypeInfoKlass* type_info_klass;
+    
+    GIDirection direction;
+    
+    if (!function_klass->get_arg(function,
+                                 self,
+				 garg_i,
+				 &arg_info,
+				 &arg_info_klass,
+				 dart_error_out,
+				 error))
+      return FALSE;
+    if (!arg_info_klass->get_direction(arg_info,
+                                 self,
+				 &direction,
+				 dart_error_out,
+				 error)) {
+      arg_info_klass->free(arg_info);
+      return FALSE;
+    }
+    
+    if (direction == GI_DIRECTION_OUT) {
+      GITypeTag type_tag;
+      
       out_argc++;
-      g_arg_info_load_type(&arg_info, &type_info);
-      switch (g_type_info_get_tag(&type_info)) {
+      if (!arg_info_klass->get_type(arg_info,
+	                            self,
+				    &type_info,
+				    &type_info_klass,
+				    dart_error_out,
+				    error)) {
+        arg_info_klass->free(arg_info);
+        return FALSE;
+      }
+      if (!type_info_klass->get_tag(type_info,
+	self,
+	&type_tag,
+	dart_error_out,
+	error)) {
+	type_info_klass->free(type_info);
+        arg_info_klass->free(arg_info);
+        return FALSE;
+      }
+      switch (type_tag) {
       case GI_TYPE_TAG_ARRAY: {
         gint arg_to_suppress, arg_i = 0;
-        arg_to_suppress = g_type_info_get_array_length(&type_info);
+	if (!type_info_klass->get_array_length(type_info,
+	                                       self,
+					       &arg_to_suppress,
+					       dart_error_out,
+					       error)) {
+	  type_info_klass->free(type_info);
+          arg_info_klass->free(arg_info);
+          return FALSE;
+        }
         if (arg_to_suppress != -1) {
           for (; arg_i < suppressed_args_length; arg_i++) {
             if (suppressed_args[arg_i] == -1) {
@@ -2103,7 +2685,8 @@ void _gdart_prep_results(GdartBridgeContext *self,
       default:
         break;
       }
-    } else if (g_arg_info_get_direction(&arg_info) == GI_DIRECTION_INOUT) {
+      type_info_klass->free(type_info);
+    } else if (direction == GI_DIRECTION_INOUT) {
       gint arg_i = 0;
       for (; arg_i < suppressed_args_length; arg_i++) {
         if (suppressed_args[arg_i] == garg_i) {
@@ -2114,33 +2697,35 @@ void _gdart_prep_results(GdartBridgeContext *self,
       }
       out_argc++;
     }
+    arg_info_klass->free(arg_info);
   }
   (*out_argc_out) = out_argc;
+  return TRUE;
 }
 
 
-void _gdart_function_result_load_boolean(
+static void _gdart_function_result_load_boolean (
   GdartBridgeContext *self,
-  const gchar* error_prefix,
+  const gchar *error_prefix,
   GIArgument *gi_return_value,
-  gint* out_arg_pos_out, //in-out
-  Dart_Handle* dart_out)   //status
+  gint *out_arg_pos_out, //in-out
+  Dart_Handle *dart_out)   //status
 {
   gint out_arg_pos = (*out_arg_pos_out);
   gboolean result = gi_return_value->v_boolean;
-  dart_out[out_arg_pos++] = Dart_NewBoolean((bool) result);
+  dart_out[out_arg_pos++] = Dart_NewBoolean ( (bool) result);
   *out_arg_pos_out = out_arg_pos;
 }
 
 
 
-gboolean _gdart_function_result_load_int(
+static gboolean _gdart_function_result_load_int (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   GIArgument *gi_return_value,
   GITypeTag type_tag,
-  gint* out_arg_pos_out, //in-out
-  Dart_Handle* dart_out,
+  gint *out_arg_pos_out, //in-out
+  Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
@@ -2176,20 +2761,20 @@ gboolean _gdart_function_result_load_int(
     result_unsigned = (guint64) gi_return_value->v_size;
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an integer-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an integer-like type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an integer-like type", G_STRFUNC);
     goto error;
   }
   switch (type_tag) {
   case GI_TYPE_TAG_GTYPE:
   case GI_TYPE_TAG_UINT64:
-    dart_out[out_arg_pos++] = Dart_NewIntegerFromUint64(result_unsigned);
+    dart_out[out_arg_pos++] = Dart_NewIntegerFromUint64 (result_unsigned);
     break;
   default:
-    dart_out[out_arg_pos++] = Dart_NewInteger(result);
+    dart_out[out_arg_pos++] = Dart_NewInteger (result);
     break;
   }
   *out_arg_pos_out = out_arg_pos;
@@ -2199,72 +2784,100 @@ error:
 }
 
 
-gint _gdart_function_result_load_int_raw(
+static gint _gdart_function_result_load_int_raw (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo *function_info,
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass* function_info_klass,
   gint gi_arg_pos,
   GIArgument *in_arg_cvalues,
   gint c_arg_pos,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
-  GIArgInfo arg_info;
-  GITypeInfo type_info;
+  gpointer arg_info;
+  const ArgInfoKlass* arg_info_klass;
+  
+  gpointer type_info;
+  const TypeInfoKlass* type_info_klass;
+  
   GITypeTag return_tag;
-  gint64 result;
   GIArgument *gi_return_value = &in_arg_cvalues[c_arg_pos];
-  g_callable_info_load_arg(function_info, gi_arg_pos, &arg_info);
-  g_arg_info_load_type(&arg_info, &type_info);
-  return_tag = g_type_info_get_tag(&type_info);
+  gint64 result;
+  
+  if (!function_info_klass->get_arg(function_info,
+    self,
+    gi_arg_pos,
+    &arg_info,
+    &arg_info_klass,
+    dart_error_out,
+    error))
+    return -1;
+  if (!arg_info_klass->get_type(arg_info,
+                                self,
+                                &type_info,
+				&type_info_klass,
+				dart_error_out,
+				error)) {
+    arg_info_klass->free(arg_info);
+    return -1;
+  }
+  arg_info_klass->free(arg_info);
+  if (!type_info_klass->get_tag(type_info,
+                                self,
+				&return_tag,
+				dart_error_out,
+				error)) {
+    type_info_klass->free(type_info);
+    return -1;
+  }
+  type_info_klass->free(type_info);
   switch (return_tag) {
   case GI_TYPE_TAG_BOOLEAN:
-    result = (gint64) * ((gint*) gi_return_value->v_pointer);
+    result = (gint64) * ( (gint *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_INT8:
-    result = (gint64) * ((gint8*) gi_return_value->v_pointer);
+    result = (gint64) * ( (gint8 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_UINT8:
-    result = (gint64) * ((guint8*) gi_return_value->v_pointer);
+    result = (gint64) * ( (guint8 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_INT16:
-    result = (gint64) * ((gint16*) gi_return_value->v_pointer);
+    result = (gint64) * ( (gint16 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_UINT16:
-    result = (gint64) * ((guint16*) gi_return_value->v_pointer);
+    result = (gint64) * ( (guint16 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_INT32:
-    result = (gint64) * ((gint32*) gi_return_value->v_pointer);
+    result = (gint64) * ( (gint32 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_UINT32:
-    result = (gint64) * ((guint32*) gi_return_value->v_pointer);
+    result = (gint64) * ( (guint32 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_INT64:
-    result = (gint64) * ((gint64*) gi_return_value->v_pointer);
+    result = (gint64) * ( (gint64 *) gi_return_value->v_pointer);
     break;
   case GI_TYPE_TAG_UINT64:
-    result = (gint64) * ((guint64*) gi_return_value->v_pointer);
+    result = (gint64) * ( (guint64 *) gi_return_value->v_pointer);
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an integer-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an integer-like type", G_STRFUNC);
-    goto error;
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an integer-like type", G_STRFUNC);
+    result = -1;
   }
   return result;
-error:
-  return -1;
 }
 
-gboolean _gdart_function_result_load_num(
+static gboolean _gdart_function_result_load_num (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   GIArgument *gi_return_value,
   GITypeTag type_tag,
-  gint* out_arg_pos_out, //in-out
-  Dart_Handle* dart_out,
+  gint *out_arg_pos_out, //in-out
+  Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
@@ -2278,14 +2891,14 @@ gboolean _gdart_function_result_load_num(
     result = gi_return_value->v_double;
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an integer-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an integer-like type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an integer-like type", G_STRFUNC);
     goto error;
   }
-  dart_out[out_arg_pos++] = Dart_NewDouble(result);
+  dart_out[out_arg_pos++] = Dart_NewDouble (result);
   *out_arg_pos_out = out_arg_pos;
   return TRUE;
 error:
@@ -2293,14 +2906,14 @@ error:
 }
 
 
-gboolean _gdart_function_result_load_string(
+static gboolean _gdart_function_result_load_string (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   GIArgument *gi_return_value,
   GITransfer transfer,
   GITypeTag type_tag,
-  gint* out_arg_pos_out, //in-out
-  Dart_Handle* dart_out,
+  gint *out_arg_pos_out, //in-out
+  Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
@@ -2308,49 +2921,49 @@ gboolean _gdart_function_result_load_string(
   gchar *result, *result_filename;
   gboolean deallocate = FALSE;
   gsize bytes_read, bytes_written;
-  GError* inner_error = NULL;
+  GError *inner_error = NULL;
   gintptr codepoints;
   if (transfer == GI_TRANSFER_EVERYTHING) {
     deallocate = TRUE;
   }
   switch (type_tag) {
   case GI_TYPE_TAG_UTF8:
-    result = (gchar*) gi_return_value->v_string;
+    result = (gchar *) gi_return_value->v_string;
     if (result == NULL) goto null_out;
     break;
   case GI_TYPE_TAG_FILENAME:
-    result_filename = (gchar*) gi_return_value->v_string;
+    result_filename = (gchar *) gi_return_value->v_string;
     if (result_filename == NULL) goto null_out;
-    result = g_filename_to_utf8(result_filename,
-                                -1,
-                                &bytes_read,
-                                &bytes_written,
-                                &inner_error);
+    result = g_filename_to_utf8 (result_filename,
+                                 -1,
+                                 &bytes_read,
+                                 &bytes_written,
+                                 &inner_error);
     if (result == NULL) {
-      *dart_error_out = gdart_bridge_context_create_error_handle(
+      *dart_error_out = gdart_bridge_context_create_error_handle (
                           self,
                           "%s",
                           inner_error->message);
-      g_propagate_error(error, inner_error);
+      g_propagate_error (error, inner_error);
       return FALSE;
     }
     if (deallocate) {
-      g_free(result_filename);
+      g_free (result_filename);
     }
     deallocate = TRUE;
     break;
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(
+    *dart_error_out = gdart_bridge_context_create_error_handle (
                         self,
                         "%s: expected an integer-like type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: expected an integer-like type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: expected an integer-like type", G_STRFUNC);
     goto error;
   }
-  codepoints = (gintptr) g_utf8_strlen(result, -1);
-  dart_out[out_arg_pos++] = Dart_NewStringFromUTF8((guint8*) result, codepoints);
+  codepoints = (gintptr) g_utf8_strlen (result, -1);
+  dart_out[out_arg_pos++] = Dart_NewStringFromUTF8 ( (guint8 *) result, codepoints);
   if (deallocate) {
-    g_free(result);
+    g_free (result);
   }
   *out_arg_pos_out = out_arg_pos;
   return TRUE;
@@ -2365,16 +2978,18 @@ error:
 
 
 
-gboolean _gdart_function_result_load_array(
+static gboolean _gdart_function_result_load_array (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo* function_info,
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass* function_info_klass,
   gboolean is_method,
   GIArgument *gi_return_value,
   GIArgument *in_arg_cvalues,
-  GITypeInfo *type_info,
+  gpointer type_info,
+  const TypeInfoKlass* type_info_klass,
   GITransfer transfer,
-  gint* out_arg_pos_out, //in-out
+  gint *out_arg_pos_out, //in-out
   Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
@@ -2383,10 +2998,13 @@ gboolean _gdart_function_result_load_array(
 
   gpointer result;
   gboolean deallocate = FALSE, deallocate_members = FALSE,
-           is_null_terminated = FALSE;
-  gint64 length;
+           is_null_terminated;
+  gint length;
   gint length_parameter;
-  GITypeInfo *param_type;
+  
+  gpointer param_type;
+  const TypeInfoKlass* param_type_klass;
+  
   Dart_Handle dart_list;
 
   if (transfer == GI_TRANSFER_EVERYTHING) {
@@ -2397,7 +3015,19 @@ gboolean _gdart_function_result_load_array(
   }
 
   result = gi_return_value->v_pointer;
-  length_parameter = g_type_info_get_array_length(type_info);
+  if (!type_info_klass->get_array_length(type_info,
+                                         self,
+					 &length_parameter,
+					 dart_error_out,
+					 error))
+    return FALSE;
+
+  if (!type_info_klass->is_zero_terminated(type_info,
+                                         self,
+					 &is_null_terminated,
+					 dart_error_out,
+					 error))
+    return FALSE;
 
   if (length_parameter != -1) {
     gint length_parameter_c;
@@ -2406,9 +3036,10 @@ gboolean _gdart_function_result_load_array(
     } else {
       length_parameter_c = length_parameter;
     }
-    length = _gdart_function_result_load_int_raw(self,
+    length = _gdart_function_result_load_int_raw (self,
              name_prefix,
              function_info,
+	     function_info_klass,
              length_parameter,
              in_arg_cvalues,
              length_parameter_c,
@@ -2417,42 +3048,54 @@ gboolean _gdart_function_result_load_array(
     if (length == -1) {
       return FALSE;
     }
-  } else if (g_type_info_is_zero_terminated(type_info)) {
+  } else if (is_null_terminated) {
     length = -1;
-    is_null_terminated = TRUE;
   } else {
-    length = g_type_info_get_array_fixed_size(type_info);
+    if (!type_info_klass->get_array_fixed_size(type_info,
+                                               self,
+					       &length,
+					       dart_error_out,
+					       error))
+      return FALSE;
     if (length == -1) {
       return FALSE;
     }
   }
-  param_type = g_type_info_get_param_type(type_info, 0);
-  if (!gdart_array_load_parameters(self,
-                                   name_prefix,
-                                   param_type,
-                                   length,
-                                   is_null_terminated,
-                                   deallocate_members,
-                                   result,
-                                   &dart_list,
-                                   dart_error_out,
-                                   error)) {
-    g_base_info_unref((GIBaseInfo*) param_type);
+  if (!type_info_klass->get_param_type(type_info,
+                                       self,
+				       0,
+				       &param_type,
+				       &param_type_klass,
+				       dart_error_out,
+				       error))
+    return FALSE;
+  if (!gdart_array_load_parameters (self,
+                                    name_prefix,
+                                    param_type,
+				    param_type_klass,
+                                    length,
+                                    is_null_terminated,
+                                    deallocate_members,
+                                    result,
+                                    &dart_list,
+                                    dart_error_out,
+                                    error)) {
+    param_type_klass->free(param_type);
     return FALSE;
   }
   dart_out[out_arg_pos++] = dart_list;
-  g_base_info_unref((GIBaseInfo*) param_type);
+  param_type_klass->free(param_type);
   if (deallocate) {
-    g_free(result);
+    g_free (result);
   }
   *out_arg_pos_out = out_arg_pos;
   return TRUE;
 }
 
-gboolean _gdart_function_result_load_wrapped_pointer(
+static gboolean _gdart_function_result_load_wrapped_pointer (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo* function_info,
+  const gchar *name_prefix,
+  GICallableInfo *function_info,
   gboolean is_method,
   gboolean must_copy,
   gboolean is_user_allocated,
@@ -2460,18 +3103,19 @@ gboolean _gdart_function_result_load_wrapped_pointer(
   GIArgument *gi_return_value,
   GIArgument *gi_return_value_user_allocated,
   GIArgument *in_arg_cvalues,
-  GIRegisteredTypeInfo *registered_type_info, //heap allocated
+  gpointer registered_type_info, //heap allocated
+  const RegisteredTypeInfoKlass* registered_type_info_klass,
   GIInfoType info_type,
-  gint* out_arg_pos_out, //in-out
+  gint *out_arg_pos_out, //in-out
   Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
   gint out_arg_pos = (*out_arg_pos_out);
-  const gchar* namespace;
+  const gchar *namespace_;
   GType gtype;
   gpointer raw_result;
-  GdartBridgeContextWrappedObject* object_wrapper;
+  GdartBridgeContextWrappedObject *object_wrapper;
   Dart_Handle internal_container, wrapped_object;
   GIRegisteredTypeInfo *type_info = NULL;
 
@@ -2487,58 +3131,83 @@ gboolean _gdart_function_result_load_wrapped_pointer(
     return TRUE;
   }
 
-  object_wrapper = g_slice_new(GdartBridgeContextWrappedObject);
-  gtype = g_registered_type_info_get_g_type(registered_type_info);
+  object_wrapper = g_slice_new (GdartBridgeContextWrappedObject);
+  if (!registered_type_info_klass->get_gtype(registered_type_info,
+                                             self,
+					     &gtype,
+					     dart_error_out,
+					     error))
+    return FALSE;
+  if ( (info_type == GI_INFO_TYPE_OBJECT && g_type_is_a (gtype, G_TYPE_OBJECT))
+       || info_type == GI_INFO_TYPE_INTERFACE) {
+    GObject *object = (GObject *) raw_result;
 
-  if ((info_type == GI_INFO_TYPE_OBJECT && g_type_is_a(gtype, G_TYPE_OBJECT))
-      || info_type == GI_INFO_TYPE_INTERFACE) {
-    GObject* object = (GObject*) raw_result;
-
-    gtype = G_OBJECT_TYPE(object);
-    type_info = (GIRegisteredTypeInfo*) g_irepository_find_by_gtype(
-                  gdart_bridge_context_get_gi_repository(self),
+    gtype = G_OBJECT_TYPE (object);
+    type_info = (GIRegisteredTypeInfo *) g_irepository_find_by_gtype (
+                  gdart_bridge_context_get_gi_repository (self),
                   gtype);
   }
 
   object_wrapper->type = gtype;
   if (type_info == NULL) {
-    object_wrapper->object_info = g_base_info_ref((GIBaseInfo*) registered_type_info);
+    object_wrapper->object_info = registered_type_info_klass->copy(registered_type_info);
+    object_wrapper->object_info_klass = *registered_type_info_klass;
   } else {
+    //printf("Brought in a foreign registered type. Ref count is now %i\n", ++gi_count);
     object_wrapper->object_info = type_info;
+    object_wrapper->object_info_klass = gi_registered_type_info_registered_type_info;
+    //registered_type_info_klass->free(registered_type_info);
     registered_type_info = type_info;
+    registered_type_info_klass = &gi_registered_type_info_registered_type_info;
   }
-
+    if (!registered_type_info_klass->get_namespace(registered_type_info,
+                                                   self,
+						   &namespace_,
+						   dart_error_out,
+						   error)) {
+      return FALSE;
+    }
   switch (info_type) {
   case GI_INFO_TYPE_UNION:
-  case GI_INFO_TYPE_STRUCT:
+  case GI_INFO_TYPE_STRUCT: {
+    const gchar *name;
+    if (!registered_type_info_klass->get_name(registered_type_info,
+                                                   self,
+						   &name,
+						   dart_error_out,
+						   error)) {
+      return FALSE;
+    }
     object_wrapper->copy_func = (GBoxedCopyFunc)
-                                gdart_bridge_context_retrieve_copy_func(self,
-                                    g_base_info_get_namespace((GIBaseInfo*) registered_type_info),
-                                    (GIBaseInfo*) registered_type_info,
+                                gdart_bridge_context_retrieve_copy_func (self,
+                                    namespace_,
+                                    registered_type_info,
+				    registered_type_info_klass,
                                     gtype);
     object_wrapper->free_func = (GBoxedFreeFunc)
-                                gdart_bridge_context_retrieve_free_func(self,
-                                    g_base_info_get_namespace((GIBaseInfo*) object_wrapper->object_info),
-                                    (GIBaseInfo*) registered_type_info,
+                                gdart_bridge_context_retrieve_free_func (self,
+                                    namespace_,
+                                    registered_type_info,
+				    registered_type_info_klass,
                                     gtype);
     if (must_copy) {
       if (object_wrapper->copy_func == NULL) {
-        g_warning("%s: The GI type of an object to be bound was an [unowned %s."
-                  "%s] but there's no registered copy function. "
-                  "This can be unsafe if the object is used after it has "
-                  "been invalidated by external code.",
-                  name_prefix,
-                  g_base_info_get_namespace(registered_type_info),
-                  g_base_info_get_name(registered_type_info));
+        g_warning ("%s: The GI type of an object to be bound was an [unowned %s."
+                   "%s] but there's no registered copy function. "
+                   "This can be unsafe if the object is used after it has "
+                   "been invalidated by external code.",
+                   name_prefix,
+                   namespace_,
+                   name);
         object_wrapper->object = raw_result;
-        internal_container = gdart_bridge_context_wrap_pointer(self,
+        internal_container = gdart_bridge_context_wrap_pointer (self,
                              object_wrapper,
                              gdart_bridge_context_finalize_wrapped_unowned_struct,
                              dart_error_out,
                              error);
       } else {
-        object_wrapper->object = object_wrapper->copy_func(raw_result);
-        internal_container = gdart_bridge_context_wrap_pointer(self,
+        object_wrapper->object = object_wrapper->copy_func (raw_result);
+        internal_container = gdart_bridge_context_wrap_pointer (self,
                              object_wrapper,
                              gdart_bridge_context_finalize_wrapped_custom_struct,
                              dart_error_out,
@@ -2547,26 +3216,27 @@ gboolean _gdart_function_result_load_wrapped_pointer(
     } else {
       object_wrapper->object = raw_result;
       if (object_wrapper->copy_func == NULL) {
-        internal_container = gdart_bridge_context_wrap_pointer(self,
+        internal_container = gdart_bridge_context_wrap_pointer (self,
                              object_wrapper,
                              gdart_bridge_context_finalize_wrapped_struct,
                              dart_error_out,
                              error);
       } else {
-        internal_container = gdart_bridge_context_wrap_pointer(self,
+        internal_container = gdart_bridge_context_wrap_pointer (self,
                              object_wrapper,
                              gdart_bridge_context_finalize_wrapped_custom_struct,
                              dart_error_out,
                              error);
       }
     }
+  }
     break;
   case GI_INFO_TYPE_BOXED:
     if (must_copy) {
-      raw_result = g_boxed_copy(gtype, raw_result);
+      raw_result = g_boxed_copy (gtype, raw_result);
     }
     object_wrapper->object = raw_result;
-    internal_container = gdart_bridge_context_wrap_pointer(self,
+    internal_container = gdart_bridge_context_wrap_pointer (self,
                          object_wrapper,
                          gdart_bridge_context_finalize_wrapped_boxed,
                          dart_error_out,
@@ -2576,24 +3246,40 @@ gboolean _gdart_function_result_load_wrapped_pointer(
   case GI_INFO_TYPE_INTERFACE:
     if (must_copy && !is_main) {
       GIObjectInfoRefFunction refer;
-      refer = g_object_info_get_ref_function_pointer((GIObjectInfo*) object_wrapper->object_info);
+      if (!registered_type_info_klass->
+	cast_to_object_info(registered_type_info)->
+	get_ref_function_pointer(registered_type_info,
+	                                                                                                   self,
+													   &refer,
+													   dart_error_out,
+													   error)) {
+	return FALSE;
+      }
       if (refer != NULL) {
-        raw_result = refer(raw_result);
+        raw_result = refer (raw_result);
       } else {
-        raw_result = g_object_ref(raw_result);
+        raw_result = g_object_ref (raw_result);
       }
     } else if (must_copy) {
       GIObjectInfoRefFunction refer;
-      refer = g_object_info_get_ref_function_pointer((GIObjectInfo*) object_wrapper->object_info);
+      if (!registered_type_info_klass->
+	cast_to_object_info(registered_type_info)->
+	get_ref_function_pointer(registered_type_info,
+	                                                                                                   self,
+													   &refer,
+													   dart_error_out,
+													   error)) {
+	return FALSE;
+      }
       if (refer != NULL) {
-        raw_result = refer(raw_result);
+        raw_result = refer (raw_result);
       } else {
-        raw_result = g_object_ref_sink(raw_result);
+        raw_result = g_object_ref_sink (raw_result);
         //if this is the main result, assume we are given a floating reference.
       }
     }
     object_wrapper->object = raw_result;
-    internal_container = gdart_bridge_context_wrap_pointer(self,
+    internal_container = gdart_bridge_context_wrap_pointer (self,
                          object_wrapper,
                          gdart_bridge_context_finalize_wrapped_gobject,
                          dart_error_out,
@@ -2605,12 +3291,12 @@ gboolean _gdart_function_result_load_wrapped_pointer(
   if (internal_container == NULL) {
     return FALSE;
   }
-  namespace = g_base_info_get_namespace((GIBaseInfo*) registered_type_info);
-  wrapped_object = gdart_bridge_context_wrap_internal_pointer(self,
+  wrapped_object = gdart_bridge_context_wrap_internal_pointer (self,
                    internal_container,
-                   namespace,
+                   namespace_,
                    gtype,
-                   (GIBaseInfo*) registered_type_info,
+                   registered_type_info,
+		   registered_type_info_klass,
                    dart_error_out,
                    error);
   if (wrapped_object == NULL) {
@@ -2622,12 +3308,12 @@ gboolean _gdart_function_result_load_wrapped_pointer(
 }
 
 
-gboolean _gdart_function_result_load_wrapped_pointer_with_g_error(
+static gboolean _gdart_function_result_load_wrapped_pointer_with_g_error (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   gboolean must_copy,
   GIArgument *gi_return_value,
-  gint* out_arg_pos_out, //in-out
+  gint *out_arg_pos_out, //in-out
   Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
@@ -2643,15 +3329,15 @@ gboolean _gdart_function_result_load_wrapped_pointer_with_g_error(
     *out_arg_pos_out = out_arg_pos;
     return TRUE;
   }
-  error_to_throw = (GError*) raw_result;
-  result = gdart_bridge_context_wrap_class_for_error(self,
+  error_to_throw = (GError *) raw_result;
+  result = gdart_bridge_context_wrap_class_for_error (self,
            error_to_throw->domain,
            error_to_throw->code,
            error_to_throw->message,
            dart_error_out,
            error);
   if (!must_copy) {
-    g_error_free(error_to_throw);
+    g_error_free (error_to_throw);
   }
   if (result == NULL) return FALSE;
 
@@ -2660,26 +3346,27 @@ gboolean _gdart_function_result_load_wrapped_pointer_with_g_error(
   return TRUE;
 }
 
-gboolean _gdart_function_result_load_wrapped_pointer_with_g_type(
+static gboolean _gdart_function_result_load_wrapped_pointer_with_g_type (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
+  const gchar *name_prefix,
   gboolean must_copy,
   GIArgument *gi_return_value,
   GType gtype,
   gboolean is_boxed_type,
-  GIRegisteredTypeInfo *registered_type_info, // or NULL for a List or SList, heap allocted
-  gint* out_arg_pos_out, //in-out
+  gpointer registered_type_info, // or NULL for a List or SList, heap allocted
+  const RegisteredTypeInfoKlass* registered_type_info_klass,
+  gint *out_arg_pos_out, //in-out
   Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
   gint out_arg_pos = (*out_arg_pos_out);
-  const gchar* namespace;
+  const gchar *namespace_;
   gpointer raw_result;
-  GdartBridgeContextWrappedObject* object_wrapper;
+  GdartBridgeContextWrappedObject *object_wrapper;
   Dart_Handle internal_container, wrapped_object;
   if (gtype == G_TYPE_ERROR) {
-    return _gdart_function_result_load_wrapped_pointer_with_g_error(
+    return _gdart_function_result_load_wrapped_pointer_with_g_error (
              self,
              name_prefix,
              must_copy,
@@ -2697,49 +3384,69 @@ gboolean _gdart_function_result_load_wrapped_pointer_with_g_type(
     return TRUE;
   }
 
-  object_wrapper = g_slice_new(GdartBridgeContextWrappedObject);
+  object_wrapper = g_slice_new (GdartBridgeContextWrappedObject);
   if (registered_type_info != NULL) {
-    object_wrapper->object_info = g_base_info_ref((GIBaseInfo*) registered_type_info);
+    object_wrapper->object_info = registered_type_info_klass->copy(registered_type_info);
+    object_wrapper->object_info_klass = *registered_type_info_klass;
   } else {
     object_wrapper->object_info = NULL;
+    object_wrapper->object_info_klass = null_registered_type_info;
   }
-
-
+  if (registered_type_info != NULL) {
+    if (!registered_type_info_klass->get_namespace(registered_type_info,
+                                                   self,
+						   &namespace_,
+						   dart_error_out,
+						   error))
+      return FALSE;
+  } else {
+    namespace_ = "Base";
+  }
+  
   object_wrapper->copy_func = (GBoxedCopyFunc)
-                              gdart_bridge_context_retrieve_copy_func(self,
-                                  g_base_info_get_namespace((GIBaseInfo*) object_wrapper->object_info),
-                                  (GIBaseInfo*) registered_type_info,
+                              gdart_bridge_context_retrieve_copy_func (self,
+                                  namespace_,
+                                  registered_type_info,
+				  registered_type_info_klass,
                                   gtype);
   object_wrapper->free_func = (GBoxedFreeFunc)
-                              gdart_bridge_context_retrieve_free_func(self,
-                                  g_base_info_get_namespace((GIBaseInfo*) registered_type_info),
-                                  (GIBaseInfo*) registered_type_info,
+                              gdart_bridge_context_retrieve_free_func (self,
+                                  namespace_,
+                                  registered_type_info,
+				  registered_type_info_klass,
                                   gtype);
   if (must_copy && is_boxed_type) {
-    object_wrapper->object = g_boxed_copy(gtype, raw_result);
-    internal_container = gdart_bridge_context_wrap_pointer(self,
+    object_wrapper->object = g_boxed_copy (gtype, raw_result);
+    internal_container = gdart_bridge_context_wrap_pointer (self,
                          object_wrapper,
                          gdart_bridge_context_finalize_wrapped_boxed,
                          dart_error_out,
                          error);
   } else if (must_copy) {
+    const gchar* name;
+    if (!registered_type_info_klass->get_name(registered_type_info,
+                                                   self,
+						   &name,
+						   dart_error_out,
+						   error))
+      return FALSE;
     if (object_wrapper->copy_func == NULL) {
-      g_warning("%s: The GI type of an object to be bound was an [unowned %s."
-                "%s] but there's no registered copy function. "
-                "This can be unsafe if the object is used after it has "
-                "been invalidated by external code.",
-                name_prefix,
-                g_base_info_get_namespace(registered_type_info),
-                g_base_info_get_name(registered_type_info));
+      g_warning ("%s: The GI type of an object to be bound was an [unowned %s."
+                 "%s] but there's no registered copy function. "
+                 "This can be unsafe if the object is used after it has "
+                 "been invalidated by external code.",
+                 name_prefix,
+                 namespace_,
+                 name);
       object_wrapper->object = raw_result;
-      internal_container = gdart_bridge_context_wrap_pointer(self,
+      internal_container = gdart_bridge_context_wrap_pointer (self,
                            object_wrapper,
                            gdart_bridge_context_finalize_wrapped_unowned_struct,
                            dart_error_out,
                            error);
     } else {
-      object_wrapper->object = object_wrapper->copy_func(raw_result);
-      internal_container = gdart_bridge_context_wrap_pointer(self,
+      object_wrapper->object = object_wrapper->copy_func (raw_result);
+      internal_container = gdart_bridge_context_wrap_pointer (self,
                            object_wrapper,
                            gdart_bridge_context_finalize_wrapped_custom_struct,
                            dart_error_out,
@@ -2748,13 +3455,13 @@ gboolean _gdart_function_result_load_wrapped_pointer_with_g_type(
   } else {
     object_wrapper->object = raw_result;
     if (object_wrapper->copy_func == NULL) {
-      internal_container = gdart_bridge_context_wrap_pointer(self,
+      internal_container = gdart_bridge_context_wrap_pointer (self,
                            object_wrapper,
                            gdart_bridge_context_finalize_wrapped_struct,
                            dart_error_out,
                            error);
     } else {
-      internal_container = gdart_bridge_context_wrap_pointer(self,
+      internal_container = gdart_bridge_context_wrap_pointer (self,
                            object_wrapper,
                            gdart_bridge_context_finalize_wrapped_custom_struct,
                            dart_error_out,
@@ -2764,16 +3471,12 @@ gboolean _gdart_function_result_load_wrapped_pointer_with_g_type(
   if (internal_container == NULL) {
     return FALSE;
   }
-  if (registered_type_info != NULL) {
-    namespace = g_base_info_get_namespace((GIBaseInfo*) registered_type_info);
-  } else {
-    namespace = "Base";
-  }
-  wrapped_object = gdart_bridge_context_wrap_internal_pointer(self,
+  wrapped_object = gdart_bridge_context_wrap_internal_pointer (self,
                    internal_container,
-                   namespace,
+                   namespace_,
                    gtype,
-                   (GIBaseInfo*) registered_type_info,
+                   registered_type_info,
+		   registered_type_info_klass,
                    dart_error_out,
                    error);
   if (wrapped_object == NULL) {
@@ -2785,41 +3488,61 @@ gboolean _gdart_function_result_load_wrapped_pointer_with_g_type(
 }
 
 
-gboolean _gdart_function_result_load_enum(GdartBridgeContext *self,
-    const gchar* name_prefix,
+static gboolean _gdart_function_result_load_enum (GdartBridgeContext *self,
+    const gchar *name_prefix,
     GIArgument *gi_return_value,
-    GIEnumInfo *base_info,
-    gint* out_arg_pos_out,
+    gpointer base_info,
+    const EnumInfoKlass* base_info_klass,
+    gint *out_arg_pos_out,
     Dart_Handle *dart_out,
     Dart_Handle *dart_error_out,
     GError **error)
 {
+  const gchar* namespace_;
   GITypeTag type_tag;
   Dart_Handle value, wrapper, result;
   gint index = 0, out_arg_pos;
+  GType gtype;
 
   out_arg_pos = *out_arg_pos_out;
-
-  type_tag = g_enum_info_get_storage_type(base_info);
-  if (!_gdart_function_result_load_int(self, name_prefix, gi_return_value, type_tag,
-                                       &index, &value, dart_error_out,
-                                       error)) {
+  if (!base_info_klass->get_storage_type(base_info,
+                                         self,
+					 &type_tag,
+					 dart_error_out,
+					 error))
+    return FALSE;
+  if (!_gdart_function_result_load_int (self, name_prefix, gi_return_value, type_tag,
+                                        &index, &value, dart_error_out,
+                                        error)) {
     return FALSE;
   }
-  wrapper = gdart_bridge_context_retrieve_wrapping_class(
+  if (!base_info_klass->get_namespace(base_info,
+                                      self,
+				      &namespace_,
+				      dart_error_out,
+				      error))
+    return FALSE;
+  if (!base_info_klass->get_gtype(base_info,
+                                      self,
+				      &gtype,
+				      dart_error_out,
+				      error))
+    return FALSE;
+  wrapper = gdart_bridge_context_retrieve_wrapping_class (
               self,
-              g_base_info_get_namespace((GIBaseInfo*) base_info),
-              g_registered_type_info_get_g_type((GIRegisteredTypeInfo*) base_info),
+              namespace_,
+              gtype,
               base_info,
+	      base_info_klass->cast_to_registered_type_info(base_info),
               TRUE,
               dart_error_out,
               error);
   if (wrapper == NULL) return FALSE;
-  result = Dart_New(wrapper, Dart_Null(), 1, &value);
-  if (Dart_IsError(result)) {
-    g_warning("%s: dart threw an error", name_prefix);
+  result = Dart_New (wrapper, Dart_Null(), 1, &value);
+  if (Dart_IsError (result)) {
+    g_warning ("%s: dart threw an error", name_prefix);
     *dart_error_out = result;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
   dart_out[out_arg_pos++] = result;
@@ -2828,47 +3551,67 @@ gboolean _gdart_function_result_load_enum(GdartBridgeContext *self,
 }
 
 
-gboolean _gdart_function_result_load_interface(
+static gboolean _gdart_function_result_load_interface (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo* function_info,
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass* function_info_klass,
   gboolean is_method,
   gboolean is_user_allocated,
   gboolean is_main,
   GIArgument *gi_return_value,
   GIArgument *gi_return_value_user_allocated,
   GIArgument *in_arg_cvalues,
-  GITypeInfo *type_info,
+  gpointer type_info,
+  const TypeInfoKlass* type_info_klass,
   GITransfer transfer,
-  gint* out_arg_pos_out, //in-out
+  gint *out_arg_pos_out, //in-out
   Dart_Handle *dart_out,
   Dart_Handle *dart_error_out, //status
   GError **error)
 {
-  GIBaseInfo* base_info;
+  gpointer base_info;
+  const InterfaceInfoKlass* base_info_klass;
+  
   gboolean make_copy = TRUE, result;
   GIInfoType info_type;
 
-  base_info = g_type_info_get_interface(type_info); //heap allocated
+  if (!type_info_klass->get_interface(type_info,
+                                      self,
+				      &base_info,
+				      &base_info_klass,
+				      dart_error_out,
+				      error)) 
+    return FALSE;
   if (transfer == GI_TRANSFER_EVERYTHING || transfer == GI_TRANSFER_CONTAINER) {
     make_copy = FALSE;
   }
-  info_type = g_base_info_get_type(base_info);
+  if (!base_info_klass->get_type(base_info,
+                                 self,
+				 &info_type,
+				 dart_error_out,
+				 error)) {
+    base_info_klass->free(base_info);
+    return FALSE;
+  }
   switch (info_type) {
   case GI_INFO_TYPE_CALLBACK:
     //TODO: handle callbacks.
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: can't handle callbacks yet", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: can't handle callbacks yet", G_STRFUNC);
-    g_base_info_unref(base_info);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: can't handle callbacks yet", G_STRFUNC);
+    base_info_klass->free(base_info);
     return FALSE;
   case GI_INFO_TYPE_STRUCT:
   case GI_INFO_TYPE_BOXED:
   case GI_INFO_TYPE_UNION:
   case GI_INFO_TYPE_INTERFACE:
   case GI_INFO_TYPE_OBJECT: {
-    result = _gdart_function_result_load_wrapped_pointer(self,
+    const RegisteredTypeInfoKlass* klass;
+    klass = base_info_klass->cast_to_registered_type_info(base_info);
+    
+    result = _gdart_function_result_load_wrapped_pointer (self,
              name_prefix,
              function_info,
              is_method,
@@ -2878,42 +3621,50 @@ gboolean _gdart_function_result_load_interface(
              gi_return_value,
              gi_return_value_user_allocated,
              in_arg_cvalues,
-             (GIRegisteredTypeInfo *) base_info,
+             base_info,
+	     klass,
              info_type,
              out_arg_pos_out,
              dart_out,
              dart_error_out,
              error);
-    g_base_info_unref(base_info);
+    base_info_klass->free(base_info);
     return result;
     case GI_INFO_TYPE_ENUM:
-    case GI_INFO_TYPE_FLAGS:
-      result = _gdart_function_result_load_enum(self,
+    case GI_INFO_TYPE_FLAGS: {
+      const EnumInfoKlass* klass;
+      
+      klass = base_info_klass->cast_to_enum_info(base_info);
+      result = _gdart_function_result_load_enum (self,
                name_prefix,
                gi_return_value,
-               (GIEnumInfo *) base_info,
+               base_info,
+	       klass,
                out_arg_pos_out,
                dart_out,
                dart_error_out,
                error);
-      g_base_info_unref(base_info);
+      base_info_klass->free(base_info);
       return result;
+    }
     default:
-      *dart_error_out = gdart_bridge_context_create_error_handle(self,
+      *dart_error_out = gdart_bridge_context_create_error_handle (self,
                         "%s: received an unexpected base info type", G_STRFUNC);
-      g_set_error(error, GDART_ERROR, 1,
-                  "%s: received an unexpected base info type", G_STRFUNC);
+      g_set_error (error, GDART_ERROR, 1,
+                   "%s: received an unexpected base info type", G_STRFUNC);
       return FALSE;
     }
   }
 }
 
 
-gboolean _gdart_function_result_load_return(
+static gboolean _gdart_function_result_load_return (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo *function_info,
-  GIArgInfo* arg_info, // or NULL if examining the main argument
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass* function_info_klass,
+  gpointer arg_info, // or NULL if examining the main argument
+  const ArgInfoKlass* arg_info_klass,
   gboolean is_method,
   gboolean can_throw_gerror,
   gboolean is_main_return,
@@ -2922,9 +3673,10 @@ gboolean _gdart_function_result_load_return(
   GArgument *inout_original_arg_cvalues,
   GIFFIReturnValue *gi_return_value,
   GIFFIReturnValue *gi_return_value_user_allocated,
-  GITypeInfo* return_type,
-  gint* out_arg_pos_out, //in-out
-  Dart_Handle* dart_out, //out caller-allocates
+  gpointer return_type,
+  const TypeInfoKlass* return_type_klass,
+  gint *out_arg_pos_out, //in-out
+  Dart_Handle *dart_out, //out caller-allocates
   gint out_argc,
   Dart_Handle *dart_error_out, //status
   GError **error)   //status
@@ -2932,12 +3684,32 @@ gboolean _gdart_function_result_load_return(
   GITypeTag return_tag;
   GITransfer transfer;
   gboolean is_user_allocated = FALSE;
-  return_tag = g_type_info_get_tag(return_type);
+  if (!return_type_klass->get_tag(return_type,
+                                  self,
+				  &return_tag,
+				  dart_error_out,
+				  error))
+    return FALSE;
   if (arg_info == NULL) {
-    transfer = g_callable_info_get_caller_owns(function_info);
+    if (!function_info_klass->get_caller_owns(function_info,
+                                              self,
+					      &transfer,
+					      dart_error_out,
+					      error))
+      return FALSE;
   } else {
-    transfer = g_arg_info_get_ownership_transfer(arg_info);
-    is_user_allocated = g_arg_info_is_caller_allocates(arg_info);
+    if (!arg_info_klass->get_ownership_transfer(arg_info,
+                                                self,
+						&transfer,
+						dart_error_out,
+						error))
+      return FALSE;
+    if (!arg_info_klass->is_caller_allocates(arg_info,
+                                                self,
+						&is_user_allocated,
+						dart_error_out,
+						error))
+      return FALSE;
   }
   switch (return_tag) {
   case GI_TYPE_TAG_VOID:
@@ -2945,11 +3717,11 @@ gboolean _gdart_function_result_load_return(
   case GI_TYPE_TAG_BOOLEAN:
     if (can_throw_gerror)
       return TRUE;
-    _gdart_function_result_load_boolean(self,
-                                        name_prefix,
-                                        gi_return_value,
-                                        out_arg_pos_out,
-                                        dart_out);
+    _gdart_function_result_load_boolean (self,
+                                         name_prefix,
+                                         gi_return_value,
+                                         out_arg_pos_out,
+                                         dart_out);
     return TRUE;
   case GI_TYPE_TAG_INT8:
   case GI_TYPE_TAG_UINT8:
@@ -2960,27 +3732,27 @@ gboolean _gdart_function_result_load_return(
   case GI_TYPE_TAG_INT64:
   case GI_TYPE_TAG_UINT64:
   case GI_TYPE_TAG_GTYPE:
-    return _gdart_function_result_load_int(self,
-                                           name_prefix,
-                                           gi_return_value,
-                                           return_tag,
-                                           out_arg_pos_out,
-                                           dart_out,
-                                           dart_error_out,
-                                           error);
+    return _gdart_function_result_load_int (self,
+                                            name_prefix,
+                                            gi_return_value,
+                                            return_tag,
+                                            out_arg_pos_out,
+                                            dart_out,
+                                            dart_error_out,
+                                            error);
   case GI_TYPE_TAG_FLOAT:
   case GI_TYPE_TAG_DOUBLE:
-    return _gdart_function_result_load_num(self,
-                                           name_prefix,
-                                           gi_return_value,
-                                           return_tag,
-                                           out_arg_pos_out,
-                                           dart_out,
-                                           dart_error_out,
-                                           error);
+    return _gdart_function_result_load_num (self,
+                                            name_prefix,
+                                            gi_return_value,
+                                            return_tag,
+                                            out_arg_pos_out,
+                                            dart_out,
+                                            dart_error_out,
+                                            error);
   case GI_TYPE_TAG_UTF8:
   case GI_TYPE_TAG_FILENAME:
-    return _gdart_function_result_load_string(self,
+    return _gdart_function_result_load_string (self,
            name_prefix,
            gi_return_value,
            transfer,
@@ -2990,22 +3762,25 @@ gboolean _gdart_function_result_load_return(
            dart_error_out,
            error);
   case GI_TYPE_TAG_ARRAY:
-    return _gdart_function_result_load_array(self,
+    return _gdart_function_result_load_array (self,
            name_prefix,
            function_info,
+	   function_info_klass,
            is_method,
            gi_return_value,
            in_arg_cvalues,
            return_type,
+	   return_type_klass,
            transfer,
            out_arg_pos_out,
            dart_out,
            dart_error_out,
            error);
   case GI_TYPE_TAG_INTERFACE:
-    return _gdart_function_result_load_interface(self,
+    return _gdart_function_result_load_interface (self,
            name_prefix,
            function_info,
+	   function_info_klass,
            is_method,
            is_user_allocated,
            (arg_info != NULL),
@@ -3013,6 +3788,7 @@ gboolean _gdart_function_result_load_return(
            gi_return_value_user_allocated,
            in_arg_cvalues,
            return_type,
+	   return_type_klass,
            transfer,
            out_arg_pos_out,
            dart_out,
@@ -3021,7 +3797,7 @@ gboolean _gdart_function_result_load_return(
   case GI_TYPE_TAG_GLIST:
     //I'm sure there's some kind of problem here. Transfering GLists is
     //bound to create issues.
-    return _gdart_function_result_load_wrapped_pointer_with_g_type(
+    return _gdart_function_result_load_wrapped_pointer_with_g_type (
              self,
              name_prefix,
              (transfer == GI_TRANSFER_NOTHING),
@@ -3029,6 +3805,7 @@ gboolean _gdart_function_result_load_return(
              G_DART_COMPAT_LIST_TYPE,
              FALSE,
              NULL,
+	     &null_registered_type_info,
              out_arg_pos_out,
              dart_out,
              dart_error_out,
@@ -3036,7 +3813,7 @@ gboolean _gdart_function_result_load_return(
   case GI_TYPE_TAG_GSLIST:
     //I'm sure there's some kind of problem here. Transfering GLists is
     //bound to create issues.
-    return _gdart_function_result_load_wrapped_pointer_with_g_type(
+    return _gdart_function_result_load_wrapped_pointer_with_g_type (
              self,
              name_prefix,
              (transfer == GI_TRANSFER_NOTHING),
@@ -3044,18 +3821,20 @@ gboolean _gdart_function_result_load_return(
              G_DART_COMPAT_SLIST_TYPE,
              FALSE,
              NULL,
+	     &null_registered_type_info,
              out_arg_pos_out,
              dart_out,
              dart_error_out,
              error);
   case GI_TYPE_TAG_GHASH: {
-    GIRegisteredTypeInfo* type_info;
+    GIRegisteredTypeInfo *type_info;
     gboolean result;
 
-    type_info = (GIRegisteredTypeInfo*) g_irepository_find_by_gtype(
-                  gdart_bridge_context_get_gi_repository(self),
+    type_info = (GIRegisteredTypeInfo *) g_irepository_find_by_gtype (
+                  gdart_bridge_context_get_gi_repository (self),
                   G_TYPE_HASH_TABLE); //heap allocated
-    result = _gdart_function_result_load_wrapped_pointer_with_g_type(
+    //printf("Brought in a foreign registered type. Ref count is now %i\n", ++gi_count);
+    result = _gdart_function_result_load_wrapped_pointer_with_g_type (
                self,
                name_prefix,
                (transfer == GI_TRANSFER_NOTHING),
@@ -3063,22 +3842,24 @@ gboolean _gdart_function_result_load_return(
                G_TYPE_HASH_TABLE,
                TRUE,
                type_info,
+	       &gi_registered_type_info_registered_type_info,
                out_arg_pos_out,
                dart_out,
                dart_error_out,
                error);
-    g_base_info_unref(type_info);
+    g_base_info_unref (type_info);
     return result;
   }
   case GI_TYPE_TAG_ERROR: {
     //TODO: Handle GErrors better.
-    GIRegisteredTypeInfo* type_info;
+    GIRegisteredTypeInfo *type_info;
     gboolean result;
 
-    type_info = (GIRegisteredTypeInfo*) g_irepository_find_by_gtype(
-                  gdart_bridge_context_get_gi_repository(self),
+    type_info = (GIRegisteredTypeInfo *) g_irepository_find_by_gtype (
+                  gdart_bridge_context_get_gi_repository (self),
                   G_TYPE_ERROR); //heap allocated
-    result = _gdart_function_result_load_wrapped_pointer_with_g_type(
+    //printf("Brought in a foreign registered type. Ref count is now %i\n", ++gi_count);
+    result = _gdart_function_result_load_wrapped_pointer_with_g_type (
                self,
                name_prefix,
                (transfer == GI_TRANSFER_NOTHING),
@@ -3086,79 +3867,101 @@ gboolean _gdart_function_result_load_return(
                G_TYPE_ERROR,
                TRUE,
                type_info,
+	       &gi_registered_type_info_registered_type_info,
                out_arg_pos_out,
                dart_out,
                dart_error_out,
                error);
-    g_base_info_unref(type_info);
+    g_base_info_unref (type_info);
     return result;
   }
   default:
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: got an unexpected type", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: got an unexpected type", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: got an unexpected type", G_STRFUNC);
     return FALSE;
   }
 }
 
-gboolean _gdart_function_invoke_load_return_arguments(
+static gboolean _gdart_function_invoke_load_return_arguments (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo *function_info,
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass* function_info_klass,
   gboolean is_method,
   gboolean can_throw_gerror,
   gint c_argc,
   gint gi_argc,
-  gint* suppressed_args,
+  gint *suppressed_args,
   gint suppressed_args_length,
   GArgument *in_arg_cvalues,
   GArgument *out_arg_cvalues,
   GArgument *inout_original_arg_cvalues,
   GIFFIReturnValue *gi_return_value,
-  GITypeInfo* return_type,
+  gpointer return_type,
+  const TypeInfoKlass* return_type_klass,
   Dart_Handle *dart_out,
   gint out_argc,
   Dart_Handle *dart_error_out,
   GError **error)
 {
   gint out_arg_pos = 0, gi_arg_pos = 0;
-  GITypeInfo type_info;
-  gchar* return_identifier;
+  gchar *return_identifier;
+  Dart_Handle *outputs = g_newa (Dart_Handle, out_argc);
+  return_identifier = g_strdup_printf ("%s[return]", name_prefix);
 
-  g_callable_info_load_return_type(function_info, &type_info);
-  Dart_Handle *outputs = g_newa(Dart_Handle, out_argc);
-  return_identifier = g_strdup_printf("%s[return]", name_prefix);
-
-  if (!_gdart_function_result_load_return(self,
-                                          return_identifier,
-                                          function_info,
-                                          NULL,
-                                          is_method,
-                                          can_throw_gerror,
-                                          TRUE,
-                                          in_arg_cvalues,
-                                          out_arg_cvalues,
-                                          inout_original_arg_cvalues,
-                                          gi_return_value,
-                                          NULL,
-                                          &type_info,
-                                          &out_arg_pos,
-                                          outputs,
-                                          out_argc,
-                                          dart_error_out,
-                                          error)) {
+  if (!_gdart_function_result_load_return (self,
+      return_identifier,
+      function_info,
+      function_info_klass,
+      NULL,
+      &null_arg_info,
+      is_method,
+      can_throw_gerror,
+      TRUE,
+      in_arg_cvalues,
+      out_arg_cvalues,
+      inout_original_arg_cvalues,
+      gi_return_value,
+      NULL,
+      return_type,
+      return_type_klass,
+      &out_arg_pos,
+      outputs,
+      out_argc,
+      dart_error_out,
+      error)) {
     return FALSE;
   }
   for (; gi_arg_pos < gi_argc; gi_arg_pos++) {
     gint c_arg_pos, arg_i = 0;
-    GIArgInfo arg_info;
+    gpointer type_info;
+    const TypeInfoKlass* type_info_klass;
+    gpointer arg_info;
+    const ArgInfoKlass* arg_info_klass;
     GIDirection direction;
-    gchar* arg_identifier;
+    gchar *arg_identifier;
+    const gchar* arg_identifier_short;
 
-    g_callable_info_load_arg(function_info, gi_arg_pos, &arg_info);
-    direction = g_arg_info_get_direction(&arg_info);
+    if (!function_info_klass->get_arg(function_info,
+                                      self,
+				      gi_arg_pos,
+				      &arg_info,
+				      &arg_info_klass,
+				      dart_error_out,
+				      error))
+      return FALSE;
+    if (!arg_info_klass->get_direction(arg_info,
+                                       self,
+				       &direction,
+				       dart_error_out,
+				       error)) {
+      arg_info_klass->free(arg_info);
+      return FALSE;
+    }
     if (direction == GI_DIRECTION_IN) {
+      arg_info_klass->free(arg_info);
       continue;
     }
     for (; arg_i < suppressed_args_length; arg_i++) {
@@ -3168,54 +3971,79 @@ gboolean _gdart_function_invoke_load_return_arguments(
       if (suppressed_args[arg_i] == -1) break;
     }
     c_arg_pos = is_method ? gi_arg_pos + 1 : gi_arg_pos;
-    g_arg_info_load_type(&arg_info, &type_info);
-    arg_identifier = g_strdup_printf("%s.%s",
-                                     name_prefix,
-                                     g_base_info_get_name((GIBaseInfo*) &arg_info));
-    if (!_gdart_function_result_load_return(self,
-                                            arg_identifier,
-                                            function_info,
-                                            &arg_info,
-                                            is_method,
-                                            can_throw_gerror,
-                                            FALSE,
-                                            in_arg_cvalues,
-                                            out_arg_cvalues,
-                                            inout_original_arg_cvalues,
-                                            &out_arg_cvalues[c_arg_pos],
-                                            &in_arg_cvalues[c_arg_pos],
-                                            &type_info,
-                                            &out_arg_pos,
-                                            outputs,
-                                            out_argc,
-                                            dart_error_out,
-                                            error)) {
-      g_free(arg_identifier);
+    if (!arg_info_klass->get_name(arg_info,
+                                  self,
+				  &arg_identifier_short,
+				  dart_error_out,
+				  error)) {
+      arg_info_klass->free(arg_info);
       return FALSE;
     }
-    g_free(arg_identifier);
-out:
+    if (!arg_info_klass->get_type(arg_info,
+                                       self,
+				       &type_info,
+				       &type_info_klass,
+				       dart_error_out,
+				       error)) {
+      arg_info_klass->free(arg_info);
+      return FALSE;
+    }
+    
+    arg_identifier = g_strdup_printf ("%s.%s",
+                                      name_prefix,
+                                      arg_identifier_short);
+    if (!_gdart_function_result_load_return (self,
+        arg_identifier,
+        function_info,
+	function_info_klass,
+        arg_info,
+	arg_info_klass,
+        is_method,
+        can_throw_gerror,
+        FALSE,
+        in_arg_cvalues,
+        out_arg_cvalues,
+        inout_original_arg_cvalues,
+        &out_arg_cvalues[c_arg_pos],
+        &in_arg_cvalues[c_arg_pos],
+        type_info,
+	type_info_klass,
+        &out_arg_pos,
+        outputs,
+        out_argc,
+        dart_error_out,
+        error)) {
+      type_info_klass->free(type_info);
+      arg_info_klass->free(arg_info);
+      g_free (arg_identifier);
+      return FALSE;
+    }
+    g_free (arg_identifier);
+    type_info_klass->free(type_info);
+  out:
+    arg_info_klass->free(arg_info);
     continue;
   }
   if (can_throw_gerror) {
     //TODO: Handle GErrors better.
-    GIRegisteredTypeInfo* type_info;
+    GIRegisteredTypeInfo *type_info;
     gboolean result;
     gint position = 0;
     Dart_Handle result_dart;
-    gchar* error_identifier;
+    gchar *error_identifier;
 
-    error_identifier = g_strdup_printf("%s.error", name_prefix);
+    error_identifier = g_strdup_printf ("%s.error", name_prefix);
 
-    type_info = (GIRegisteredTypeInfo*) g_irepository_find_by_gtype(
-                  gdart_bridge_context_get_gi_repository(self),
+    type_info = (GIRegisteredTypeInfo *) g_irepository_find_by_gtype (
+                  gdart_bridge_context_get_gi_repository (self),
                   G_TYPE_ERROR); //heap allocated
+    //printf("Brought in a foreign registered type. Ref count is now %i\n", ++gi_count);
     if (out_arg_cvalues[is_method ? gi_argc + 1 : gi_argc].v_pointer == NULL) {
-      g_free(error_identifier);
-      g_base_info_unref((GIBaseInfo*) type_info);
+      g_free (error_identifier);
+      g_base_info_unref ( (GIBaseInfo *) type_info);
       goto success_out;
     }
-    result = _gdart_function_result_load_wrapped_pointer_with_g_type(
+    result = _gdart_function_result_load_wrapped_pointer_with_g_type (
                self,
                error_identifier,
                FALSE,
@@ -3223,18 +4051,19 @@ out:
                G_TYPE_ERROR,
                TRUE,
                type_info,
+	       &gi_registered_type_info_registered_type_info,
                &position,
                &result_dart,
                dart_error_out,
                error);
-    g_free(error_identifier);
-    g_base_info_unref((GIBaseInfo*) type_info);
+    g_free (error_identifier);
+    g_base_info_unref ( (GIBaseInfo *) type_info);
     if (!result) return FALSE;
-    if (!Dart_IsNull(result_dart)) {
+    if (!Dart_IsNull (result_dart)) {
       GError *inner_error = NULL;
       *dart_error_out = result_dart;
       inner_error  = (GError *) out_arg_cvalues[is_method ? gi_argc + 1 : gi_argc].v_pointer;
-      g_propagate_error(error, inner_error);
+      g_propagate_error (error, inner_error);
       return FALSE;
     }
   }
@@ -3246,27 +4075,29 @@ success_out:
   } else {
     Dart_Handle result;
     gint out_arg_pos;
-    result = Dart_NewList(out_argc);
+    result = Dart_NewList (out_argc);
     for (out_arg_pos = 0; out_arg_pos < out_argc; out_arg_pos++) {
-      Dart_ListSetAt(result, out_arg_pos, outputs[out_arg_pos]);
+      Dart_ListSetAt (result, out_arg_pos, outputs[out_arg_pos]);
     }
     *dart_out = result;
   }
   return TRUE;
 }
 
-gboolean gdart_function_invoke(GdartBridgeContext *self,
-                               const gchar* name_prefix,
-                               GICallableInfo *function_info,
-                               GIRegisteredTypeInfo *type_info,
-                               GType type,
-                               Dart_Handle dart_receiver,
-                               Dart_Handle dart_args,
-                               gint* suppressed_args,
-                               gint suppressed_args_length,
-                               Dart_Handle *result_out,
-                               Dart_Handle *dart_error_out,
-                               GError **error)
+gboolean gdart_function_invoke (GdartBridgeContext *self,
+                                const gchar *name_prefix,
+                                gpointer function_info,
+                                const CallableInfoKlass *function_info_klass,
+                                gpointer type_info,
+				const RegisteredTypeInfoKlass* type_info_klass,
+                                GType type,
+                                Dart_Handle dart_receiver,
+                                Dart_Handle dart_args,
+                                gint *suppressed_args,
+                                gint suppressed_args_length,
+                                Dart_Handle *result_out,
+                                Dart_Handle *dart_error_out,
+                                GError **error)
 {
   GIFunctionInvoker invoker;
   GArgument *in_arg_cvalues, *out_arg_cvalues, *inout_original_arg_cvalues;
@@ -3276,35 +4107,54 @@ gboolean gdart_function_invoke(GdartBridgeContext *self,
   gpointer return_value_p;
   gint c_argc, gi_argc, out_argc, c_arg_pos = 0;
   gboolean is_method, can_throw_gerror;
-  GITypeInfo return_type;
+  gpointer return_type;
+  const TypeInfoKlass* return_type_klass;
   GITypeTag return_tag;
 
-  if (!gdart_function_prep_invoke(self,
-                                  name_prefix,
-                                  function_info,
-                                  type,
-                                  &invoker,
-                                  dart_error_out,
-                                  error)) {
+  if (!gdart_function_prep_invoke (self,
+                                   name_prefix,
+                                   function_info,
+				   function_info_klass,
+                                   type,
+                                   &invoker,
+                                   dart_error_out,
+                                   error)) {
     return FALSE;
   }
 
-  is_method = g_callable_info_is_method(function_info);
-  can_throw_gerror = g_callable_info_can_throw_gerror(function_info);
+  if (!function_info_klass->is_method(function_info,
+                                      self,
+				      &is_method,
+				      dart_error_out,
+				      error))
+    return FALSE;
+  
+  if (!function_info_klass->can_throw_gerror(function_info,
+                                      self,
+				      &can_throw_gerror,
+				      dart_error_out,
+				      error))
+    return FALSE;
   c_argc = invoker.cif.nargs;
-  gi_argc = g_callable_info_get_n_args(function_info);
+  if (!function_info_klass->get_n_args(function_info,
+                                      self,
+				      &gi_argc,
+				      dart_error_out,
+				      error))
+    return FALSE;
 
-  in_arg_cvalues = g_newa(GArgument, c_argc);
-  out_arg_cvalues = g_newa(GArgument, c_argc);
-  inout_original_arg_cvalues = g_newa(GArgument, c_argc);
-  ffi_arg_pointers = g_newa(gpointer, c_argc);
-  trampolines = g_newa(GdartCallbackTrampoline *, c_argc);
+  in_arg_cvalues = g_newa (GArgument, c_argc);
+  out_arg_cvalues = g_newa (GArgument, c_argc);
+  inout_original_arg_cvalues = g_newa (GArgument, c_argc);
+  ffi_arg_pointers = g_newa (gpointer, c_argc);
+  trampolines = g_newa (GdartCallbackTrampoline *, c_argc);
   for (; c_arg_pos < c_argc; c_arg_pos++)
     trampolines[c_arg_pos] = NULL;
 
-  if (!_gdart_function_invoke_fill_arguments(self,
+  if (!_gdart_function_invoke_fill_arguments (self,
       name_prefix,
       function_info,
+      function_info_klass,
       type_info,
       type,
       dart_receiver,
@@ -3324,8 +4174,21 @@ gboolean gdart_function_invoke(GdartBridgeContext *self,
       error)) {
     return FALSE;
   }
-  g_callable_info_load_return_type(function_info, &return_type);
-  return_tag = g_type_info_get_tag(&return_type);
+  if (!function_info_klass->get_return_type(function_info,
+                                            self,
+					    &return_type,
+					    &return_type_klass,
+					    dart_error_out,
+					    error))
+    return FALSE;
+  if (!return_type_klass->get_tag(return_type,
+                                  self,
+				  &return_tag,
+				  dart_error_out,
+				  error)) {
+    return_type_klass->free(return_type);
+    return FALSE;
+  }
 
   if (return_tag == GI_TYPE_TAG_FLOAT)
     return_value_p = &gi_return_value.v_float;
@@ -3336,24 +4199,32 @@ gboolean gdart_function_invoke(GdartBridgeContext *self,
   else
     return_value_p = &gi_return_value.v_long;
 
-  ffi_call(&invoker.cif,
-           FFI_FN(invoker.native_address),
-           return_value_p,
-           ffi_arg_pointers);
-  _gdart_prep_results(self,
-                      name_prefix,
-                      function_info,
-                      &return_type,
-                      suppressed_args,
-                      suppressed_args_length,
-                      &out_argc,
-                      gi_argc,
-                      can_throw_gerror);
+  ffi_call (&invoker.cif,
+            FFI_FN (invoker.native_address),
+            return_value_p,
+            ffi_arg_pointers);
+  if (!_gdart_prep_results (self,
+                       name_prefix,
+                       function_info,
+		       function_info_klass,
+                       return_type,
+		       return_type_klass,
+                       suppressed_args,
+                       suppressed_args_length,
+                       &out_argc,
+                       gi_argc,
+                       can_throw_gerror,
+		       dart_error_out,
+ 			error)) {
+    return_type_klass->free(return_type);
+    return FALSE;
+  }
 
   gboolean result;
-  result = _gdart_function_invoke_load_return_arguments(self,
+  result = _gdart_function_invoke_load_return_arguments (self,
            name_prefix,
            function_info,
+	   function_info_klass,
            is_method,
            can_throw_gerror,
            c_argc,
@@ -3364,67 +4235,85 @@ gboolean gdart_function_invoke(GdartBridgeContext *self,
            out_arg_cvalues,
            inout_original_arg_cvalues,
            &gi_return_value,
-           &return_type,
+           return_type,
+	   return_type_klass,
            result_out,
            out_argc,
            dart_error_out,
            error);
-  _gdart_function_invoke_unfill_arguments(self,
-                                          name_prefix,
-                                          function_info,
-                                          is_method,
-                                          can_throw_gerror,
-                                          FALSE,
-                                          in_arg_cvalues,
-                                          out_arg_cvalues,
-                                          inout_original_arg_cvalues,
-                                          trampolines,
-                                          c_argc,
-                                          gi_argc,
-                                          suppressed_args,
-                                          suppressed_args_length);
+  return_type_klass->free(return_type);
+  if (!_gdart_function_invoke_unfill_arguments (self,
+      name_prefix,
+      function_info,
+      function_info_klass,
+      is_method,
+      can_throw_gerror,
+      FALSE,
+      in_arg_cvalues,
+      out_arg_cvalues,
+      inout_original_arg_cvalues,
+      trampolines,
+      c_argc,
+      gi_argc,
+      suppressed_args,
+      suppressed_args_length,
+      dart_error_out,
+      error)) {
+    result = FALSE;
+  }
   for (c_arg_pos = 0; c_arg_pos < c_argc; c_arg_pos++) {
     if (trampolines[c_arg_pos] == NULL) {
       break;
     }
-    _gdart_callback_closure_free_trampoline(trampolines[c_arg_pos]);
+    _gdart_callback_closure_free_trampoline (trampolines[c_arg_pos]);
   }
 
   return result;
 }
 
-void _gdart_callback_copyback_out_argument(
-  GITypeInfo* type_info,
-  GIArgument* in_arg_cvalues,
-  GIArgument* out_arg_cvalues,
-  gint c_arg_pos)
+static gboolean _gdart_callback_copyback_out_argument (
+  GdartBridgeContext *self,
+  gpointer type_info,
+  const TypeInfoKlass *type_info_klass,
+  GIArgument *in_arg_cvalues,
+  GIArgument *out_arg_cvalues,
+  gint c_arg_pos,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
-  switch(g_type_info_get_tag(type_info)) {
+  GITypeTag type_tag;
+  if (!type_info_klass->get_tag (type_info,
+                                 self,
+                                 &type_tag,
+                                 dart_error_out,
+                                 error))
+    return FALSE;
+  switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
-    *((gboolean *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_boolean;
+    * ( (gboolean *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_boolean;
     break;
   case GI_TYPE_TAG_INT8:
   case GI_TYPE_TAG_UINT8:
-    *((guint8 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint8;
+    * ( (guint8 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint8;
     break;
   case GI_TYPE_TAG_INT16:
   case GI_TYPE_TAG_UINT16:
-    *((guint16 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint16;
+    * ( (guint16 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint16;
     break;
   case GI_TYPE_TAG_INT32:
   case GI_TYPE_TAG_UINT32:
-    *((guint32 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint32;
+    * ( (guint32 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint32;
     break;
   case GI_TYPE_TAG_INT64:
   case GI_TYPE_TAG_UINT64:
   case GI_TYPE_TAG_GTYPE:
-    *((guint64 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint64;
+    * ( (guint64 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint64;
     break;
   case GI_TYPE_TAG_FLOAT:
-    *((gfloat *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_float;
+    * ( (gfloat *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_float;
     break;
   case GI_TYPE_TAG_DOUBLE:
-    *((gdouble *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_double;
+    * ( (gdouble *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_double;
     break;
   case GI_TYPE_TAG_ARRAY:
   case GI_TYPE_TAG_UTF8:
@@ -3433,46 +4322,76 @@ void _gdart_callback_copyback_out_argument(
   case GI_TYPE_TAG_GSLIST:
   case GI_TYPE_TAG_GHASH:
   case GI_TYPE_TAG_ERROR:
-    *((gpointer *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_pointer;
+    * ( (gpointer *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_pointer;
     break;
   case GI_TYPE_TAG_INTERFACE: {
-    GIBaseInfo* base_info;
-    base_info = g_type_info_get_interface(type_info);
-    switch (g_base_info_get_type(base_info)) {
+    gpointer base_info;
+    const InterfaceInfoKlass* base_info_klass;
+    GIInfoType base_info_type;
+    
+    if (!type_info_klass->get_interface(type_info,
+                                        self,
+					&base_info,
+					&base_info_klass,
+					dart_error_out,
+					error))
+      return FALSE;
+    if (!base_info_klass->get_type(base_info,
+                                   self,
+				   &base_info_type,
+				   dart_error_out,
+				   error)) {
+      base_info_klass->free(base_info);
+      return FALSE;
+    }
+    switch (base_info_type) {
     case GI_INFO_TYPE_CALLBACK:
     case GI_INFO_TYPE_BOXED:
     case GI_INFO_TYPE_OBJECT:
     case GI_INFO_TYPE_INTERFACE:
     case GI_INFO_TYPE_STRUCT:
     case GI_INFO_TYPE_UNION:
-      *((gpointer *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_pointer;
+      * ( (gpointer *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_pointer;
       break;
     case GI_INFO_TYPE_ENUM:
     case GI_INFO_TYPE_FLAGS: {
-      switch (g_enum_info_get_storage_type((GIEnumInfo*) base_info)) {
+      const EnumInfoKlass* klass;
+      GITypeTag storage_type;
+      
+      klass = base_info_klass->cast_to_enum_info(base_info);
+      if (!klass->get_storage_type(base_info,
+	                           self,
+				   &storage_type,
+				   dart_error_out,
+				   error)) {
+	base_info_klass->free(base_info);
+        return FALSE;
+      }
+      switch (storage_type) {
       case GI_TYPE_TAG_BOOLEAN:
-        *((gboolean *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_boolean;
+        * ( (gboolean *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_boolean;
         break;
       case GI_TYPE_TAG_INT8:
       case GI_TYPE_TAG_UINT8:
-        *((guint8 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint8;
+        * ( (guint8 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint8;
         break;
       case GI_TYPE_TAG_INT16:
       case GI_TYPE_TAG_UINT16:
-        *((guint16 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint16;
+        * ( (guint16 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint16;
         break;
       case GI_TYPE_TAG_INT32:
       case GI_TYPE_TAG_UINT32:
-        *((guint32 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint32;
+        * ( (guint32 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint32;
         break;
       case GI_TYPE_TAG_INT64:
       case GI_TYPE_TAG_UINT64:
       case GI_TYPE_TAG_GTYPE:
-        *((guint64 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint64;
+        * ( (guint64 *) in_arg_cvalues[c_arg_pos].v_pointer) = out_arg_cvalues[c_arg_pos].v_uint64;
         break;
       default:
         break;
       }
+      base_info_klass->free(base_info);
     }
     break;
     default:
@@ -3483,40 +4402,52 @@ void _gdart_callback_copyback_out_argument(
   default:
     break;
   }
+  return TRUE;
 }
 
-void _gdart_callback_copy_ref_argument(
-  GITypeInfo* type_info,
-  GIArgument* in_arg_cvalues,
-  GIArgument* inout_original_arg_cvalues,
-  gint c_arg_pos)
+static gboolean _gdart_callback_copy_ref_argument (
+  GdartBridgeContext* self,
+  gpointer type_info,
+  const TypeInfoKlass* type_info_klass,
+  GIArgument *in_arg_cvalues,
+  GIArgument *inout_original_arg_cvalues,
+  gint c_arg_pos,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
-  switch(g_type_info_get_tag(type_info)) {
+  GITypeTag type_tag;
+  if (!type_info_klass->get_tag(type_info,
+                                self,
+				&type_tag,
+				dart_error_out,
+				error))
+    return FALSE;
+  switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
-    inout_original_arg_cvalues[c_arg_pos].v_boolean = *((gboolean*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_boolean = * ( (gboolean *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_INT8:
   case GI_TYPE_TAG_UINT8:
-    inout_original_arg_cvalues[c_arg_pos].v_uint8 = *((guint8*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_uint8 = * ( (guint8 *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_INT16:
   case GI_TYPE_TAG_UINT16:
-    inout_original_arg_cvalues[c_arg_pos].v_uint16 = *((guint16*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_uint16 = * ( (guint16 *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_INT32:
   case GI_TYPE_TAG_UINT32:
-    inout_original_arg_cvalues[c_arg_pos].v_uint32 = *((guint32*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_uint32 = * ( (guint32 *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_INT64:
   case GI_TYPE_TAG_UINT64:
   case GI_TYPE_TAG_GTYPE:
-    inout_original_arg_cvalues[c_arg_pos].v_uint64 = *((guint64*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_uint64 = * ( (guint64 *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_FLOAT:
-    inout_original_arg_cvalues[c_arg_pos].v_float = *((gfloat*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_float = * ( (gfloat *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_DOUBLE:
-    inout_original_arg_cvalues[c_arg_pos].v_double = *((gdouble*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_double = * ( (gdouble *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_ARRAY:
   case GI_TYPE_TAG_UTF8:
@@ -3525,42 +4456,69 @@ void _gdart_callback_copy_ref_argument(
   case GI_TYPE_TAG_GSLIST:
   case GI_TYPE_TAG_GHASH:
   case GI_TYPE_TAG_ERROR:
-    inout_original_arg_cvalues[c_arg_pos].v_pointer = *((gpointer*) in_arg_cvalues[c_arg_pos].v_pointer);
+    inout_original_arg_cvalues[c_arg_pos].v_pointer = * ( (gpointer *) in_arg_cvalues[c_arg_pos].v_pointer);
     break;
   case GI_TYPE_TAG_INTERFACE: {
-    GIBaseInfo* base_info;
-    base_info = g_type_info_get_interface(type_info);
-    switch (g_base_info_get_type(base_info)) {
+    gpointer base_info;
+    const InterfaceInfoKlass* base_info_klass;
+    GIInfoType base_info_type;
+    
+    if (!type_info_klass->get_interface(type_info,
+                                        self,
+					&base_info,
+					&base_info_klass,
+					dart_error_out,
+					error))
+      return FALSE;
+    if (!base_info_klass->get_type(base_info,
+                                   self,
+				   &base_info_type,
+				   dart_error_out,
+				   error)) {
+      base_info_klass->free(base_info);
+      return FALSE;
+    }
+    switch (base_info_type) {
     case GI_INFO_TYPE_CALLBACK:
     case GI_INFO_TYPE_BOXED:
     case GI_INFO_TYPE_OBJECT:
     case GI_INFO_TYPE_INTERFACE:
     case GI_INFO_TYPE_STRUCT:
     case GI_INFO_TYPE_UNION:
-      inout_original_arg_cvalues[c_arg_pos].v_pointer = *((gpointer*) in_arg_cvalues[c_arg_pos].v_pointer);
+      inout_original_arg_cvalues[c_arg_pos].v_pointer = * ( (gpointer *) in_arg_cvalues[c_arg_pos].v_pointer);
       break;
     case GI_INFO_TYPE_ENUM:
     case GI_INFO_TYPE_FLAGS: {
-      switch (g_enum_info_get_storage_type((GIEnumInfo*) base_info)) {
+      GITypeTag storage_type;
+      if (!base_info_klass->cast_to_enum_info(base_info)->get_storage_type(base_info,
+								      self,
+								      &storage_type,
+								      dart_error_out,
+								      error)) {
+        base_info_klass->free(base_info);
+        return FALSE;
+      }
+      
+      switch (storage_type) {
       case GI_TYPE_TAG_BOOLEAN:
-        inout_original_arg_cvalues[c_arg_pos].v_boolean = *((gboolean*) in_arg_cvalues[c_arg_pos].v_pointer);
+        inout_original_arg_cvalues[c_arg_pos].v_boolean = * ( (gboolean *) in_arg_cvalues[c_arg_pos].v_pointer);
         break;
       case GI_TYPE_TAG_INT8:
       case GI_TYPE_TAG_UINT8:
-        inout_original_arg_cvalues[c_arg_pos].v_uint8 = *((guint8*) in_arg_cvalues[c_arg_pos].v_pointer);
+        inout_original_arg_cvalues[c_arg_pos].v_uint8 = * ( (guint8 *) in_arg_cvalues[c_arg_pos].v_pointer);
         break;
       case GI_TYPE_TAG_INT16:
       case GI_TYPE_TAG_UINT16:
-        inout_original_arg_cvalues[c_arg_pos].v_uint16 = *((guint16*) in_arg_cvalues[c_arg_pos].v_pointer);
+        inout_original_arg_cvalues[c_arg_pos].v_uint16 = * ( (guint16 *) in_arg_cvalues[c_arg_pos].v_pointer);
         break;
       case GI_TYPE_TAG_INT32:
       case GI_TYPE_TAG_UINT32:
-        inout_original_arg_cvalues[c_arg_pos].v_uint32 = *((guint32*) in_arg_cvalues[c_arg_pos].v_pointer);
+        inout_original_arg_cvalues[c_arg_pos].v_uint32 = * ( (guint32 *) in_arg_cvalues[c_arg_pos].v_pointer);
         break;
       case GI_TYPE_TAG_INT64:
       case GI_TYPE_TAG_UINT64:
       case GI_TYPE_TAG_GTYPE:
-        inout_original_arg_cvalues[c_arg_pos].v_uint64 = *((guint64*) in_arg_cvalues[c_arg_pos].v_pointer);
+        inout_original_arg_cvalues[c_arg_pos].v_uint64 = * ( (guint64 *) in_arg_cvalues[c_arg_pos].v_pointer);
         break;
       default:
         break;
@@ -3570,19 +4528,23 @@ void _gdart_callback_copy_ref_argument(
     default:
       break;
     }
+    base_info_klass->free(base_info);
   }
   break;
   default:
     break;
   }
+  return TRUE;
 }
 
 
-void _gdart_callback_prep_arguments_for_callback(
+static gboolean _gdart_callback_prep_arguments_for_callback (
+  GdartBridgeContext *self,
   void **args,
-  GICallableInfo* callable_info,
-  GIArgument* in_arg_cvalues,
-  GIArgument* inout_original_arg_cvalues,
+  gpointer callable_info,
+  const CallableInfoKlass *callable_info_klass,
+  GIArgument *in_arg_cvalues,
+  GIArgument *inout_original_arg_cvalues,
   gint c_argc,
   gint gi_argc,
   gboolean is_method,
@@ -3590,36 +4552,83 @@ void _gdart_callback_prep_arguments_for_callback(
   gboolean can_throw_gerror,
   gint *suppressed_args,
   gint suppressed_args_length,
-  gint *dart_argc_out)
+  gint *dart_argc_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
   gint gi_arg_pos = 0, c_arg_pos = 0, dart_argc = 0;
 
   if (is_method) {
-    GIArgument* this_argument = (GIArgument*) args[c_arg_pos];
+    GIArgument *this_argument = (GIArgument *) args[c_arg_pos];
     in_arg_cvalues[c_arg_pos] = *this_argument;
     c_arg_pos++;
   }
   for (; gi_arg_pos < gi_argc; gi_arg_pos++) {
-    GIArgInfo arg_info;
-    GITypeInfo type_info;
+    gpointer arg_info;
+    const ArgInfoKlass *arg_info_klass;
+
+    gpointer type_info;
+    const TypeInfoKlass *type_info_klass;
+
     GIDirection direction;
 
-    GIArgument* this_argument = (GIArgument*) args[c_arg_pos];
+    GIArgument *this_argument = (GIArgument *) args[c_arg_pos];
     in_arg_cvalues[c_arg_pos] = *this_argument;
     if (has_user_data && gi_arg_pos == (gi_argc - 1)) {
       c_arg_pos++;
       continue;
     }
-
-    g_callable_info_load_arg(callable_info, gi_arg_pos, &arg_info);
-    g_arg_info_load_type(&arg_info, &type_info);
-    direction = g_arg_info_get_direction(&arg_info);
+    if (!callable_info_klass->get_arg (callable_info,
+                                       self,
+                                       gi_arg_pos,
+                                       &arg_info,
+                                       &arg_info_klass,
+                                       dart_error_out,
+                                       error))
+      return FALSE;
+    if (!arg_info_klass->get_direction (arg_info,
+                                   self,
+                                   &direction,
+                                   dart_error_out,
+                                   error)) {
+      arg_info_klass->free (arg_info);
+      return FALSE;
+    }
+    if (!arg_info_klass->get_type (arg_info,
+                                   self,
+                                   &type_info,
+                                   &type_info_klass,
+                                   dart_error_out,
+                                   error)) {
+      arg_info_klass->free (arg_info);
+      return FALSE;
+    }
+    arg_info_klass->free (arg_info);
+    
     if (direction == GI_DIRECTION_IN || direction == GI_DIRECTION_INOUT) {
+      GITypeTag type_tag;
+
       dart_argc++;
-      switch (g_type_info_get_tag(&type_info)) {
+      if (!type_info_klass->get_tag (type_info,
+                                     self,
+                                     &type_tag,
+                                     dart_error_out,
+                                     error)) {
+        type_info_klass->free (type_info);
+        return FALSE;
+      }
+      switch (type_tag) {
       case GI_TYPE_TAG_ARRAY: {
         gint arg_to_suppress, arg_i = 0;
-        arg_to_suppress = g_type_info_get_array_length(&type_info);
+
+        if (!type_info_klass->get_array_length (type_info,
+                                                self,
+                                                &arg_to_suppress,
+                                                dart_error_out,
+                                                error)) {
+          type_info_klass->free (type_info);
+          return FALSE;
+        }
         if (arg_to_suppress != -1) {
           for (; arg_i < suppressed_args_length; arg_i++) {
             if (suppressed_args[arg_i] == -1) {
@@ -3638,19 +4647,21 @@ void _gdart_callback_prep_arguments_for_callback(
     c_arg_pos++;
   }
   if (can_throw_gerror) {
-    GIArgument* this_argument = (GIArgument*) args[c_arg_pos];
+    GIArgument *this_argument = (GIArgument *) args[c_arg_pos];
     in_arg_cvalues[c_arg_pos] = *this_argument;
     c_arg_pos++;
   }
   (*dart_argc_out) = dart_argc;
+  return TRUE;
 }
 
-void _gdart_callback_load_arguments_for_callback(
-  GdartBridgeContext* self,
-  const gchar* name_prefix,
-  GICallableInfo* callable_info,
-  GIArgument* in_arg_cvalues,
-  GIArgument* inout_original_arg_cvalues,
+static gboolean _gdart_callback_load_arguments_for_callback (
+  GdartBridgeContext *self,
+  const gchar *name_prefix,
+  gpointer callable_info,
+  const CallableInfoKlass* callable_info_klass,
+  GIArgument *in_arg_cvalues,
+  GIArgument *inout_original_arg_cvalues,
   gint c_argc,
   gint gi_argc,
   gboolean is_method,
@@ -3659,109 +4670,168 @@ void _gdart_callback_load_arguments_for_callback(
   gint *suppressed_args,
   gint suppressed_args_length,
   gint dart_argc,
-  Dart_Handle* dart_arguments)
+  Dart_Handle *dart_arguments,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
   gint gi_arg_pos = 0, c_arg_pos = 0, dart_arg_pos = 0;
-  Dart_Handle set_on_error = NULL;
-  GError *error = NULL;
 
   if (is_method) {
     c_arg_pos++;
   }
   for (; gi_arg_pos < gi_argc; gi_arg_pos++) {
     gint arg_i = 0;
-    GIArgInfo arg_info;
-    GITypeInfo type_info;
+    
+    gpointer arg_info;
+    const ArgInfoKlass* arg_info_klass;
+    
+    gpointer type_info;
+    const TypeInfoKlass* type_info_klass;
+    
     GIDirection direction;
-    gchar* arg_name;
+    gchar *arg_name;
+    const gchar* arg_name_short;
 
-    g_callable_info_load_arg(callable_info, gi_arg_pos, &arg_info);
-    arg_name = g_strdup_printf("%s.%s",
-                               name_prefix,
-                               g_base_info_get_name((GIBaseInfo*) &arg_info));
-    g_arg_info_load_type(&arg_info, &type_info);
-    direction = g_arg_info_get_direction(&arg_info);
+    if (!callable_info_klass->get_arg(callable_info,
+                                      self,
+				      gi_arg_pos,
+				      &arg_info,
+				      &arg_info_klass,
+				      dart_error_out,
+				      error))
+      return FALSE;
+    if (!arg_info_klass->get_name(arg_info,
+                                  self,
+				  &arg_name_short,
+				  dart_error_out,
+				  error)) {
+      arg_info_klass->free(arg_info);
+      return FALSE;
+    }
+    if (!arg_info_klass->get_direction(arg_info,
+                                  self,
+				  &direction,
+				  dart_error_out,
+				  error)) {
+      arg_info_klass->free(arg_info);
+      return FALSE;
+    }
+    
+    
+    arg_name = g_strdup_printf ("%s.%s",
+                                name_prefix,
+                                arg_name_short);
+    if (!arg_info_klass->get_type(arg_info,
+                                  self,
+				  &type_info,
+				  &type_info_klass,
+				  dart_error_out,
+				  error)) {
+      g_free(arg_name);
+      arg_info_klass->free(arg_info);
+      return FALSE;
+    }
     if (direction == GI_DIRECTION_INOUT) {
-      _gdart_callback_copy_ref_argument(&type_info,
-                                        in_arg_cvalues,
-                                        inout_original_arg_cvalues,
-                                        c_arg_pos);
+      if (!_gdart_callback_copy_ref_argument (self,
+	                                      type_info,
+	                                      type_info_klass,
+                                              in_arg_cvalues,
+                                              inout_original_arg_cvalues,
+                                              c_arg_pos,
+					      dart_error_out,
+					      error)) {
+        g_free(arg_name);
+        arg_info_klass->free(arg_info);
+        type_info_klass->free(type_info);
+        return FALSE;
+      }
     }
     for (; arg_i < suppressed_args_length; arg_i++) {
       if (suppressed_args[arg_i] == gi_arg_pos) {
-        goto out;
+        g_free(arg_name);
+        arg_info_klass->free(arg_info);
+        type_info_klass->free(type_info);
+        return TRUE;
       }
       if (suppressed_args[arg_i] == -1) break;
     }
     switch (direction) {
     case GI_DIRECTION_IN:
-      if (!_gdart_function_result_load_return(self,
-                                              arg_name,
-                                              callable_info,
-                                              &arg_info,
-                                              is_method,
-                                              can_throw_gerror,
-                                              FALSE,
-                                              in_arg_cvalues,
-                                              NULL,
-                                              NULL,
-                                              &in_arg_cvalues[c_arg_pos],
-                                              NULL,
-                                              &type_info,
-                                              &dart_arg_pos,
-                                              dart_arguments,
-                                              dart_argc,
-                                              &set_on_error,
-                                              &error)) {
-        goto error_out;
+      if (!_gdart_function_result_load_return (self,
+          arg_name,
+          callable_info,
+	  callable_info_klass,
+          arg_info,
+	  arg_info_klass,
+          is_method,
+          can_throw_gerror,
+          FALSE,
+          in_arg_cvalues,
+          NULL,
+          NULL,
+          &in_arg_cvalues[c_arg_pos],
+          NULL,
+          type_info,
+	  type_info_klass,
+          &dart_arg_pos,
+          dart_arguments,
+          dart_argc,
+          dart_error_out,
+          error)) {
+        g_free(arg_name);
+        arg_info_klass->free(arg_info);
+        type_info_klass->free(type_info);
+        return FALSE;
       }
       break;
     case GI_DIRECTION_INOUT:
-      if (!_gdart_function_result_load_return(self,
-                                              arg_name,
-                                              callable_info,
-                                              &arg_info,
-                                              is_method,
-                                              can_throw_gerror,
-                                              FALSE,
-                                              inout_original_arg_cvalues,
-                                              NULL,
-                                              NULL,
-                                              &inout_original_arg_cvalues[c_arg_pos],
-                                              NULL,
-                                              &type_info,
-                                              &dart_arg_pos,
-                                              dart_arguments,
-                                              dart_argc,
-                                              &set_on_error,
-                                              &error)) {
-        goto error_out;
+      if (!_gdart_function_result_load_return (self,
+          arg_name,
+          callable_info,
+	  callable_info_klass,
+          arg_info,
+	  arg_info_klass,
+          is_method,
+          can_throw_gerror,
+          FALSE,
+          inout_original_arg_cvalues,
+          NULL,
+          NULL,
+          &inout_original_arg_cvalues[c_arg_pos],
+          NULL,
+          type_info,
+	  type_info_klass,
+          &dart_arg_pos,
+          dart_arguments,
+          dart_argc,
+          dart_error_out,
+          error)) {
+        arg_info_klass->free(arg_info);
+        type_info_klass->free(type_info);
+        g_free (arg_name);
+        return FALSE;
       }
       break;
     default:
       break;
     }
-out:
-    g_free(arg_name);
+    arg_info_klass->free(arg_info);
+    type_info_klass->free(type_info);
+    g_free (arg_name);
     c_arg_pos++;
   }
   if (user_data_present) {
     c_arg_pos++;
   }
-  return;
-error_out: {
-    g_critical("Dart threw a fatal error from within a callback in a "
-               "place where it can't be ignored: %s",
-               error->message);
-    g_assert_not_reached();
-  }
+  return TRUE;
 }
 
 
-void _gdart_function_invoke_fill_callback_returns(
+static gboolean _gdart_function_invoke_fill_callback_returns (
   GdartBridgeContext *self,
-  const gchar* name_prefix,
-  GICallableInfo *function_info,
+  const gchar *name_prefix,
+  gpointer function_info,
+  const CallableInfoKlass *function_info_klass,
   Dart_Handle dart_args,
   gboolean is_method,
   gboolean can_throw_gerror,
@@ -3770,62 +4840,122 @@ void _gdart_function_invoke_fill_callback_returns(
   GArgument *out_arg_cvalues,
   gint c_argc,
   gint gi_argc,
-  gint* suppressed_args,
-  gint suppressed_args_length)
+  gint *suppressed_args,
+  gint suppressed_args_length,
+  Dart_Handle *dart_error_out,
+  GError **error)
 {
   gint c_arg_pos = 0, gi_arg_pos = 0, dart_arg_pos = 0, c_arg_pos0 = 0;
-  GITypeInfo return_type_info;
-  GITypeTag type_tag;
-  Dart_Handle set_on_error = NULL;
-  GError *error = NULL;
 
-  g_callable_info_load_return_type(function_info, &return_type_info);
+  gpointer return_type_info;
+  const TypeInfoKlass *return_type_info_klass;
+
+  GITypeTag type_tag;
+
+  if (!function_info_klass->get_return_type (function_info,
+      self,
+      &return_type_info,
+      &return_type_info_klass,
+      dart_error_out,
+      error))
+    goto error_out;
   if (is_method) {
     c_arg_pos++;
   }
 
-  type_tag = g_type_info_get_tag(&return_type_info);
+  if (!return_type_info_klass->get_tag (return_type_info,
+                                        self,
+                                        &type_tag,
+      dart_error_out,
+                                        error)) {
+    return_type_info_klass->free (return_type_info);
+    goto error_out;
+  }
   if (type_tag != GI_TYPE_TAG_VOID && (!can_throw_gerror || type_tag != GI_TYPE_TAG_BOOLEAN)) {
     gchar *return_name;
-    return_name = g_strdup_printf("%s[return]", name_prefix);
-    if (!_gdart_function_fill_argument_in(self,
-                                          return_name,
-                                          dart_args,
-                                          function_info,
-                                          g_callable_info_get_caller_owns(function_info) != GI_TRANSFER_NOTHING,
-                                          is_method,
-                                          &c_arg_pos0,
-                                          &dart_arg_pos,
-                                          -1,
-                                          NULL,
-                                          &return_type_info,
-                                          suppressed_args,
-                                          gi_argc,
-                                          main_out_argument,
-                                          out_arg_cvalues,
-                                          NULL,
-                                          NULL,
-                                          0,
-                                          &set_on_error,
-                                          &error)) {
+    GITransfer caller_owns;
+    
+    
+    return_name = g_strdup_printf ("%s[return]", name_prefix);
+    if (!function_info_klass->get_caller_owns(function_info,
+                                              self,
+					      &caller_owns,
+					      dart_error_out,
+					      error)) {
+      return_type_info_klass->free (return_type_info);
       g_free(return_name);
       goto error_out;
     }
-    g_free(return_name);
+    if (!_gdart_function_fill_argument_in (self,
+                                           return_name,
+                                           dart_args,
+                                           function_info,
+                                           function_info_klass,
+                                           caller_owns != GI_TRANSFER_NOTHING,
+                                           is_method,
+                                           &c_arg_pos0,
+                                           &dart_arg_pos,
+                                           -1,
+                                           NULL,
+                                           &null_arg_info,
+                                           return_type_info,
+                                           return_type_info_klass,
+                                           suppressed_args,
+                                           gi_argc,
+                                           main_out_argument,
+                                           out_arg_cvalues,
+                                           NULL,
+                                           NULL,
+                                           0,
+      dart_error_out,
+                                           error)) {
+      return_type_info_klass->free (return_type_info);
+      g_free (return_name);
+      goto error_out;
+    }
+    return_type_info_klass->free (return_type_info);
+    g_free (return_name);
   } else if (can_throw_gerror && type_tag == GI_TYPE_TAG_BOOLEAN) {
     main_out_argument->v_boolean = TRUE;
   }
 
   for (gi_arg_pos = 0; gi_arg_pos < gi_argc; gi_arg_pos++) {
     GIDirection direction;
-    GIArgInfo arg_info;
-    gchar* arg_name;
 
-    g_callable_info_load_arg(function_info, gi_arg_pos, &arg_info);
-    arg_name = g_strdup_printf("%s.%s",
-                               name_prefix,
-                               g_base_info_get_name((GIBaseInfo*) &arg_info));
-    direction = g_arg_info_get_direction(&arg_info);
+    gpointer arg_info;
+    const ArgInfoKlass *arg_info_klass;
+
+    gchar *arg_name;
+    const gchar *arg_name_only;
+
+    if (!function_info_klass->get_arg (function_info,
+                                       self,
+                                       gi_arg_pos,
+                                       &arg_info,
+                                       &arg_info_klass,
+      dart_error_out,
+                                       error))
+      goto error_out;
+    if (!arg_info_klass->get_name (arg_info,
+                                   self,
+                                   &arg_name_only,
+      dart_error_out,
+                                   error)) {
+      arg_info_klass->free (arg_info);
+      goto error_out;
+    }
+    if (!arg_info_klass->get_direction (arg_info,
+                                        self,
+                                        &direction,
+      dart_error_out,
+                                        error)) {
+      arg_info_klass->free (arg_info);
+      goto error_out;
+    }
+
+    arg_name = g_strdup_printf ("%s.%s",
+                                name_prefix,
+                                arg_name_only);
     switch (direction) {
     case GI_DIRECTION_IN:
       c_arg_pos++;
@@ -3833,149 +4963,238 @@ void _gdart_function_invoke_fill_callback_returns(
     case GI_DIRECTION_INOUT:
     case GI_DIRECTION_OUT: {
       gint c_arg_pos_previous;
-      GITypeInfo arg_type;
+
+      gpointer arg_type;
+      const TypeInfoKlass *arg_type_klass;
+      GITypeTag type_tag;
+      GITransfer transfer;
 
       c_arg_pos_previous = c_arg_pos;
       if (in_arg_cvalues[c_arg_pos].v_pointer == NULL) {
         c_arg_pos++;
         break;
       }
-      g_arg_info_load_type(&arg_info, &arg_type);
-      switch (g_type_info_get_tag(&arg_type)) {
+      if (!arg_info_klass->get_type (arg_info,
+                                     self,
+                                     &arg_type,
+                                     &arg_type_klass,
+      dart_error_out,
+                                     error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        goto error_out;
+      }
+      if (!arg_type_klass->get_tag (arg_type,
+                                    self,
+                                    &type_tag,
+      dart_error_out,
+                                    error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        goto error_out;
+      }
+	if (!arg_info_klass->get_ownership_transfer(arg_info,
+	                                   self,
+				           &transfer,
+      dart_error_out,
+				           error)) {
+          g_free (arg_name);
+          arg_info_klass->free (arg_info);
+          arg_type_klass->free (arg_type);
+          goto error_out;
+        }
+
+      switch (type_tag) {
       case GI_TYPE_TAG_UTF8:
       case GI_TYPE_TAG_FILENAME:
       case GI_TYPE_TAG_ARRAY: {
-        if (g_arg_info_get_ownership_transfer(&arg_info) == GI_TRANSFER_NOTHING) {
-          g_warning("%s: The type of transfer for an out argument was "
-                    "`transfer none`, but Dart uses native types for "
-                    "arguments of this type.",
-                    arg_name);
-          g_free(arg_name);
-          g_assert_not_reached();
+        if (transfer == GI_TRANSFER_NOTHING) {
+          g_warning ("%s: The type of transfer for an out argument was "
+                     "`transfer none`, but Dart uses native types for "
+                     "arguments of this type.",
+                     arg_name);
+          g_free (arg_name);
+          arg_info_klass->free (arg_info);
+          arg_type_klass->free (arg_type);
+          goto error_out;
         }
       }
       default:
         break;
       }
-      if (!_gdart_function_fill_argument_in(self,
-                                            arg_name,
-                                            dart_args,
-                                            function_info,
-                                            g_arg_info_get_ownership_transfer(&arg_info) != GI_TRANSFER_NOTHING,
-                                            is_method,
-                                            &c_arg_pos,
-                                            &dart_arg_pos,
-                                            gi_arg_pos,
-                                            &arg_info,
-                                            &arg_type,
-                                            suppressed_args,
-                                            gi_argc,
-                                            &out_arg_cvalues[c_arg_pos],
-                                            out_arg_cvalues,
-                                            NULL,
-                                            NULL,
-                                            0,
-                                            &set_on_error,
-                                            &error)) {
-        g_free(arg_name);
+      if (!_gdart_function_fill_argument_in (self,
+                                             arg_name,
+                                             dart_args,
+                                             function_info,
+                                             function_info_klass,
+                                             transfer != GI_TRANSFER_NOTHING,
+                                             is_method,
+                                             &c_arg_pos,
+                                             &dart_arg_pos,
+                                             gi_arg_pos,
+                                             arg_info,
+                                             arg_info_klass,
+                                             arg_type,
+                                             arg_type_klass,
+                                             suppressed_args,
+                                             gi_argc,
+                                             &out_arg_cvalues[c_arg_pos],
+                                             out_arg_cvalues,
+                                             NULL,
+                                             NULL,
+                                             0,
+      dart_error_out,
+                                             error)) {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
         goto error_out;
       }
-      _gdart_callback_copyback_out_argument(&arg_type,
-                                            in_arg_cvalues,
-                                            out_arg_cvalues,
-                                            c_arg_pos_previous);
+      if (!_gdart_callback_copyback_out_argument (self,
+          arg_type,
+          arg_type_klass,
+          in_arg_cvalues,
+          out_arg_cvalues,
+          c_arg_pos_previous,
+      dart_error_out,
+          error))  {
+        g_free (arg_name);
+        arg_info_klass->free (arg_info);
+        arg_type_klass->free (arg_type);
+        goto error_out;
+      }
+      arg_type_klass->free (arg_type);
+
       break;
     }
+    arg_info_klass->free (arg_info);
     default:
-      g_free(arg_name);
+      g_free (arg_name);
       g_assert_not_reached();
     }
-    g_free(arg_name);
+    g_free (arg_name);
   }
   if (can_throw_gerror) {
     c_arg_pos++;
   }
+
   if (c_arg_pos != c_argc) {
     g_assert_not_reached();
   }
-  return;
+  return TRUE;
 error_out: {
-    g_critical("Dart threw a fatal error from within a callback in a "
-               "place where it can't be ignored: %s",
-               error->message);
-    g_assert_not_reached();
+    return FALSE;
   }
 }
 
-void set_return_ffi_arg_from_giargument (GITypeInfo  *ret_type,
+static gboolean set_return_ffi_arg_from_giargument (
+    GdartBridgeContext* self,
+    gpointer    ret_type,
+    const TypeInfoKlass* ret_type_klass,
     void        *result,
-    GIArgument  *return_value)
+    GIArgument  *return_value,
+    Dart_Handle* dart_error_out,
+    GError **error)
 {
-  switch (g_type_info_get_tag(ret_type)) {
+  GITypeTag type_tag;
+  if (!ret_type_klass->get_tag(ret_type,
+    self,
+    &type_tag,
+    dart_error_out,
+    error))
+    return FALSE;
+  switch (type_tag) {
   case GI_TYPE_TAG_INT8:
-    *(ffi_sarg *) result = return_value->v_int8;
+    * (ffi_sarg *) result = return_value->v_int8;
     break;
   case GI_TYPE_TAG_UINT8:
-    *(ffi_arg *) result = return_value->v_uint8;
+    * (ffi_arg *) result = return_value->v_uint8;
     break;
   case GI_TYPE_TAG_INT16:
-    *(ffi_sarg *) result = return_value->v_int16;
+    * (ffi_sarg *) result = return_value->v_int16;
     break;
   case GI_TYPE_TAG_UINT16:
-    *(ffi_arg *) result = return_value->v_uint16;
+    * (ffi_arg *) result = return_value->v_uint16;
     break;
   case GI_TYPE_TAG_INT32:
-    *(ffi_sarg *) result = return_value->v_int32;
+    * (ffi_sarg *) result = return_value->v_int32;
     break;
   case GI_TYPE_TAG_UINT32:
   case GI_TYPE_TAG_BOOLEAN:
   case GI_TYPE_TAG_UNICHAR:
-    *(ffi_arg *) result = return_value->v_uint32;
+    * (ffi_arg *) result = return_value->v_uint32;
 
     break;
   case GI_TYPE_TAG_INT64:
-    *(ffi_sarg *) result = return_value->v_int64;
+    * (ffi_sarg *) result = return_value->v_int64;
     break;
   case GI_TYPE_TAG_UINT64:
-    *(ffi_arg *) result = return_value->v_uint64;
+    * (ffi_arg *) result = return_value->v_uint64;
     break;
   case GI_TYPE_TAG_INTERFACE: {
-    GIBaseInfo* interface_info;
+    gpointer interface_info;
+    const InterfaceInfoKlass* interface_info_klass;
+    
     GIInfoType interface_type;
-
-    interface_info = g_type_info_get_interface(ret_type);
-    interface_type = g_base_info_get_type(interface_info);
-
+    
+    if (!ret_type_klass->get_interface(ret_type,
+				  self,
+				  &interface_info,
+				  &interface_info_klass,
+				  dart_error_out,
+				  error))
+      return FALSE;
+    if (!interface_info_klass->get_type(interface_info,
+                                        self,
+					&interface_type,
+					dart_error_out,
+					error)) {
+      interface_info_klass->free(interface_info);
+      return FALSE;
+    }
     switch (interface_type) {
     case GI_INFO_TYPE_ENUM:
     case GI_INFO_TYPE_FLAGS:
-      *(ffi_sarg *) result = return_value->v_long;
+      * (ffi_sarg *) result = return_value->v_long;
       break;
     default:
-      *(ffi_arg *) result = (ffi_arg) return_value->v_pointer;
+      * (ffi_arg *) result = (ffi_arg) return_value->v_pointer;
       break;
     }
 
-    g_base_info_unref(interface_info);
+    interface_info_klass->free(interface_info);
   }
   default:
-    *(ffi_arg *) result = (ffi_arg) return_value->v_uint64;
+    * (ffi_arg *) result = (ffi_arg) return_value->v_uint64;
     break;
   }
+  return TRUE;
 }
 
-void _gdart_callback_closure_free_trampoline(GdartCallbackTrampoline* trampoline)
+static void _gdart_callback_closure_free_trampoline (GdartCallbackTrampoline *trampoline)
 {
-  g_callable_info_free_closure(trampoline->signal_info, trampoline->closure);
-  Dart_DeletePersistentHandle(trampoline->closure_dart);
-  g_free(trampoline->closure_name);
-  g_slice_free(GdartCallbackTrampoline, trampoline);
+  Dart_Handle dart_error;
+  GError *inner_error = NULL;
+
+  if (!trampoline->signal_info_klass.free_closure (trampoline->signal_info,
+      trampoline->self,
+      trampoline->closure,
+      &dart_error,
+      &inner_error)) {
+    g_assert_not_reached();
+  }
+  trampoline->signal_info_klass.free (trampoline->signal_info);
+  Dart_DeletePersistentHandle (trampoline->closure_dart);
+  g_object_unref (G_OBJECT (trampoline->self));
+  g_free (trampoline->closure_name);
+  g_slice_free (GdartCallbackTrampoline, trampoline);
 }
 
-static void _gdart_callback_closure(ffi_cif *cif,
-                                    void *result,
-                                    void **args,
-                                    void *data)
+static void _gdart_callback_closure (ffi_cif *cif,
+                                     void *result,
+                                     void **args,
+                                     void *data)
 {
   GdartCallbackTrampoline *trampoline;
   Dart_Handle closure, *dart_arguments, dart_result;
@@ -3983,30 +5202,70 @@ static void _gdart_callback_closure(ffi_cif *cif,
        c_arg_pos = 0;
   GIArgument *in_arg_cvalues, *inout_original_arg_cvalues, *out_arg_cvalues,
              main_return;
-  GITypeInfo return_type_info;
-  gint* suppressed_args;
+
+  gpointer return_type_info;
+  const TypeInfoKlass *return_type_info_klass;
+
+  gint *suppressed_args;
   gboolean is_method, can_throw_gerror;
-  GdartBridgeContext* self;
+  GdartBridgeContext *self;
   gchar *closure_name;
 
-  trampoline = (GdartCallbackTrampoline*) data;
+  Dart_Handle set_on_error = NULL;
+  GError *error = NULL;
+
+  trampoline = (GdartCallbackTrampoline *) data;
   c_argc = trampoline->cif.nargs;
-  closure_name = g_strdup_printf("(closure invoked from %s)", trampoline->closure_name);
-  gi_argc = g_callable_info_get_n_args(trampoline->signal_info);
-  is_method = g_callable_info_is_method(trampoline->signal_info);
-  can_throw_gerror = g_callable_info_can_throw_gerror(trampoline->signal_info);
-  g_callable_info_load_return_type(trampoline->signal_info, &return_type_info);
+  closure_name = g_strdup_printf ("(closure invoked from %s)", trampoline->closure_name);
+  self = gdart_bridge_context_new_from_isolate (Dart_CurrentIsolate());
+
+  if (!trampoline->signal_info_klass.get_n_args (trampoline->signal_info,
+      self,
+      &gi_argc,
+      &set_on_error,
+      &error)) {
+    g_free (closure_name);
+    goto error_out;
+  }
+  if (!trampoline->signal_info_klass.is_method (trampoline->signal_info,
+      self,
+      &is_method,
+      &set_on_error,
+      &error)) {
+    g_free (closure_name);
+    goto error_out;
+  }
+  if (!trampoline->signal_info_klass.can_throw_gerror (trampoline->signal_info,
+      self,
+      &can_throw_gerror,
+      &set_on_error,
+      &error)) {
+    g_free (closure_name);
+    goto error_out;
+  }
+
+  if (!trampoline->signal_info_klass.get_return_type (trampoline->signal_info,
+      self,
+      &return_type_info,
+      &return_type_info_klass,
+      &set_on_error,
+      &error)) {
+    g_free (closure_name);
+    goto error_out;
+  }
   suppressed_args_length = gi_argc;
-  in_arg_cvalues = g_newa(GIArgument, c_argc);
-  inout_original_arg_cvalues = g_newa(GIArgument, c_argc);
-  out_arg_cvalues = g_newa(GIArgument, c_argc);
-  suppressed_args = g_newa(gint, suppressed_args_length);
+  in_arg_cvalues = g_newa (GIArgument, c_argc);
+  inout_original_arg_cvalues = g_newa (GIArgument, c_argc);
+  out_arg_cvalues = g_newa (GIArgument, c_argc);
+  suppressed_args = g_newa (gint, suppressed_args_length);
   for (; c_arg_pos < suppressed_args_length; c_arg_pos++) {
     suppressed_args[c_arg_pos] = -1;
   }
-  self = gdart_bridge_context_new_from_isolate(Dart_CurrentIsolate());
-  _gdart_callback_prep_arguments_for_callback(args,
+  if (!_gdart_callback_prep_arguments_for_callback (
+      self,
+      args,
       trampoline->signal_info,
+      &trampoline->signal_info_klass,
       in_arg_cvalues,
       inout_original_arg_cvalues,
       c_argc,
@@ -4016,14 +5275,21 @@ static void _gdart_callback_closure(ffi_cif *cif,
       can_throw_gerror,
       suppressed_args,
       suppressed_args_length,
-      &dart_argc);
+      &dart_argc,
+      &set_on_error,
+      &error))  {
+    g_free (closure_name);
+    return_type_info_klass->free(return_type_info);
+    goto error_out;
+  }
   if (trampoline->user_data_present) {
     //dart_argc--;
   }
-  dart_arguments = g_newa(Dart_Handle, dart_argc);
-  _gdart_callback_load_arguments_for_callback(self,
+  dart_arguments = g_newa (Dart_Handle, dart_argc);
+  if (!_gdart_callback_load_arguments_for_callback (self,
       closure_name,
       trampoline->signal_info,
+      &trampoline->signal_info_klass,
       in_arg_cvalues,
       inout_original_arg_cvalues,
       c_argc,
@@ -4034,96 +5300,111 @@ static void _gdart_callback_closure(ffi_cif *cif,
       suppressed_args,
       suppressed_args_length,
       dart_argc,
-      dart_arguments);
+      dart_arguments,
+      &set_on_error,
+      &error)) {
+    g_free (closure_name);
+    return_type_info_klass->free(return_type_info);
+    goto error_out;
+  }
   Dart_EnterScope();
-  closure = Dart_HandleFromPersistent(trampoline->closure_dart);
-  dart_result = Dart_InvokeClosure(closure, dart_argc, dart_arguments);
-  if (Dart_IsError(dart_result)) {
+  closure = Dart_HandleFromPersistent (trampoline->closure_dart);
+  dart_result = Dart_InvokeClosure (closure, dart_argc, dart_arguments);
+  if (Dart_IsError (dart_result)) {
     //TODO: Handle GErrors when callbacks can throw them.
     Dart_Handle stacktrace, dart_stacktrace_string, temp_result;
     gchar *output_string, *output_string_copy;
     gintptr output_string_length;
 
-    stacktrace = Dart_ErrorGetStacktrace(dart_result);
-    if (Dart_IsError(stacktrace)) {
+    stacktrace = Dart_ErrorGetStacktrace (dart_result);
+    if (Dart_IsError (stacktrace)) {
       dart_stacktrace_string = result;
     } else {
-      dart_stacktrace_string = Dart_ToString(stacktrace);
+      dart_stacktrace_string = Dart_ToString (stacktrace);
     }
-    if (Dart_IsError(dart_stacktrace_string)) {
+    if (Dart_IsError (dart_stacktrace_string)) {
       temp_result = dart_stacktrace_string;
     } else {
-      temp_result = Dart_StringToUTF8(dart_stacktrace_string,
-                                      (guint8**) &output_string,
-                                      &output_string_length);
+      temp_result = Dart_StringToUTF8 (dart_stacktrace_string,
+                                       (guint8 **) &output_string,
+                                       &output_string_length);
     }
-    if (Dart_IsError(temp_result)) {
+    if (Dart_IsError (temp_result)) {
       output_string_length = 0;
-      output_string_copy = g_newa(gchar, 1);
+      output_string_copy = g_newa (gchar, 1);
       output_string_copy[0] = '\0';
     } else {
-      output_string_copy = g_newa(gchar, output_string_length + 1);
-      memmove(output_string_copy, output_string, output_string_length);
+      output_string_copy = g_newa (gchar, output_string_length + 1);
+      memmove (output_string_copy, output_string, output_string_length);
       output_string_copy[output_string_length] = '\0';
     }
-    g_critical("%s: Dart threw a fatal error from within a callback:\n%s\n%s",
-               closure_name,
-               Dart_GetError(dart_result),
-               output_string_copy);
+    g_critical ("%s: Dart threw a fatal error from within a callback:\n%s\n%s",
+                closure_name,
+                Dart_GetError (dart_result),
+                output_string_copy);
     g_assert_not_reached();
   }
-  _gdart_prep_results(self,
-                      closure_name,
-                      trampoline->signal_info,
-                      &return_type_info,
-                      suppressed_args,
-                      suppressed_args_length,
-                      &dart_out_argc,
-                      gi_argc,
-                      can_throw_gerror);
+  if (!_gdart_prep_results (self,
+                       closure_name,
+                       trampoline->signal_info,
+		       &trampoline->signal_info_klass,
+                       return_type_info,
+		       return_type_info_klass,
+                       suppressed_args,
+                       suppressed_args_length,
+                       &dart_out_argc,
+                       gi_argc,
+                       can_throw_gerror,
+		       &set_on_error,
+ 		       &error)) {
+    g_free (closure_name);
+    return_type_info_klass->free(return_type_info);
+    goto error_out;
+  }
   if (dart_out_argc == 1) {
     Dart_Handle result_element, temp_result;
     result_element = dart_result;
-    dart_result = Dart_NewList(1);
-    temp_result = Dart_ListSetAt(dart_result, 0, result_element);
-    if (Dart_IsError(temp_result)) {
+    dart_result = Dart_NewList (1);
+    temp_result = Dart_ListSetAt (dart_result, 0, result_element);
+    if (Dart_IsError (temp_result)) {
       Dart_Handle stacktrace, dart_stacktrace_string, temp_result;
       gchar *output_string, *output_string_copy;
       gintptr output_string_length;
 
-      stacktrace = Dart_ErrorGetStacktrace(dart_result);
-      if (Dart_IsError(stacktrace)) {
+      stacktrace = Dart_ErrorGetStacktrace (dart_result);
+      if (Dart_IsError (stacktrace)) {
         dart_stacktrace_string = result;
       } else {
-        dart_stacktrace_string = Dart_ToString(stacktrace);
+        dart_stacktrace_string = Dart_ToString (stacktrace);
       }
-      if (Dart_IsError(dart_stacktrace_string)) {
+      if (Dart_IsError (dart_stacktrace_string)) {
         temp_result = dart_stacktrace_string;
       } else {
-        temp_result = Dart_StringToUTF8(dart_stacktrace_string,
-                                        (guint8**) &output_string,
-                                        &output_string_length);
+        temp_result = Dart_StringToUTF8 (dart_stacktrace_string,
+                                         (guint8 **) &output_string,
+                                         &output_string_length);
       }
-      if (Dart_IsError(temp_result)) {
+      if (Dart_IsError (temp_result)) {
         output_string_length = 0;
-        output_string_copy = g_newa(gchar, 1);
+        output_string_copy = g_newa (gchar, 1);
         output_string_copy[0] = '\0';
       } else {
-        output_string_copy = g_newa(gchar, output_string_length + 1);
-        memmove(output_string_copy, output_string, output_string_length);
+        output_string_copy = g_newa (gchar, output_string_length + 1);
+        memmove (output_string_copy, output_string, output_string_length);
         output_string_copy[output_string_length] = '\0';
       }
-      g_critical("%s: Dart threw an error from within a callback:\n%s\n%s",
-                 closure_name,
-                 Dart_GetError(dart_result),
-                 output_string_copy);
+      g_critical ("%s: Dart threw an error from within a callback:\n%s\n%s",
+                  closure_name,
+                  Dart_GetError (dart_result),
+                  output_string_copy);
     }
   } else if (dart_out_argc == 0) {
-    dart_result = Dart_NewList(0);
+    dart_result = Dart_NewList (0);
   }
-  _gdart_function_invoke_fill_callback_returns(self,
+  if (!_gdart_function_invoke_fill_callback_returns (self,
       closure_name,
       trampoline->signal_info,
+      &trampoline->signal_info_klass,
       dart_result,
       is_method,
       can_throw_gerror,
@@ -4133,85 +5414,141 @@ static void _gdart_callback_closure(ffi_cif *cif,
       c_argc,
       gi_argc,
       suppressed_args,
-      suppressed_args_length);
+      suppressed_args_length,
+      &set_on_error,
+      &error)) {
+    g_free (closure_name);
+    return_type_info_klass->free(return_type_info);
+    goto error_out;
+  }
   if (trampoline->is_one_shot) {
-    _gdart_callback_closure_free_trampoline(trampoline);
+    _gdart_callback_closure_free_trampoline (trampoline);
   }
   Dart_ExitScope();
-  set_return_ffi_arg_from_giargument(&return_type_info, result, &main_return);
-  g_free(closure_name);
+  if (!set_return_ffi_arg_from_giargument (self,
+                                           return_type_info,
+				           return_type_info_klass,
+					   result,
+					   &main_return,
+					   &set_on_error,
+					   &error)) {
+    g_free (closure_name);
+    return_type_info_klass->free(return_type_info);
+    goto error_out;
+  }
+  return_type_info_klass->free(return_type_info);
+  g_free (closure_name);
+  return;
+error_out: {
+    g_critical ("Dart threw a fatal error from within a callback in a "
+                "place where it can't be ignored: %s",
+                error->message);
+    g_assert_not_reached();
+  }
 }
 
-void gdart_callback_closure_notify(gpointer data)
+void gdart_callback_closure_notify (gpointer data)
 {
-  _gdart_callback_closure_free_trampoline((GdartCallbackTrampoline*) data);
+  _gdart_callback_closure_free_trampoline ( (GdartCallbackTrampoline *) data);
 }
 
-void gdart_callback_closure_free(gpointer data, GClosure *closure)
+void gdart_callback_closure_free (gpointer data, GClosure *closure)
 {
-  _gdart_callback_closure_free_trampoline((GdartCallbackTrampoline*) data);
+  _gdart_callback_closure_free_trampoline ( (GdartCallbackTrampoline *) data);
 }
 
-gboolean gdart_signal_connect_data(
+GISignalInfo * _g_object_info_find_signal (GIObjectInfo *info,
+			   const gchar  *name)
+{
+  gint n_signals;
+  gint i;
+
+  n_signals = g_object_info_get_n_signals (info);
+  for (i = 0; i < n_signals; i++)
+    {
+      GISignalInfo *siginfo = g_object_info_get_signal (info, i);
+
+      if (g_strcmp0 (g_base_info_get_name (siginfo), name) != 0)
+	{
+	  g_base_info_unref ((GIBaseInfo*)siginfo);
+	  continue;
+	}
+
+      return siginfo;
+    }
+  return NULL;
+}
+
+gboolean gdart_signal_connect_data (
   GdartBridgeContext *self,
-  const gchar* detailed_signal,
-  GObject* object,
-  GIObjectInfo* object_info, //heap allocated
+  const gchar *detailed_signal,
+  GObject *object,
+  GIObjectInfo *object_info, //heap allocated
   Dart_Handle callback,
   bool is_after,
   Dart_Handle *result_out,
   Dart_Handle *dart_error_out,
   GError **error)
 {
-  GdartCallbackTrampoline* trampoline;
-  gchar** substrings;
-  GICallableInfo* signal_info;
+  GdartCallbackTrampoline *trampoline;
+  gchar **substrings;
+  GICallableInfo *signal_info;
   guint64 result;
   Dart_Handle result_dart;
 
-  substrings = g_strsplit(detailed_signal, "::", -1);
+  substrings = g_strsplit (detailed_signal, "::", -1);
   {
     GIObjectInfo *current_object_info, *previous_object_info;
-    current_object_info = g_base_info_ref((GIBaseInfo*) object_info);
+    //TODO: Switch to interface
+    current_object_info = g_base_info_ref ( (GIBaseInfo *) object_info);
     while (current_object_info != NULL) {
-      signal_info = g_object_info_find_signal(current_object_info, substrings[0]);
+      //TODO: Switch to interface
+      /* printf("Searching for signal %s in %s.%s\n", 
+	     detailed_signal, 
+	     g_base_info_get_namespace((GIBaseInfo *) current_object_info),
+	     g_base_info_get_name((GIBaseInfo *) current_object_info));
+      */
+      signal_info = _g_object_info_find_signal (current_object_info, substrings[0]);
       if (signal_info != NULL) break;
       previous_object_info = current_object_info;
-      current_object_info = g_object_info_get_parent(current_object_info);
-      g_base_info_unref((GIBaseInfo*) previous_object_info);
+      current_object_info = g_object_info_get_parent (current_object_info);
+      g_base_info_unref ( (GIBaseInfo *) previous_object_info);
     }
-    if (current_object_info != NULL) g_base_info_unref((GIBaseInfo*) current_object_info);
+    if (current_object_info != NULL) g_base_info_unref ( (GIBaseInfo *) current_object_info);
   }
-  g_strfreev(substrings);
+  g_strfreev (substrings);
   if (signal_info == NULL) {
-    *dart_error_out = gdart_bridge_context_create_error_handle(self,
+    *dart_error_out = gdart_bridge_context_create_error_handle (self,
                       "%s: could not find the specified signal", G_STRFUNC);
-    g_set_error(error, GDART_ERROR, 1,
-                "%s: could not find the specified signal", G_STRFUNC);
+    g_set_error (error, GDART_ERROR, 1,
+                 "%s: could not find the specified signal", G_STRFUNC);
     return FALSE;
   }
-  trampoline = g_slice_new(GdartCallbackTrampoline);
-  trampoline->closure = g_callable_info_prepare_closure(signal_info,
+  trampoline = g_slice_new (GdartCallbackTrampoline);
+  //TODO: Switch to interface
+  trampoline->closure = g_callable_info_prepare_closure (signal_info,
                         &trampoline->cif,
                         _gdart_callback_closure,
                         trampoline);
-  trampoline->closure_dart = Dart_NewPersistentHandle(callback);
+  trampoline->closure_dart = Dart_NewPersistentHandle (callback);
   trampoline->signal_info = signal_info;
+  trampoline->signal_info_klass = gi_callable_info_callable_info;
+  trampoline->self = (GdartBridgeContext *) g_object_ref (G_OBJECT (self));
   trampoline->user_data_present = FALSE;
   trampoline->is_one_shot = FALSE;
-  trampoline->closure_name = g_strdup_printf("GLib.GObject.signals['%s']",
+  trampoline->closure_name = g_strdup_printf ("GLib.GObject.signals['%s']",
                              detailed_signal);
-  result = g_signal_connect_data(object,
-                                 detailed_signal,
-                                 G_CALLBACK(trampoline->closure),
-                                 trampoline,
-                                 gdart_callback_closure_free,
-                                 is_after ? G_CONNECT_AFTER : 0);
-  result_dart = Dart_NewIntegerFromUint64(result);
-  if (Dart_IsError(result_dart)) {
-    g_warning("%s: Dart threw an error.", trampoline->closure_name);
+  result = g_signal_connect_data (object,
+                                  detailed_signal,
+                                  G_CALLBACK (trampoline->closure),
+                                  trampoline,
+                                  gdart_callback_closure_free,
+                                  is_after ? G_CONNECT_AFTER : 0);
+  result_dart = Dart_NewIntegerFromUint64 (result);
+  if (Dart_IsError (result_dart)) {
+    g_warning ("%s: Dart threw an error.", trampoline->closure_name);
     *dart_error_out = result_dart;
-    g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
   *result_out = result_dart;

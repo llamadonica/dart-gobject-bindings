@@ -46,12 +46,6 @@ class GObjectBase {
   void setFieldOfObject(String giRepositoryName, int index, dynamic value) {
     throw new Exception('Not implemented yet!');
   }
-  // dynamic getGProperty(String giRepositoryName) {
-  //  throw new Exception('Not implemented yet!');
-  //}
-  void setGProperty(String giRepositoryName, dynamic value) {
-    throw new Exception('Not implemented yet!');
-  }
   void signalDisconnect(int signalId) native "gdart_bridge_context_object_signal_disconnect";
 }
 
