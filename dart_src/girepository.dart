@@ -304,6 +304,46 @@ class TypeTag extends GEnumBase {
   static const TypeTag UNICHAR = const TypeTag(21);
 }
 
+class ScopeType  extends GEnumBase {
+  const ScopeType(int value) : super(value);
+
+  static const ScopeType INVALID = const ScopeType(0);
+  static const ScopeType CALL = const ScopeType(1);
+  static const ScopeType ASYNC = const ScopeType(2);
+  static const ScopeType NOTIFIED = const ScopeType(3);
+
+  static const List<ScopeType> values = const <ScopeType>[INVALID, CALL, ASYNC, NOTIFIED];
+
+  String toString() {
+    switch(value) {
+      case 0: return 'ScopeType.INVALID';
+      case 1: return 'ScopeType.CALL';
+      case 2: return 'ScopeType.ASYNC';
+      case 3: return 'ScopeType.NOTIFIED';
+      default: return super.toString();
+    }
+  }
+}
+
+class Transfer  extends GEnumBase {
+  const Transfer(int value) : super(value);
+
+  static const Transfer NOTHING = const Transfer(0);
+  static const Transfer CONTAINER = const Transfer(1);
+  static const Transfer EVERYTHING = const Transfer(2);
+
+  static const List<Transfer> values = const <Transfer>[NOTHING, CONTAINER, EVERYTHING];
+
+  String toString() {
+    switch(value) {
+      case 0: return 'Transfer.NOTHING';
+      case 1: return 'Transfer.CONTAINER';
+      case 2: return 'Transfer.EVERYTHING';
+      default: return super.toString();
+    }
+  }
+}
+
 class RepositoryLoadFlags extends GEnumBase {
   const RepositoryLoadFlags(int value) : super(value);
 

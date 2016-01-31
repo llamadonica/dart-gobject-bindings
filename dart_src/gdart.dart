@@ -82,3 +82,4 @@ class GIObjectInfo extends GObjectBase {
   void setGPropertyOnReceiver(String name, dynamic receiver, dynamic value) native "gdart_bridge_context_object_info_set_g_property_on_receiver";
 }
 
+

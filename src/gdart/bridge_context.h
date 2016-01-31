@@ -66,6 +66,7 @@ Dart_Handle gdart_bridge_context_wrap_class_for_error(
   const gchar* message,
   Dart_Handle *dart_error_out,
   GError **error);
+Dart_Handle gdart_bridge_context_get_object_info_class(GdartBridgeContext *self);
 Dart_Handle gdart_bridge_context_retrieve_wrapping_class(
   GdartBridgeContext* self,
   const gchar* namespace,

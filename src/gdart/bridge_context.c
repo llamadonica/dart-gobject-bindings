@@ -414,17 +414,17 @@ static gboolean _gdart_bridge_context_ensure_encapsulation_class_created(GdartBr
   g_assert_nonnull(self);
   if (self->encapsulation_class_created) return TRUE;
   class_name = Dart_NewStringFromCString("_RawPtrImpl");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_CreateNativeWrapperClass(library, class_name, 1);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -444,17 +444,17 @@ static gboolean _gdart_bridge_context_ensure_loaded_gdart_internal_error_class(G
   g_assert_nonnull(self);
   if (self->loaded_gdart_internal_error_class) return TRUE;
   class_name = Dart_NewStringFromCString("GDartException");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_GetType(library, class_name, 0, NULL);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -474,17 +474,17 @@ static gboolean _gdart_bridge_context_ensure_loaded_unknown_object_class(GdartBr
   g_assert_nonnull(self);
   if (self->loaded_unknown_object_class) return TRUE;
   class_name = Dart_NewStringFromCString("UnknownObject");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_GetType(library, class_name, 0, NULL);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -506,17 +506,17 @@ static gboolean _gdart_bridge_context_ensure_loaded_unknown_error_class(GdartBri
   g_assert_nonnull(self);
   if (self->loaded_unknown_error_class) return TRUE;
   class_name = Dart_NewStringFromCString("GErrorBase");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_GetType(library, class_name, 0, NULL);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -538,17 +538,17 @@ static gboolean _gdart_bridge_context_ensure_loaded_base_object_class(GdartBridg
   g_assert_nonnull(self);
   if (self->loaded_base_object_class) return TRUE;
   class_name = Dart_NewStringFromCString("GObjectBase");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_GetType(library, class_name, 0, NULL);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -569,17 +569,17 @@ static gboolean _gdart_bridge_context_ensure_loaded_base_enum_class(GdartBridgeC
   g_assert_nonnull(self);
   if (self->loaded_base_enum_class) return TRUE;
   class_name = Dart_NewStringFromCString("GEnumBase");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_GetType(library, class_name, 0, NULL);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -621,17 +621,17 @@ static gboolean _gdart_bridge_context_ensure_loaded_object_info_class(GdartBridg
   g_assert_nonnull(self);
   if (self->loaded_object_info_class) return TRUE;
   class_name = Dart_NewStringFromCString("GIObjectInfo");
-  if (Dart_IsError(class_name)) {
+  if (G_UNLIKELY(Dart_IsError(class_name))) {
     *dart_error_out = class_name;
     goto out_error;
   }
   library = Dart_HandleFromWeakPersistent(self->base_library);
-  if (Dart_IsError(library)) {
+  if (G_UNLIKELY(Dart_IsError(library))) {
     *dart_error_out = library;
     goto out_error;
   }
   class = Dart_GetType(library, class_name, 0, NULL);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
@@ -664,7 +664,7 @@ Dart_Handle gdart_bridge_context_create_error_handle(
   error_message = Dart_NewStringFromUTF8((const uint8_t*) error_string,
                                          strlen(error_string));
   g_free(error_string);
-  if (Dart_IsError(error_message)) {
+  if (G_UNLIKELY(Dart_IsError(error_message))) {
     Dart_PropagateError(error_message);
   }
   result = Dart_New(Dart_HandleFromPersistent(self->gdart_internal_error_class),
@@ -672,7 +672,7 @@ Dart_Handle gdart_bridge_context_create_error_handle(
                     1,
                     &error_message);
 
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     Dart_PropagateError(result);
   }
   return result;
@@ -705,17 +705,17 @@ Dart_Handle gdart_bridge_context_wrap_pointer(GdartBridgeContext* self,
     goto rethrow;
   }
   class = Dart_HandleFromPersistent(self->raw_pointer_class);
-  if (Dart_IsError(class)) {
+  if (G_UNLIKELY(Dart_IsError(class))) {
     *dart_error_out = class;
     goto out_error;
   }
   instance = Dart_Allocate(class);
-  if (Dart_IsError(instance)) {
+  if (G_UNLIKELY(Dart_IsError(instance))) {
     *dart_error_out = instance;
     goto out_error;
   }
   result = Dart_SetNativeInstanceField(instance, 0, (intptr_t) container);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     *dart_error_out = result;
     goto out_error;
   }
@@ -746,7 +746,7 @@ void gdart_bridge_context_lookup_error_quark_from_string(
     goto error;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -758,7 +758,7 @@ void gdart_bridge_context_lookup_error_quark_from_string(
     goto error;
   } else {
     result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-    if (Dart_IsError(result)) {
+    if (G_UNLIKELY(Dart_IsError(result))) {
       dart_error_out = result;
       goto error_native;
     }
@@ -768,7 +768,7 @@ void gdart_bridge_context_lookup_error_quark_from_string(
   }
   gtype = g_quark_from_string(symbol_name_str_out);
   gtype_result = Dart_NewIntegerFromUint64((guint64) gtype);
-  if (Dart_IsError(gtype_result)) {
+  if (G_UNLIKELY(Dart_IsError(gtype_result))) {
     dart_error_out = gtype_result;
     goto error_native;
   }
@@ -803,7 +803,7 @@ void gdart_bridge_context_register_interceptor_type_for_error_quark(
     goto error;
   }
   gtype = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(gtype)) {
+  if (G_UNLIKELY(Dart_IsError(gtype))) {
     dart_error_out = gtype;
     goto error_native;
   }
@@ -813,7 +813,7 @@ void gdart_bridge_context_register_interceptor_type_for_error_quark(
     goto error;
   }
   temp_result = Dart_IntegerFitsIntoUint64(gtype, &integer_fits);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -828,7 +828,7 @@ void gdart_bridge_context_register_interceptor_type_for_error_quark(
                      "%s: the gtype parameter was not a valid gquark for this system.", G_STRFUNC);
     goto error;
   }
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -840,7 +840,7 @@ void gdart_bridge_context_register_interceptor_type_for_error_quark(
   gtype_as_gtype = (GQuark) gtype_int;
 
   dart_type = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(dart_type)) {
+  if (G_UNLIKELY(Dart_IsError(dart_type))) {
     dart_error_out = dart_type;
     goto error_native;
   }
@@ -892,7 +892,7 @@ void gdart_bridge_context_lookup_error_string_from_quark(
     goto error;
   }
   gtype = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(gtype)) {
+  if (G_UNLIKELY(Dart_IsError(gtype))) {
     dart_error_out = gtype;
     goto error_native;
   }
@@ -902,7 +902,7 @@ void gdart_bridge_context_lookup_error_string_from_quark(
     goto error;
   }
   temp_result = Dart_IntegerFitsIntoUint64(gtype, &integer_fits);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -917,7 +917,7 @@ void gdart_bridge_context_lookup_error_string_from_quark(
                      "%s: the gtype parameter was not a valid gquark for this system.", G_STRFUNC);
     goto error;
   }
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -966,7 +966,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
     goto error;
   }
   gtype = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(gtype)) {
+  if (G_UNLIKELY(Dart_IsError(gtype))) {
     dart_error_out = gtype;
     goto error_native;
   }
@@ -976,7 +976,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
     goto error;
   }
   temp_result = Dart_IntegerFitsIntoUint64(gtype, &integer_fits);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -986,7 +986,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
     goto error;
   }
   temp_result = Dart_IntegerToUint64(gtype, &gtype_int);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -997,7 +997,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
   }
   gtype_as_gtype = (GType) gtype_int;
   namespace = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(namespace)) {
+  if (G_UNLIKELY(Dart_IsError(namespace))) {
     dart_error_out = namespace;
     goto error_native;
   }
@@ -1007,7 +1007,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
     goto error;
   }
   temp_result = Dart_StringToUTF8(namespace, (uint8_t **) &namespace_str, &namespace_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1030,7 +1030,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
   namespace_str_const = g_typelib_get_namespace(typelib);
 
   symbol_name = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -1040,7 +1040,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1053,7 +1053,7 @@ void gdart_bridge_context_register_interceptor_type_for_gtype(Dart_NativeArgumen
                                          symbol_name_str_out);
 
   dart_type = Dart_GetNativeArgument(arguments, 3);
-  if (Dart_IsError(dart_type)) {
+  if (G_UNLIKELY(Dart_IsError(dart_type))) {
     dart_error_out = dart_type;
     goto error_native;
   }
@@ -1118,7 +1118,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   gtype = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(gtype)) {
+  if (G_UNLIKELY(Dart_IsError(gtype))) {
     dart_error_out = gtype;
     goto error_native;
   }
@@ -1128,7 +1128,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_IntegerFitsIntoUint64(gtype, &integer_fits);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1138,7 +1138,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_IntegerToUint64(gtype, &gtype_int);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1149,7 +1149,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
   }
   gtype_as_gtype = (GType) gtype_int;
   namespace = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(namespace)) {
+  if (G_UNLIKELY(Dart_IsError(namespace))) {
     dart_error_out = namespace;
     goto error_native;
   }
@@ -1159,14 +1159,14 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_StringToUTF8(namespace, (uint8_t **) &namespace_str, &namespace_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
 
 
   symbol_name = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -1176,7 +1176,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1187,7 +1187,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
 
 
   function_name = Dart_GetNativeArgument(arguments, 3);
-  if (Dart_IsError(function_name)) {
+  if (G_UNLIKELY(Dart_IsError(function_name))) {
     dart_error_out = function_name;
     goto error_native;
   }
@@ -1197,7 +1197,7 @@ void gdart_bridge_context_register_copy_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_StringToUTF8(function_name, (uint8_t **) &function_name_str, &function_name_str_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1291,7 +1291,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   gtype = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(gtype)) {
+  if (G_UNLIKELY(Dart_IsError(gtype))) {
     dart_error_out = gtype;
     goto error_native;
   }
@@ -1301,7 +1301,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_IntegerFitsIntoUint64(gtype, &integer_fits);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1311,7 +1311,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_IntegerToUint64(gtype, &gtype_int);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1322,7 +1322,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
   }
   gtype_as_gtype = (GType) gtype_int;
   namespace = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(namespace)) {
+  if (G_UNLIKELY(Dart_IsError(namespace))) {
     dart_error_out = namespace;
     goto error_native;
   }
@@ -1332,13 +1332,13 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_StringToUTF8(namespace, (uint8_t **) &namespace_str, &namespace_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
 
   symbol_name = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -1348,7 +1348,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1358,7 +1358,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
 
 
   function_name = Dart_GetNativeArgument(arguments, 3);
-  if (Dart_IsError(function_name)) {
+  if (G_UNLIKELY(Dart_IsError(function_name))) {
     dart_error_out = function_name;
     goto error_native;
   }
@@ -1368,7 +1368,7 @@ void gdart_bridge_context_register_free_func_for_gtype(Dart_NativeArguments argu
     goto error;
   }
   temp_result = Dart_StringToUTF8(function_name, (uint8_t **) &function_name_str, &function_name_str_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -1450,7 +1450,7 @@ void gdart_bridge_context_lookup_gtype_from_named_type(
     goto error;
   }
   namespace = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(namespace)) {
+  if (G_UNLIKELY(Dart_IsError(namespace))) {
     dart_error_out = namespace;
     goto error_native;
   }
@@ -1460,7 +1460,7 @@ void gdart_bridge_context_lookup_gtype_from_named_type(
     goto error;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -1470,12 +1470,12 @@ void gdart_bridge_context_lookup_gtype_from_named_type(
     goto error;
   }
   result = Dart_StringToUTF8(namespace, (uint8_t **) &namespace_str, &namespace_length);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     dart_error_out = result;
     goto error_native;
   }
   result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     dart_error_out = result;
     goto error_native;
   }
@@ -1510,7 +1510,7 @@ void gdart_bridge_context_lookup_gtype_from_named_type(
   }
   gtype = g_registered_type_info_get_g_type((GIRegisteredTypeInfo*) result_base_info);
   gtype_result = Dart_NewIntegerFromUint64((guint64) gtype);
-  if (Dart_IsError(gtype_result)) {
+  if (G_UNLIKELY(Dart_IsError(gtype_result))) {
     dart_error_out = gtype_result;
     goto error_native;
   }
@@ -1530,7 +1530,7 @@ void gdart_bridge_context_lookup_gtype_for_slist(
   Dart_EnterScope();
   Dart_Handle dart_error_out, gtype_result;
   gtype_result = Dart_NewIntegerFromUint64((guint64) G_DART_COMPAT_SLIST_TYPE);
-  if (Dart_IsError(gtype_result)) {
+  if (G_UNLIKELY(Dart_IsError(gtype_result))) {
     dart_error_out = gtype_result;
     goto error_native;
   }
@@ -1547,7 +1547,7 @@ void gdart_bridge_context_lookup_gtype_for_list(
   Dart_EnterScope();
   Dart_Handle dart_error_out, gtype_result;
   gtype_result = Dart_NewIntegerFromUint64((guint64) G_DART_COMPAT_LIST_TYPE);
-  if (Dart_IsError(gtype_result)) {
+  if (G_UNLIKELY(Dart_IsError(gtype_result))) {
     dart_error_out = gtype_result;
     goto error_native;
   }
@@ -1745,7 +1745,7 @@ Dart_Handle gdart_bridge_context_wrap_class_for_error(
     type_handle = Dart_HandleFromPersistent(self->gdart_unknown_error_class);
     name_handle = Dart_NewStringFromCString("fromFields");
     constructor_parameters[0] = Dart_NewInteger(error_domain);
-    if (Dart_IsError(constructor_parameters[0])) {
+    if (G_UNLIKELY(Dart_IsError(constructor_parameters[0]))) {
       *dart_error_out = constructor_parameters[0];
       g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
       return NULL;
@@ -1774,20 +1774,20 @@ Dart_Handle gdart_bridge_context_wrap_class_for_error(
     return NULL;
   }
   int_handle = Dart_NewInteger(code);
-  if (Dart_IsError(int_handle)) {
+  if (G_UNLIKELY(Dart_IsError(int_handle))) {
     *dart_error_out = int_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   constructor_parameters[1] = Dart_New(enum_class, Dart_Null(), 1, &int_handle);
-  if (Dart_IsError(constructor_parameters[1])) {
+  if (G_UNLIKELY(Dart_IsError(constructor_parameters[1]))) {
     *dart_error_out = constructor_parameters[1];
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   message_length = g_utf8_strlen(message, -1);
   constructor_parameters[2] = Dart_NewStringFromUTF8((const guint8*) message, message_length);
-  if (Dart_IsError(constructor_parameters[2])) {
+  if (G_UNLIKELY(Dart_IsError(constructor_parameters[2]))) {
     *dart_error_out = constructor_parameters[2];
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -1797,7 +1797,7 @@ Dart_Handle gdart_bridge_context_wrap_class_for_error(
   } else {
     final_result = Dart_New(type_handle, name_handle, 2, &constructor_parameters[1]);
   }
-  if (Dart_IsError(final_result)) {
+  if (G_UNLIKELY(Dart_IsError(final_result))) {
     *dart_error_out = final_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -1829,31 +1829,31 @@ Dart_Handle gdart_bridge_context_wrap_internal_pointer(GdartBridgeContext* self,
   if (dart_type == NULL) {
     return NULL;
   }
-  if (Dart_IsError(dart_type)) {
+  if (G_UNLIKELY(Dart_IsError(dart_type))) {
     *dart_error_out = dart_type;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   name_handle = Dart_NewStringFromCString("fromNative");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   result = Dart_New(dart_type, name_handle, 0, NULL);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     *dart_error_out = result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   name_handle = Dart_NewStringFromCString("_internal");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   temp_result = Dart_SetField(result, name_handle, internal_container);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -1893,20 +1893,20 @@ Dart_Handle _gdart_bridge_context_wrap_object(GdartBridgeContext* self,
     type_handle = (Dart_PersistentHandle) type_handle_as_pointer;
   }
   name_handle = Dart_NewStringFromCString("fromNative");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   dart_type = Dart_HandleFromPersistent(type_handle);
   Dart_DeletePersistentHandle(dart_type);
-  if (Dart_IsError(dart_type)) {
+  if (G_UNLIKELY(Dart_IsError(dart_type))) {
     *dart_error_out = dart_type;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   result = Dart_New(dart_type, name_handle, 0, NULL);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     *dart_error_out = result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -1924,13 +1924,13 @@ Dart_Handle _gdart_bridge_context_wrap_object(GdartBridgeContext* self,
     return NULL;
   }
   name_handle = Dart_NewStringFromCString("_internal");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   temp_result = Dart_SetField(result, name_handle, internal_container);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -1969,20 +1969,20 @@ Dart_Handle _gdart_bridge_context_wrap_object_info(GdartBridgeContext* self,
   type_handle = self->gdart_object_info_class;
 
   name_handle = Dart_NewStringFromCString("fromNative");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   dart_type = Dart_HandleFromPersistent(type_handle);
 
-  if (Dart_IsError(dart_type)) {
+  if (G_UNLIKELY(Dart_IsError(dart_type))) {
     *dart_error_out = dart_type;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   result = Dart_New(dart_type, name_handle, 0, NULL);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     *dart_error_out = result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -1998,13 +1998,13 @@ Dart_Handle _gdart_bridge_context_wrap_object_info(GdartBridgeContext* self,
     return NULL;
   }
   name_handle = Dart_NewStringFromCString("_internal");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   temp_result = Dart_SetField(result, name_handle, internal_container);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -2023,19 +2023,19 @@ GIRegisteredTypeInfo* gdart_bridge_context_unwrap_object_info(GdartBridgeContext
   GdartBridgeContextWrappedObjectInfo* object_info;
 
   name_handle = Dart_NewStringFromCString("_internal");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   inner_container = Dart_GetField(wrapped, name_handle);
-  if (Dart_IsError(inner_container)) {
+  if (G_UNLIKELY(Dart_IsError(inner_container))) {
     *dart_error_out = inner_container;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   temp_result = Dart_GetNativeInstanceField(inner_container, 0, (intptr_t*) &raw_pointer);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -2056,19 +2056,19 @@ GdartBridgeContextWrappedObject* gdart_bridge_context_unwrap_object(
   GdartBridgeContextWrappedObject* object_info;
 
   name_handle = Dart_NewStringFromCString("_internal");
-  if (Dart_IsError(name_handle)) {
+  if (G_UNLIKELY(Dart_IsError(name_handle))) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   inner_container = Dart_GetField(wrapped, name_handle);
-  if (Dart_IsError(inner_container)) {
+  if (G_UNLIKELY(Dart_IsError(inner_container))) {
     *dart_error_out = inner_container;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
   }
   temp_result = Dart_GetNativeInstanceField(inner_container, 0, (intptr_t*) &raw_pointer);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return NULL;
@@ -2096,7 +2096,7 @@ void gdart_bridge_context_lookup_object_info(
     goto error;
   }
   namespace = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(namespace)) {
+  if (G_UNLIKELY(Dart_IsError(namespace))) {
     dart_error_out = namespace;
     goto error_native;
   }
@@ -2106,7 +2106,7 @@ void gdart_bridge_context_lookup_object_info(
     goto error;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -2116,12 +2116,12 @@ void gdart_bridge_context_lookup_object_info(
     goto error;
   }
   result = Dart_StringToUTF8(namespace, (uint8_t **) &namespace_str, &namespace_length);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     dart_error_out = result;
     goto error_native;
   }
   result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(result)) {
+  if (G_UNLIKELY(Dart_IsError(result))) {
     dart_error_out = result;
     goto error_native;
   }
@@ -2204,7 +2204,7 @@ static gboolean _gdart_bridge_context_invoke_static(GdartBridgeContext *self,
     }
   }
   temp_result = Dart_ListLength(dart_args, &dart_args_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -2267,7 +2267,7 @@ static gboolean _gdart_bridge_context_invoke_method(GdartBridgeContext *self,
     }
   }
   temp_result = Dart_ListLength(dart_args, &dart_args_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     *dart_error_out = temp_result;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -2297,6 +2297,11 @@ static gboolean _gdart_bridge_context_invoke_method(GdartBridgeContext *self,
   return TRUE;
 }
 
+Dart_Handle gdart_bridge_context_get_object_info_class(GdartBridgeContext *self)
+{
+  return Dart_HandleFromPersistent(self->gdart_object_info_class);
+}
+
 void gdart_bridge_context_object_info_call_static(
   Dart_NativeArguments arguments)
 {
@@ -2322,7 +2327,7 @@ void gdart_bridge_context_object_info_call_static(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -2331,18 +2336,18 @@ void gdart_bridge_context_object_info_call_static(
     g_clear_error(&inner_error);
     goto error;
   }
-  expected_type = Dart_HandleFromPersistent(self->gdart_object_info_class);
-  if (Dart_IsError(expected_type)) {
+  expected_type = gdart_bridge_context_get_object_info_class(self);
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -2352,7 +2357,7 @@ void gdart_bridge_context_object_info_call_static(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -2395,7 +2400,7 @@ void gdart_bridge_context_object_info_call_static(
     goto error;
   }
   args_list = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(args_list)) {
+  if (G_UNLIKELY(Dart_IsError(args_list))) {
     g_base_info_unref((GIBaseInfo*) function_info);
     dart_error_out = args_list;
     goto error_native;
@@ -2460,7 +2465,7 @@ void gdart_bridge_context_object_info_call_method_on_receiver(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -2469,18 +2474,18 @@ void gdart_bridge_context_object_info_call_method_on_receiver(
     g_clear_error(&inner_error);
     goto error;
   }
-  expected_type = Dart_HandleFromPersistent(self->gdart_object_info_class);
-  if (Dart_IsError(expected_type)) {
+  expected_type = gdart_bridge_context_get_object_info_class(self);
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -2490,7 +2495,7 @@ void gdart_bridge_context_object_info_call_method_on_receiver(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -2500,7 +2505,7 @@ void gdart_bridge_context_object_info_call_method_on_receiver(
 
 
   this_argument = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(this_argument)) {
+  if (G_UNLIKELY(Dart_IsError(this_argument))) {
     dart_error_out = this_argument;
     goto error_native;
   }
@@ -2544,7 +2549,7 @@ void gdart_bridge_context_object_info_call_method_on_receiver(
     goto error;
   }
   args_list = Dart_GetNativeArgument(arguments, 3);
-  if (Dart_IsError(args_list)) {
+  if (G_UNLIKELY(Dart_IsError(args_list))) {
     g_base_info_unref((GIBaseInfo*) function_info);
     dart_error_out = args_list;
     goto error_native;
@@ -2610,7 +2615,7 @@ void gdart_bridge_context_object_info_get_g_property_on_receiver(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -2619,18 +2624,18 @@ void gdart_bridge_context_object_info_get_g_property_on_receiver(
     g_clear_error(&inner_error);
     goto error;
   }
-  expected_type = Dart_HandleFromPersistent(self->gdart_object_info_class);
-  if (Dart_IsError(expected_type)) {
+  expected_type = gdart_bridge_context_get_object_info_class(self);
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -2640,7 +2645,7 @@ void gdart_bridge_context_object_info_get_g_property_on_receiver(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -2650,7 +2655,7 @@ void gdart_bridge_context_object_info_get_g_property_on_receiver(
 
 
   this_argument = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(this_argument)) {
+  if (G_UNLIKELY(Dart_IsError(this_argument))) {
     dart_error_out = this_argument;
     goto error_native;
   }
@@ -2719,7 +2724,7 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -2728,18 +2733,18 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
     g_clear_error(&inner_error);
     goto error;
   }
-  expected_type = Dart_HandleFromPersistent(self->gdart_object_info_class);
-  if (Dart_IsError(expected_type)) {
+  expected_type = gdart_bridge_context_get_object_info_class(self);
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -2749,7 +2754,7 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -2759,7 +2764,7 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
 
 
   this_argument = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(this_argument)) {
+  if (G_UNLIKELY(Dart_IsError(this_argument))) {
     dart_error_out = this_argument;
     goto error_native;
   }
@@ -2783,7 +2788,7 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
                                  symbol_name_str_out);
 
   value_argument = Dart_GetNativeArgument(arguments, 3);
-  if (Dart_IsError(value_argument)) {
+  if (G_UNLIKELY(Dart_IsError(value_argument))) {
     dart_error_out = value_argument;
     goto error_native;
   }
@@ -2838,7 +2843,7 @@ void gdart_bridge_context_object_call_method(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -2848,17 +2853,17 @@ void gdart_bridge_context_object_call_method(
     goto error;
   }
   expected_type = Dart_HandleFromPersistent(self->gdart_base_object_class);
-  if (Dart_IsError(expected_type)) {
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -2868,7 +2873,7 @@ void gdart_bridge_context_object_call_method(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -2955,7 +2960,7 @@ void gdart_bridge_context_object_call_method(
     goto error;
   }
   args_list = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(args_list)) {
+  if (G_UNLIKELY(Dart_IsError(args_list))) {
     g_base_info_unref((GIBaseInfo*) function_info);
     dart_error_out = args_list;
     g_free(error_handling_name);
@@ -3018,7 +3023,7 @@ void gdart_bridge_context_object_signal_connect(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -3028,17 +3033,17 @@ void gdart_bridge_context_object_signal_connect(
     goto error;
   }
   expected_type = Dart_HandleFromPersistent(self->gdart_base_object_class);
-  if (Dart_IsError(expected_type)) {
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -3048,7 +3053,7 @@ void gdart_bridge_context_object_signal_connect(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -3068,7 +3073,7 @@ void gdart_bridge_context_object_signal_connect(
     goto error;
   }
   callback = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(callback)) {
+  if (G_UNLIKELY(Dart_IsError(callback))) {
     dart_error_out = callback;
     goto error_native;
   }
@@ -3078,12 +3083,12 @@ void gdart_bridge_context_object_signal_connect(
     goto error;
   }
   after = Dart_GetNativeArgument(arguments, 3);
-  if (Dart_IsError(after)) {
+  if (G_UNLIKELY(Dart_IsError(after))) {
     dart_error_out = after;
     goto error_native;
   }
   temp_result = Dart_BooleanValue(after, &after_bool);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -3132,7 +3137,7 @@ void gdart_bridge_context_object_signal_disconnect(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -3142,17 +3147,17 @@ void gdart_bridge_context_object_signal_disconnect(
     goto error;
   }
   expected_type = Dart_HandleFromPersistent(self->gdart_base_object_class);
-  if (Dart_IsError(expected_type)) {
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   connection_id = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(connection_id)) {
+  if (G_UNLIKELY(Dart_IsError(connection_id))) {
     dart_error_out = connection_id;
     goto error_native;
   }
@@ -3162,7 +3167,7 @@ void gdart_bridge_context_object_signal_disconnect(
     goto error;
   }
   temp_result = Dart_IntegerToInt64(connection_id, &connection_id_int);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -3201,7 +3206,7 @@ void gdart_bridge_context_object_get_string_representation(
     goto error;
   }
   receiver = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(receiver)) {
+  if (G_UNLIKELY(Dart_IsError(receiver))) {
     dart_error_out = receiver;
     goto error_native;
   }
@@ -3210,13 +3215,13 @@ void gdart_bridge_context_object_get_string_representation(
     g_clear_error(&inner_error);
     goto error;
   }
-  expected_type = Dart_HandleFromPersistent(self->gdart_object_info_class);
-  if (Dart_IsError(expected_type)) {
+  expected_type = gdart_bridge_context_get_object_info_class(self);
+  if (G_UNLIKELY(Dart_IsError(expected_type))) {
     dart_error_out = expected_type;
     goto error_native;
   }
   temp_result = Dart_ObjectIsType(receiver, expected_type, &is_of_type);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -3278,7 +3283,7 @@ void gdart_bridge_context_call_static_global(
     goto error;
   }
   namespace = Dart_GetNativeArgument(arguments, 0);
-  if (Dart_IsError(namespace)) {
+  if (G_UNLIKELY(Dart_IsError(namespace))) {
     dart_error_out = namespace;
     goto error_native;
   }
@@ -3288,12 +3293,12 @@ void gdart_bridge_context_call_static_global(
     goto error;
   }
   temp_result = Dart_StringToUTF8(namespace, (uint8_t **) &namespace_str, &namespace_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
   symbol_name = Dart_GetNativeArgument(arguments, 1);
-  if (Dart_IsError(symbol_name)) {
+  if (G_UNLIKELY(Dart_IsError(symbol_name))) {
     dart_error_out = symbol_name;
     goto error_native;
   }
@@ -3303,7 +3308,7 @@ void gdart_bridge_context_call_static_global(
     goto error;
   }
   temp_result = Dart_StringToUTF8(symbol_name, (uint8_t **) &symbol_name_str, &symbol_name_length);
-  if (Dart_IsError(temp_result)) {
+  if (G_UNLIKELY(Dart_IsError(temp_result))) {
     dart_error_out = temp_result;
     goto error_native;
   }
@@ -3351,7 +3356,7 @@ void gdart_bridge_context_call_static_global(
     goto error;
   }
   args_list = Dart_GetNativeArgument(arguments, 2);
-  if (Dart_IsError(args_list)) {
+  if (G_UNLIKELY(Dart_IsError(args_list))) {
     g_base_info_unref(function_info);
     g_free(error_prefix);
     dart_error_out = args_list;

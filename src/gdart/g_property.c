@@ -27,7 +27,7 @@ static gboolean _gdart_g_property_fill_boolean (
   bool result;
   Dart_Handle temp_result;
   temp_result = Dart_BooleanValue (dart_value, &result);
-  if (Dart_IsError (temp_result)) {
+  if (G_UNLIKELY(Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -141,7 +141,7 @@ static gboolean _gdart_g_property_fill_int (
   } else {
     temp_result = Dart_IntegerToInt64 (dart_value, &raw_result);
   }
-  if (Dart_IsError (temp_result)) {
+  if (G_UNLIKELY(Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -169,7 +169,7 @@ static gboolean _gdart_g_property_fill_num (
   Dart_Handle temp_result;
 
   temp_result = Dart_DoubleValue (dart_value, &result_out);
-  if (Dart_IsError (temp_result)) {
+  if (G_UNLIKELY(Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -214,7 +214,7 @@ static gboolean _gdart_g_property_fill_string (
   temp_result = Dart_StringToUTF8 (dart_value,
                                    (guint8 **) &result_untrimmed,
                                    &result_length);
-  if (Dart_IsError (temp_result)) {
+  if (G_UNLIKELY(Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -320,13 +320,13 @@ static gboolean _gdart_g_property_fill_enum (
 
   storage_type = g_enum_info_get_storage_type (enum_info);
   name_handle = Dart_NewStringFromCString ("value");
-  if (Dart_IsError (name_handle)) {
+  if (G_UNLIKELY(Dart_IsError (name_handle))) {
     *dart_error_out = name_handle;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
   inner_container = Dart_GetField (dart_value, name_handle);
-  if (Dart_IsError (inner_container)) {
+  if (G_UNLIKELY(Dart_IsError (inner_container))) {
     *dart_error_out = inner_container;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -336,7 +336,7 @@ static gboolean _gdart_g_property_fill_enum (
   } else {
     temp_result = Dart_IntegerToInt64 (dart_value, &raw_result);
   }
-  if (Dart_IsError (temp_result)) {
+  if (G_UNLIKELY(Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -447,7 +447,7 @@ static gboolean _gdart_g_property_fill_array (
     list_length = 0;
   } else {
     temp_result = Dart_ListLength (dart_value, &list_length);
-    if (Dart_IsError (temp_result)) {
+    if (G_UNLIKELY(Dart_IsError (temp_result))) {
       *dart_error_out = temp_result;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
@@ -844,19 +844,19 @@ gboolean gdart_g_property_set_property (GdartBridgeContext *self,
     object = NULL;
   } else {
     name_handle = Dart_NewStringFromCString ("_internal");
-    if (Dart_IsError (name_handle)) {
+    if (G_UNLIKELY(Dart_IsError (name_handle))) {
       *dart_error_out = name_handle;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
     }
     inner_container = Dart_GetField (dart_receiver, name_handle);
-    if (Dart_IsError (inner_container)) {
+    if (G_UNLIKELY(Dart_IsError (inner_container))) {
       *dart_error_out = inner_container;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
     }
     temp_result = Dart_GetNativeInstanceField (inner_container, 0, (intptr_t *) &raw_pointer);
-    if (Dart_IsError (temp_result)) {
+    if (G_UNLIKELY(Dart_IsError (temp_result))) {
       *dart_error_out = temp_result;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
@@ -1231,7 +1231,7 @@ Dart_Handle _gdart_g_property_take_enum (
               error);
   if (wrapper == NULL) return NULL;
   result = Dart_New (wrapper, Dart_Null(), 1, &dart_value);
-  if (Dart_IsError (result)) {
+  if (G_UNLIKELY(Dart_IsError (result))) {
     g_warning ("%s: dart threw an error", name_prefix);
     *dart_error_out = result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
@@ -1486,19 +1486,19 @@ gboolean gdart_g_property_get_property (GdartBridgeContext *self,
     object = NULL;
   } else {
     name_handle = Dart_NewStringFromCString ("_internal");
-    if (Dart_IsError (name_handle)) {
+    if (G_UNLIKELY(Dart_IsError (name_handle))) {
       *dart_error_out = name_handle;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
     }
     inner_container = Dart_GetField (dart_receiver, name_handle);
-    if (Dart_IsError (inner_container)) {
+    if (G_UNLIKELY(Dart_IsError (inner_container))) {
       *dart_error_out = inner_container;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
     }
     temp_result = Dart_GetNativeInstanceField (inner_container, 0, (intptr_t *) &raw_pointer);
-    if (Dart_IsError (temp_result)) {
+    if (G_UNLIKELY(Dart_IsError (temp_result))) {
       *dart_error_out = temp_result;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       return FALSE;
