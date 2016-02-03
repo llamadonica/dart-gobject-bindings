@@ -9,14 +9,17 @@
 
 #include "../include/dart_api.h"
 #include "../include/dart_native_api.h"
+#include "introspection_interface.h"
 #include "bridge_context.h"
 
 gboolean gdart_marshaller_check_argument_in(GdartBridgeContext *self,
-    GIFunctionInfo *function,
+    gpointer function,
+    const CallableInfoKlass* function_klass,
     Dart_Handle dart_args,
     gint garg_i,
     gint *dartarg_i,
-    GITypeInfo *arg_type,
+    gpointer arg_type,
+    const TypeInfoKlass *arg_type_klass,
     gint* suppressed_args,
     gint suppressed_args_length,
     gintptr dart_args_length,
@@ -24,7 +27,8 @@ gboolean gdart_marshaller_check_argument_in(GdartBridgeContext *self,
     GError **error);
 
 gboolean gdart_marshaller_check_arguments(GdartBridgeContext *self,
-    GIFunctionInfo *function,
+    gpointer function,
+    const CallableInfoKlass* function_klass,
     Dart_Handle dart_args,
     gint garg_length,
     gintptr dart_args_length,

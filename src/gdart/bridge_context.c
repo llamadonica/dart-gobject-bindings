@@ -2331,9 +2331,16 @@ static gboolean _gdart_bridge_context_invoke_static(GdartBridgeContext *self,
     return FALSE;
   }
 
-  if (!gdart_marshaller_check_arguments(self, function, dart_args,
-                                        garg_length, dart_args_length, &suppressed_args,
-                                        &suppressed_args_length, dart_error_out, error)) {
+  if (!gdart_marshaller_check_arguments(self, 
+                                        function, 
+					&gi_callable_info_callable_info, 
+                                        dart_args,
+                                        garg_length, 
+					dart_args_length, 
+					&suppressed_args,
+                                        &suppressed_args_length, 
+					dart_error_out, 
+					error)) {
     return FALSE;
   }
   if (!gdart_function_invoke(self,
@@ -2394,9 +2401,16 @@ static gboolean _gdart_bridge_context_invoke_method(GdartBridgeContext *self,
     return FALSE;
   }
 
-  if (!gdart_marshaller_check_arguments(self, function, dart_args,
-                                        garg_length, dart_args_length, &suppressed_args,
-                                        &suppressed_args_length, dart_error_out, error)) {
+  if (!gdart_marshaller_check_arguments(self, 
+                                        function,
+					&gi_callable_info_callable_info,
+                                        dart_args,
+                                        garg_length,
+					dart_args_length, 
+					&suppressed_args,
+                                        &suppressed_args_length, 
+					dart_error_out, 
+					error)) {
     return FALSE;
   }
   if (!gdart_function_invoke(self,
