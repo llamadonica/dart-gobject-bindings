@@ -551,15 +551,18 @@ static gboolean _gdart_function_argument_fill_wrapped_pointer (
     case GI_INFO_TYPE_OBJECT: {
       const ObjectInfoKlass *klass;
       GIObjectInfoRefFunction refer;
+      GdartFunctionReference *refer_reference;
 
       klass = type_info_klass->cast_to_object_info (type_info);
       if (!klass->get_ref_function_pointer (type_info,
                                             self,
                                             &refer,
+					    &refer_reference,
                                             dart_error_out,
                                             error)) {
         return FALSE;
       }
+      gdart_function_reference_unref(refer_reference);
       object = refer (object);
       break;
     }
@@ -1616,12 +1619,15 @@ gboolean gdart_function_prep_invoke (GdartBridgeContext *self,
                                      const CallableInfoKlass *function_info_klass,
                                      GType type,
                                      GIFunctionInvoker *invoker,
+                                     gpointer *user_data_out,
+				     GIFunctionInvokerDestroyFunc 
+				      *invoker_destroy_func,
                                      Dart_Handle *dart_error_out,
                                      GError **error)
 {
   GIInfoType info_type;
-  GError *inner_error = NULL;
   gpointer addr;
+  
   if (G_UNLIKELY (!function_info_klass->get_type (function_info,
                   self,
                   &info_type,
@@ -1635,32 +1641,41 @@ gboolean gdart_function_prep_invoke (GdartBridgeContext *self,
     if (!klass->prep_invoker (function_info,
                               self,
                               invoker,
+			      user_data_out,
+			      invoker_destroy_func,
                               dart_error_out,
                               error)) {
       return FALSE;
     }
   } else if (info_type == GI_INFO_TYPE_VFUNC) {
     const VFuncInfoKlass *klass;
+    gpointer address_peer;
+    AddressPeerDestroyFunc address_peer_notify;
 
     klass = function_info_klass->cast_to_v_func_info (function_info);
     if (!klass->get_address (function_info,
                              self,
                              type,
                              &addr,
+			     &address_peer,
+			     &address_peer_notify,
                              dart_error_out,
                              error)) {
+      *user_data_out = NULL;
       return FALSE;
     }
-    //TODO: rewrite this using generics.
-    if (!g_function_invoker_new_for_address (addr,
-        function_info,
-        invoker,
-        &inner_error)) {
-      *dart_error_out = gdart_bridge_context_create_error_handle (
-                          self,
-                          "%s",
-                          inner_error->message);
-      g_propagate_error (error, inner_error);
+    if (!klass->new_invoker_for_address (function_info,
+                                         self,
+					 addr,
+					 address_peer,
+					 address_peer_notify,
+					 invoker,
+					 user_data_out,
+					 invoker_destroy_func,
+					 dart_error_out,
+					 error)) {
+      if (address_peer_notify != NULL)
+        address_peer_notify(address_peer);
       return FALSE;
     }
   }
@@ -3163,6 +3178,8 @@ static gboolean _gdart_function_result_load_wrapped_pointer (
   }
 
   object_wrapper = g_slice_new (GdartBridgeContextWrappedObject);
+  object_wrapper->copy_func_ref = NULL;
+  object_wrapper->free_func_ref = NULL;
   if (G_UNLIKELY (!registered_type_info_klass->get_gtype (registered_type_info,
                   self,
                   &gtype,
@@ -3211,18 +3228,28 @@ static gboolean _gdart_function_result_load_wrapped_pointer (
       g_free (namespace_);
       return FALSE;
     }
-    object_wrapper->copy_func = (GBoxedCopyFunc)
+    object_wrapper->copy_func_ref = 
                                 gdart_bridge_context_retrieve_copy_func (self,
                                     namespace_,
                                     registered_type_info,
                                     registered_type_info_klass,
                                     gtype);
-    object_wrapper->free_func = (GBoxedFreeFunc)
+    object_wrapper->free_func_ref = 
                                 gdart_bridge_context_retrieve_free_func (self,
                                     namespace_,
                                     registered_type_info,
                                     registered_type_info_klass,
                                     gtype);
+  if (object_wrapper->copy_func_ref != NULL) {
+    object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
+  } else {
+    object_wrapper->copy_func = NULL;
+  }
+  if (object_wrapper->free_func_ref != NULL) {
+    object_wrapper->free_func = object_wrapper->free_func_ref->function_pointer;
+  } else {
+    object_wrapper->free_func = NULL;
+  }
     if (must_copy) {
       if (object_wrapper->copy_func == NULL) {
         g_warning ("%s: The GI type of an object to be bound was an [unowned %s."
@@ -3280,11 +3307,14 @@ static gboolean _gdart_function_result_load_wrapped_pointer (
   case GI_INFO_TYPE_INTERFACE:
     if (must_copy && !is_main) {
       GIObjectInfoRefFunction refer;
+      GdartFunctionReference *refer_reference;
+      
       if (!registered_type_info_klass->
           cast_to_object_info (registered_type_info)->
           get_ref_function_pointer (registered_type_info,
                                     self,
                                     &refer,
+				    &refer_reference,
                                     dart_error_out,
                                     error)) {
         g_free (namespace_);
@@ -3295,13 +3325,17 @@ static gboolean _gdart_function_result_load_wrapped_pointer (
       } else {
         raw_result = g_object_ref (raw_result);
       }
+      gdart_function_reference_unref(refer_reference);
     } else if (must_copy) {
       GIObjectInfoRefFunction refer;
+      GdartFunctionReference *refer_reference;
+      
       if (!registered_type_info_klass->
           cast_to_object_info (registered_type_info)->
           get_ref_function_pointer (registered_type_info,
                                     self,
                                     &refer,
+				    &refer_reference,
                                     dart_error_out,
                                     error)) {
         g_free (namespace_);
@@ -3313,6 +3347,7 @@ static gboolean _gdart_function_result_load_wrapped_pointer (
         raw_result = g_object_ref_sink (raw_result);
         //if this is the main result, assume we are given a floating reference.
       }
+      gdart_function_reference_unref(refer_reference);
     }
     object_wrapper->object = raw_result;
     internal_container = gdart_bridge_context_wrap_pointer (self,
@@ -3424,6 +3459,8 @@ static gboolean _gdart_function_result_load_wrapped_pointer_with_g_type (
   }
 
   object_wrapper = g_slice_new (GdartBridgeContextWrappedObject);
+  object_wrapper->copy_func_ref = NULL;
+  object_wrapper->free_func_ref = NULL;
   if (registered_type_info != NULL) {
     object_wrapper->object_info = registered_type_info_klass->copy (registered_type_info);
     object_wrapper->object_info_klass = *registered_type_info_klass;
@@ -3442,19 +3479,28 @@ static gboolean _gdart_function_result_load_wrapped_pointer_with_g_type (
   } else {
     namespace_ = g_strdup ("Base");
   }
-
-  object_wrapper->copy_func = (GBoxedCopyFunc)
-                              gdart_bridge_context_retrieve_copy_func (self,
-                                  namespace_,
-                                  registered_type_info,
-                                  registered_type_info_klass,
-                                  gtype);
-  object_wrapper->free_func = (GBoxedFreeFunc)
-                              gdart_bridge_context_retrieve_free_func (self,
-                                  namespace_,
-                                  registered_type_info,
-                                  registered_type_info_klass,
-                                  gtype);
+  object_wrapper->copy_func_ref = 
+  gdart_bridge_context_retrieve_copy_func (self,
+					   namespace_,
+					   registered_type_info,
+					   registered_type_info_klass,
+					   gtype);
+  object_wrapper->free_func_ref = 
+  gdart_bridge_context_retrieve_free_func (self,
+					   namespace_,
+					   registered_type_info,
+					   registered_type_info_klass,
+					   gtype);
+  if (object_wrapper->copy_func_ref != NULL) {
+    object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
+  } else {
+    object_wrapper->copy_func = NULL;
+  }
+  if (object_wrapper->free_func_ref != NULL) {
+    object_wrapper->free_func = object_wrapper->free_func_ref->function_pointer;
+  } else {
+    object_wrapper->free_func = NULL;
+  }
   if (must_copy && is_boxed_type) {
     object_wrapper->object = g_boxed_copy (gtype, raw_result);
     internal_container = gdart_bridge_context_wrap_pointer (self,
@@ -4163,7 +4209,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
 {
   GIFunctionInvoker invoker;
   GArgument *in_arg_cvalues, *out_arg_cvalues, *inout_original_arg_cvalues;
-  gpointer *ffi_arg_pointers;
+  gpointer *ffi_arg_pointers, prep_invoke_user_data;
   GIFFIReturnValue gi_return_value;
   GdartCallbackTrampoline **trampolines;
   gpointer return_value_p;
@@ -4172,6 +4218,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
   gpointer return_type;
   const TypeInfoKlass *return_type_klass;
   GITypeTag return_tag;
+  GIFunctionInvokerDestroyFunc invoker_destroy_func;
 
   if (!gdart_function_prep_invoke (self,
                                    name_prefix,
@@ -4179,6 +4226,8 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
                                    function_info_klass,
                                    type,
                                    &invoker,
+				   &prep_invoke_user_data,
+				   &invoker_destroy_func,
                                    dart_error_out,
                                    error)) {
     return FALSE;
@@ -4189,6 +4238,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
                   &is_method,
                   dart_error_out,
                   error))) {
+    invoker_destroy_func(&invoker, prep_invoke_user_data);
     return FALSE;
   }
 
@@ -4197,6 +4247,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
                   &can_throw_gerror,
                   dart_error_out,
                   error))) {
+    invoker_destroy_func(&invoker, prep_invoke_user_data);
     return FALSE;
   }
   c_argc = invoker.cif.nargs;
@@ -4205,6 +4256,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
                   &gi_argc,
                   dart_error_out,
                   error))) {
+    invoker_destroy_func(&invoker, prep_invoke_user_data);
     return FALSE;
   }
 
@@ -4238,6 +4290,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
       suppressed_args_length,
       dart_error_out,
       error)) {
+    invoker_destroy_func(&invoker, prep_invoke_user_data);
     return FALSE;
   }
   if (G_UNLIKELY (!function_info_klass->get_return_type (function_info,
@@ -4246,6 +4299,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
                   &return_type_klass,
                   dart_error_out,
                   error))) {
+    invoker_destroy_func(&invoker, prep_invoke_user_data);
     return FALSE;
   }
   if (G_UNLIKELY (!return_type_klass->get_tag (return_type,
@@ -4253,6 +4307,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
                   &return_tag,
                   dart_error_out,
                   error))) {
+    invoker_destroy_func(&invoker, prep_invoke_user_data);
     return_type_klass->free (return_type);
     return FALSE;
   }
@@ -4271,6 +4326,7 @@ gboolean gdart_function_invoke (GdartBridgeContext *self,
             FFI_FN (invoker.native_address),
             return_value_p,
             ffi_arg_pointers);
+  invoker_destroy_func(&invoker, prep_invoke_user_data);
   if (!_gdart_prep_results (self,
                             name_prefix,
                             function_info,

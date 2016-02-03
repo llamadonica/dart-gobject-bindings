@@ -6,5 +6,6 @@
 #define __BRIDGE_CONTEXT_FORWARD_H__
 
 typedef struct _GdartBridgeContext GdartBridgeContext;
+typedef struct _GdartFunctionReference GdartFunctionReference;
 
 #endif

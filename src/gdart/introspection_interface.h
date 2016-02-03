@@ -23,6 +23,9 @@ typedef struct _RegisteredTypeInfoKlass RegisteredTypeInfoKlass;
 typedef struct _ObjectInfoKlass ObjectInfoKlass;
 typedef struct _StructUnionInfoKlass StructUnionInfoKlass;
 
+typedef void (*GIFunctionInvokerDestroyFunc)(
+  GIFunctionInvoker* invoker, gpointer user_data);
+typedef void (*AddressPeerDestroyFunc)(gpointer peer_data);
 
 struct _InterfaceInfoKlass {
   gpointer (*copy) (gpointer object);
@@ -267,7 +270,9 @@ struct _FunctionInfoKlass {
                                GError **error);
   gboolean (*prep_invoker) (gpointer object,
                             GdartBridgeContext *self,
-                            GIFunctionInvoker *invoker,   
+                            GIFunctionInvoker *invoker,
+			    gpointer *user_data_out,
+			    GIFunctionInvokerDestroyFunc *invoker_notify_out,
 			    Dart_Handle *dart_error_out,
                             GError **error);
 };
@@ -340,7 +345,19 @@ struct _VFuncInfoKlass {
   gboolean (*get_address) (gpointer object,
                            GdartBridgeContext *self,
 			   GType type,
-                           gpointer *result_out,   
+                           gpointer *result_out,
+			   gpointer *peer_out,
+			   AddressPeerDestroyFunc *peer_finalizer_out,
+			   Dart_Handle *dart_error_out,
+                           GError **error);
+  gboolean (*new_invoker_for_address) (gpointer object,
+                           GdartBridgeContext *self,
+			   gpointer addr,
+			   gpointer peer,
+			   AddressPeerDestroyFunc peer_finalizer,
+			   GIFunctionInvoker *invoker,
+			   gpointer *user_data_out,
+			   GIFunctionInvokerDestroyFunc *invoker_notify_out,
 			   Dart_Handle *dart_error_out,
                            GError **error);
 };
@@ -441,11 +458,13 @@ struct _ObjectInfoKlass {
   gboolean (*get_ref_function_pointer) (gpointer object,
                         GdartBridgeContext *self,
                         GIObjectInfoRefFunction *result_out,
+                        GdartFunctionReference **result_out_reference,
                         Dart_Handle *dart_error,
                         GError **error);
   gboolean (*get_unref_function_pointer) (gpointer object,
                         GdartBridgeContext *self,
                         GIObjectInfoUnrefFunction *result_out,
+                        GdartFunctionReference **result_out_reference,
                         Dart_Handle *dart_error,
                         GError **error);
                       
@@ -483,44 +502,54 @@ struct _StructUnionInfoKlass {
 
 const InterfaceInfoKlass gi_base_info_interface_info;
 const InterfaceInfoKlass null_interface_info;
+const InterfaceInfoKlass dart_interface_info;
 
 const CallableInfoKlass gi_callable_info_callable_info;
 const CallableInfoKlass gi_base_info_callable_info;
 const CallableInfoKlass null_callable_info;
+const CallableInfoKlass dart_callable_info;
 
 const EnumInfoKlass gi_enum_info_enum_info;
 const EnumInfoKlass gi_base_info_enum_info;
 const EnumInfoKlass null_enum_info;
+const EnumInfoKlass dart_enum_info;
 
 const TypeInfoKlass gi_type_info_type_info;
 const TypeInfoKlass null_type_info;
+const TypeInfoKlass dart_type_info;
 
 const ArgInfoKlass gi_arg_info_arg_info;
 const ArgInfoKlass null_arg_info;
+const ArgInfoKlass dart_arg_info;
 
 const RegisteredTypeInfoKlass gi_registered_type_info_registered_type_info;
 const RegisteredTypeInfoKlass gi_base_info_registered_type_info;
 const RegisteredTypeInfoKlass null_registered_type_info;
+const RegisteredTypeInfoKlass dart_registered_type_info;
 
 const FunctionInfoKlass gi_function_info_function_info;
 const FunctionInfoKlass gi_callable_info_function_info;
 const FunctionInfoKlass gi_base_info_function_info;
 const FunctionInfoKlass null_function_info;
+const FunctionInfoKlass dart_function_info;
 
 const VFuncInfoKlass gi_v_func_info_v_func_info;
 const VFuncInfoKlass gi_callable_info_v_func_info;
 const VFuncInfoKlass gi_base_info_v_func_info;
 const VFuncInfoKlass null_v_func_info;
+const VFuncInfoKlass dart_v_func_info;
 
 const ObjectInfoKlass gi_object_info_object_info;
 const ObjectInfoKlass gi_registered_type_info_object_info;
 const ObjectInfoKlass gi_base_info_object_info;
 const ObjectInfoKlass null_object_info;
+const ObjectInfoKlass dart_object_info;
 
 const StructUnionInfoKlass gi_union_info_struct_union_info;
 const StructUnionInfoKlass gi_struct_info_struct_union_info;
 const StructUnionInfoKlass gi_registered_type_info_struct_union_info;
 const StructUnionInfoKlass gi_base_info_struct_union_info;
 const StructUnionInfoKlass null_struct_union_info;
+const StructUnionInfoKlass dart_struct_union_info;
 
 #endif

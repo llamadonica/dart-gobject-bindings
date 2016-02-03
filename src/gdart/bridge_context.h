@@ -19,7 +19,15 @@
 G_BEGIN_DECLS
 
 typedef struct _GdartBridgeContextClass GdartBridgeContextClass;
-typedef struct _GdartBridgeContextWrappedObjectInfo GdartBridgeContextWrappedObjectInfo;
+typedef struct _GdartBridgeContextWrappedObjectInfo 
+GdartBridgeContextWrappedObjectInfo;
+
+struct _GdartFunctionReference {
+  volatile int ref_count;
+  void *function_pointer;
+  gpointer dl_handle;
+};
+
 
 #define TYPE_GDART_BRIDGE_CONTEXT (gdart_bridge_context_get_type ())
 #define GDART_BRIDGE_CONTEXT(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_GDART_BRIDGE_CONTEXT, GdartBridgeContext))
@@ -53,7 +61,7 @@ Dart_Handle gdart_bridge_context_get_base_enum_class(GdartBridgeContext* self,
 GIRepository* gdart_bridge_context_get_gi_repository(GdartBridgeContext* self);
 Dart_Handle gdart_bridge_context_wrap_internal_pointer(GdartBridgeContext* self,
     Dart_Handle internal_container,
-    const gchar* namespace,
+    const gchar* namespace_,
     GType type,
     gpointer base_info,
     const RegisteredTypeInfoKlass* base_info_klass,
@@ -69,22 +77,22 @@ Dart_Handle gdart_bridge_context_wrap_class_for_error(
 Dart_Handle gdart_bridge_context_get_object_info_class(GdartBridgeContext *self);
 Dart_Handle gdart_bridge_context_retrieve_wrapping_class(
   GdartBridgeContext* self,
-  const gchar* namespace,
+  const gchar* namespace_,
   GType type,
   gpointer base_info,
   const RegisteredTypeInfoKlass* base_info_klass,
   gboolean is_enum,
   Dart_Handle *dart_error_out,
   GError **error);
-gpointer gdart_bridge_context_retrieve_copy_func(
+GdartFunctionReference* gdart_bridge_context_retrieve_copy_func(
   GdartBridgeContext* self,
-  const gchar* namespace,
+  const gchar* namespace_,
   gpointer base_info,
   const RegisteredTypeInfoKlass* base_info_klass,
   GType type);
-gpointer gdart_bridge_context_retrieve_free_func(
+GdartFunctionReference* gdart_bridge_context_retrieve_free_func(
   GdartBridgeContext* self,
-  const gchar* namespace,
+  const gchar* namespace_,
   gpointer base_info,
   const RegisteredTypeInfoKlass* base_info_klass,
   GType type);
@@ -133,6 +141,9 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
   Dart_NativeArguments arguments);
 void gdart_bridge_context_object_info_get_g_property_on_receiver(
   Dart_NativeArguments arguments);
+void gdart_function_reference_unref(GdartFunctionReference* self);
+GdartFunctionReference *gdart_function_reference_ref(
+    GdartFunctionReference* self);
 
 G_END_DECLS
 

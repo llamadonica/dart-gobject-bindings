@@ -38,6 +38,8 @@ abstract class TypeInfo extends InterfaceInfo {
   bool get isZeroTerminated;
   int get arrayFixedSize;
   TypeInfo getParamType(int n);
+
+  InfoType get type => InfoType.TYPE;
 }
 
 abstract class ArgInfo extends InterfaceInfo {
@@ -48,12 +50,12 @@ abstract class ArgInfo extends InterfaceInfo {
   ScopeType get scope;
   Transfer get ownershipTransfer;
   bool isCallerAllocates;
+  InfoType get type => InfoType.ARG;
 }
 
 abstract class CallableInfo extends InterfaceInfo {
   FFIType get ffiReturnType;
   List<FFIType> get ffiArgumentTypes;
-  FFIAbi get ffiAbiType;
   List<ArgInfo> get args;
   bool get isMethod;
   Transfer get callerOwns;
@@ -63,10 +65,12 @@ abstract class CallableInfo extends InterfaceInfo {
 
 abstract class FunctionInfo extends CallableInfo {
  dynamic get function; // a functionSymbol or some other type that resolves to a function
+ InfoType get type => InfoType.FUNCTION;
 }
 
 abstract class VFuncInfo extends CallableInfo {
   dynamic getFunction(int gtype);
+  InfoType get type => InfoType.VFUNC;
 }
 
 abstract class RegisteredTypeInfo extends InterfaceInfo {
@@ -86,6 +90,7 @@ class FunctionSymbol {
 abstract class ObjectInfo extends RegisteredTypeInfo {
   dynamic get refFunction;
   dynamic get unrefFunction;
+  InfoType get type => InfoType.OBJECT;
 }
 
 abstract class StructUnionUnionInfo extends RegisteredTypeInfo {

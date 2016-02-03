@@ -1120,18 +1120,28 @@ Dart_Handle _gdart_g_property_take_wrapped_pointer (
   switch (info_type) {
   case GI_INFO_TYPE_UNION:
   case GI_INFO_TYPE_STRUCT:
-    object_wrapper->copy_func = (GBoxedCopyFunc)
+    object_wrapper->copy_func_ref = 
                                 gdart_bridge_context_retrieve_copy_func (self,
                                     g_base_info_get_namespace ( (GIBaseInfo *) registered_type_info),
                                     (GIBaseInfo *) registered_type_info,
 									 &gi_registered_type_info_registered_type_info,
                                     gtype);
-    object_wrapper->free_func = (GBoxedFreeFunc)
+    object_wrapper->free_func_ref = 
                                 gdart_bridge_context_retrieve_free_func (self,
                                     g_base_info_get_namespace ( (GIBaseInfo *) object_wrapper->object_info),
                                     (GIBaseInfo *) registered_type_info,
 									 &gi_registered_type_info_registered_type_info,
                                     gtype);
+    if (object_wrapper->copy_func_ref != NULL) {
+      object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
+    } else {
+      object_wrapper->copy_func = NULL;
+    }
+    if (object_wrapper->free_func_ref != NULL) {
+      object_wrapper->free_func = object_wrapper->free_func_ref->function_pointer;
+    } else {
+      object_wrapper->free_func = NULL;
+    }
     if (object_wrapper->copy_func == NULL) {
       g_warning ("%s: The GI type of an object to be bound was an [unowned %s."
                  "%s] but there's no registered copy function. "

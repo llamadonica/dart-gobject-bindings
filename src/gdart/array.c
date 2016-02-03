@@ -1319,6 +1319,8 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
   }
 
   object_wrapper = g_slice_new (GdartBridgeContextWrappedObject);
+  object_wrapper->copy_func_ref = NULL;
+  object_wrapper->free_func_ref = NULL;
 
   object_wrapper->type = gtype;
   if (registered_type_info != NULL) {
@@ -1337,20 +1339,29 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
     g_slice_free(GdartBridgeContextWrappedObject, object_wrapper);
     return FALSE;
   }
-
-  object_wrapper->copy_func = (GBoxedCopyFunc)
-                              gdart_bridge_context_retrieve_copy_func (self,
-                                  namespace_,
-                                  registered_type_info,
-                                  registered_type_info_klass,
-                                  gtype);
-
-  object_wrapper->free_func = (GBoxedFreeFunc)
-                              gdart_bridge_context_retrieve_free_func (self,
-                                  namespace_,
-                                  registered_type_info,
-                                  registered_type_info_klass,
-                                  gtype);
+  object_wrapper->copy_func_ref = 
+  gdart_bridge_context_retrieve_copy_func (self,
+					   g_base_info_get_namespace ( (GIBaseInfo *) registered_type_info),
+					   (GIBaseInfo *) registered_type_info,
+					   &gi_registered_type_info_registered_type_info,
+					   gtype);
+  object_wrapper->free_func_ref = 
+  gdart_bridge_context_retrieve_free_func (self,
+					   g_base_info_get_namespace ( (GIBaseInfo *) object_wrapper->object_info),
+					   (GIBaseInfo *) registered_type_info,
+					   &gi_registered_type_info_registered_type_info,
+					   gtype);
+  if (object_wrapper->copy_func_ref != NULL) {
+    object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
+  } else {
+    object_wrapper->copy_func = NULL;
+  }
+  if (object_wrapper->free_func_ref != NULL) {
+    object_wrapper->free_func = object_wrapper->free_func_ref->function_pointer;
+  } else {
+    object_wrapper->free_func = NULL;
+  }
+  
   if (must_copy && is_boxed_type) {
     object_wrapper->object = g_boxed_copy (gtype, raw_result);
     internal_container = gdart_bridge_context_wrap_pointer (self,
@@ -1462,6 +1473,8 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
   }
 
   object_wrapper = g_slice_new (GdartBridgeContextWrappedObject);
+  object_wrapper->copy_func_ref = NULL;
+  object_wrapper->free_func_ref = NULL;
   if (!registered_type_info_klass->get_gtype (registered_type_info,
       self,
       &gtype,
@@ -1501,19 +1514,28 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
   switch (info_type) {
   case GI_INFO_TYPE_UNION:
   case GI_INFO_TYPE_STRUCT: {
-    object_wrapper->copy_func = (GBoxedCopyFunc)
+    object_wrapper->copy_func_ref = 
                                 gdart_bridge_context_retrieve_copy_func (self,
-                                    namespace_,
-                                    registered_type_info,
-                                    registered_type_info_klass,
+                                    g_base_info_get_namespace ( (GIBaseInfo *) registered_type_info),
+                                    (GIBaseInfo *) registered_type_info,
+									 &gi_registered_type_info_registered_type_info,
                                     gtype);
-
-    object_wrapper->free_func = (GBoxedFreeFunc)
+    object_wrapper->free_func_ref = 
                                 gdart_bridge_context_retrieve_free_func (self,
-                                    namespace_,
-                                    registered_type_info,
-                                    registered_type_info_klass,
+                                    g_base_info_get_namespace ( (GIBaseInfo *) object_wrapper->object_info),
+                                    (GIBaseInfo *) registered_type_info,
+									 &gi_registered_type_info_registered_type_info,
                                     gtype);
+    if (object_wrapper->copy_func_ref != NULL) {
+      object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
+    } else {
+      object_wrapper->copy_func = NULL;
+    }
+    if (object_wrapper->free_func_ref != NULL) {
+      object_wrapper->free_func = object_wrapper->free_func_ref->function_pointer;
+    } else {
+      object_wrapper->free_func = NULL;
+    }
     if (must_copy) {
       if (object_wrapper->copy_func == NULL) {
         gchar *name;
@@ -1582,11 +1604,17 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
   case GI_INFO_TYPE_OBJECT:
     if (must_copy) {
       GIObjectInfoRefFunction refer;
-      if (G_UNLIKELY(!registered_type_info_klass->cast_to_object_info(registered_type_info)->get_ref_function_pointer(registered_type_info,
-	                                                                                                   self,
-													   &refer,
-													   dart_error_out,
-													   error))) {
+      GdartFunctionReference *ref_reference;
+      
+      if (G_UNLIKELY(
+	!registered_type_info_klass->
+	  cast_to_object_info(registered_type_info)->
+          get_ref_function_pointer(registered_type_info,
+	    self,
+	    &refer,
+	    &ref_reference,
+	    dart_error_out,
+	    error))) {
         registered_type_info_klass->free (object_wrapper->object_info);
         return FALSE;
       }
@@ -1596,6 +1624,7 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
         raw_result = g_object_ref_sink (raw_result);
         //if this is the main result, assume we are given a floating reference.
       }
+      gdart_function_reference_unref(ref_reference);
     }
     object_wrapper->object = raw_result;
     internal_container = gdart_bridge_context_wrap_pointer (self,

@@ -14,6 +14,8 @@ struct _GdartBridgeContextWrappedObject {
   GType type;
   GBoxedCopyFunc copy_func;
   GBoxedFreeFunc free_func;
+  GdartFunctionReference *copy_func_ref;
+  GdartFunctionReference *free_func_ref;
 };
 typedef struct _GdartBridgeContextWrappedObject GdartBridgeContextWrappedObject;
 
