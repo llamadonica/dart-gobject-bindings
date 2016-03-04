@@ -262,13 +262,13 @@ class AppInfoCreateFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'AppInfoCreateFlags');
 
   static const AppInfoCreateFlags NONE = const AppInfoCreateFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const AppInfoCreateFlags NEEDS_TERMINAL = const AppInfoCreateFlags(1);
-  bool get needsTerminal => (value & 1) == 1;
+  bool get needsTerminal => (index & 1) == 1;
   static const AppInfoCreateFlags SUPPORTS_URIS = const AppInfoCreateFlags(2);
-  bool get supportsUris => (value & 2) == 2;
+  bool get supportsUris => (index & 2) == 2;
   static const AppInfoCreateFlags SUPPORTS_STARTUP_NOTIFICATION = const AppInfoCreateFlags(4);
-  bool get supportsStartupNotification => (value & 4) == 4;
+  bool get supportsStartupNotification => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'AppInfoCreateFlags.NEEDS_TERMINAL';
@@ -278,19 +278,19 @@ class AppInfoCreateFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'AppInfoCreateFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   AppInfoCreateFlags operator|(AppInfoCreateFlags other) =>
-    new AppInfoCreateFlags(value | other.value);
+    new AppInfoCreateFlags(index | other.index);
   AppInfoCreateFlags operator&(AppInfoCreateFlags other) =>
-    new AppInfoCreateFlags(value & other.value);
+    new AppInfoCreateFlags(index & other.index);
 }
 
 class AppInfoMonitor extends GObjectObject {
@@ -627,19 +627,19 @@ class ApplicationFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ApplicationFlags');
 
   static const ApplicationFlags FLAGS_NONE = const ApplicationFlags(0);
-  bool get flagsNone => (value & 0) == 0;
+  bool get flagsNone => (index & 0) == 0;
   static const ApplicationFlags IS_SERVICE = const ApplicationFlags(1);
-  bool get isService => (value & 1) == 1;
+  bool get isService => (index & 1) == 1;
   static const ApplicationFlags IS_LAUNCHER = const ApplicationFlags(2);
-  bool get isLauncher => (value & 2) == 2;
+  bool get isLauncher => (index & 2) == 2;
   static const ApplicationFlags HANDLES_OPEN = const ApplicationFlags(4);
-  bool get handlesOpen => (value & 4) == 4;
+  bool get handlesOpen => (index & 4) == 4;
   static const ApplicationFlags HANDLES_COMMAND_LINE = const ApplicationFlags(8);
-  bool get handlesCommandLine => (value & 8) == 8;
+  bool get handlesCommandLine => (index & 8) == 8;
   static const ApplicationFlags SEND_ENVIRONMENT = const ApplicationFlags(16);
-  bool get sendEnvironment => (value & 16) == 16;
+  bool get sendEnvironment => (index & 16) == 16;
   static const ApplicationFlags NON_UNIQUE = const ApplicationFlags(32);
-  bool get nonUnique => (value & 32) == 32;
+  bool get nonUnique => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ApplicationFlags.IS_SERVICE';
@@ -652,19 +652,19 @@ class ApplicationFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ApplicationFlags.FLAGS_NONE';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ApplicationFlags operator|(ApplicationFlags other) =>
-    new ApplicationFlags(value | other.value);
+    new ApplicationFlags(index | other.index);
   ApplicationFlags operator&(ApplicationFlags other) =>
-    new ApplicationFlags(value & other.value);
+    new ApplicationFlags(index & other.index);
 }
 
 class AskPasswordFlags extends GEnumBase {
@@ -673,15 +673,15 @@ class AskPasswordFlags extends GEnumBase {
 
   static const AskPasswordFlags NULL = const AskPasswordFlags(0);
   static const AskPasswordFlags NEED_PASSWORD = const AskPasswordFlags(1);
-  bool get needPassword => (value & 1) == 1;
+  bool get needPassword => (index & 1) == 1;
   static const AskPasswordFlags NEED_USERNAME = const AskPasswordFlags(2);
-  bool get needUsername => (value & 2) == 2;
+  bool get needUsername => (index & 2) == 2;
   static const AskPasswordFlags NEED_DOMAIN = const AskPasswordFlags(4);
-  bool get needDomain => (value & 4) == 4;
+  bool get needDomain => (index & 4) == 4;
   static const AskPasswordFlags SAVING_SUPPORTED = const AskPasswordFlags(8);
-  bool get savingSupported => (value & 8) == 8;
+  bool get savingSupported => (index & 8) == 8;
   static const AskPasswordFlags ANONYMOUS_SUPPORTED = const AskPasswordFlags(16);
-  bool get anonymousSupported => (value & 16) == 16;
+  bool get anonymousSupported => (index & 16) == 16;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'AskPasswordFlags.NEED_PASSWORD';
@@ -693,19 +693,19 @@ class AskPasswordFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'AskPasswordFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 16; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   AskPasswordFlags operator|(AskPasswordFlags other) =>
-    new AskPasswordFlags(value | other.value);
+    new AskPasswordFlags(index | other.index);
   AskPasswordFlags operator&(AskPasswordFlags other) =>
-    new AskPasswordFlags(value & other.value);
+    new AskPasswordFlags(index & other.index);
 }
 
 abstract class AsyncInitable extends GObjectBase {
@@ -772,11 +772,11 @@ class BusNameOwnerFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'BusNameOwnerFlags');
 
   static const BusNameOwnerFlags NONE = const BusNameOwnerFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const BusNameOwnerFlags ALLOW_REPLACEMENT = const BusNameOwnerFlags(1);
-  bool get allowReplacement => (value & 1) == 1;
+  bool get allowReplacement => (index & 1) == 1;
   static const BusNameOwnerFlags REPLACE = const BusNameOwnerFlags(2);
-  bool get replace => (value & 2) == 2;
+  bool get replace => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'BusNameOwnerFlags.ALLOW_REPLACEMENT';
@@ -785,19 +785,19 @@ class BusNameOwnerFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'BusNameOwnerFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   BusNameOwnerFlags operator|(BusNameOwnerFlags other) =>
-    new BusNameOwnerFlags(value | other.value);
+    new BusNameOwnerFlags(index | other.index);
   BusNameOwnerFlags operator&(BusNameOwnerFlags other) =>
-    new BusNameOwnerFlags(value & other.value);
+    new BusNameOwnerFlags(index & other.index);
 }
 
 typedef void BusNameVanishedCallback(DBusConnection connection, String name);
@@ -806,9 +806,9 @@ class BusNameWatcherFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'BusNameWatcherFlags');
 
   static const BusNameWatcherFlags NONE = const BusNameWatcherFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const BusNameWatcherFlags AUTO_START = const BusNameWatcherFlags(1);
-  bool get autoStart => (value & 1) == 1;
+  bool get autoStart => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'BusNameWatcherFlags.AUTO_START';
@@ -816,19 +816,19 @@ class BusNameWatcherFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'BusNameWatcherFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   BusNameWatcherFlags operator|(BusNameWatcherFlags other) =>
-    new BusNameWatcherFlags(value | other.value);
+    new BusNameWatcherFlags(index | other.index);
   BusNameWatcherFlags operator&(BusNameWatcherFlags other) =>
-    new BusNameWatcherFlags(value & other.value);
+    new BusNameWatcherFlags(index & other.index);
 }
 
 class BusType extends GEnumBase {
@@ -840,12 +840,12 @@ class BusType extends GEnumBase {
   static const BusType SYSTEM = const BusType(1);
   static const BusType SESSION = const BusType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'BusType.STARTER';
       case 0: return 'BusType.NONE';
       case 1: return 'BusType.SYSTEM';
       case 2: return 'BusType.SESSION';
-      default: return 'new BusType($value)';
+      default: return 'new BusType($index)';
     }
   }
 }
@@ -942,11 +942,11 @@ class ConverterFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ConverterFlags');
 
   static const ConverterFlags NONE = const ConverterFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const ConverterFlags INPUT_AT_END = const ConverterFlags(1);
-  bool get inputAtEnd => (value & 1) == 1;
+  bool get inputAtEnd => (index & 1) == 1;
   static const ConverterFlags FLUSH = const ConverterFlags(2);
-  bool get flush => (value & 2) == 2;
+  bool get flush => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ConverterFlags.INPUT_AT_END';
@@ -955,19 +955,19 @@ class ConverterFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ConverterFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ConverterFlags operator|(ConverterFlags other) =>
-    new ConverterFlags(value | other.value);
+    new ConverterFlags(index | other.index);
   ConverterFlags operator&(ConverterFlags other) =>
-    new ConverterFlags(value & other.value);
+    new ConverterFlags(index & other.index);
 }
 
 class ConverterInputStream extends FilterInputStream with PollableInputStream {
@@ -999,12 +999,12 @@ class ConverterResult extends GEnumBase {
   static const ConverterResult FINISHED = const ConverterResult(2);
   static const ConverterResult FLUSHED = const ConverterResult(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ConverterResult.ERROR';
       case 1: return 'ConverterResult.CONVERTED';
       case 2: return 'ConverterResult.FINISHED';
       case 3: return 'ConverterResult.FLUSHED';
-      default: return 'new ConverterResult($value)';
+      default: return 'new ConverterResult($index)';
     }
   }
 }
@@ -1033,14 +1033,14 @@ class CredentialsType extends GEnumBase {
   static const CredentialsType SOLARIS_UCRED = const CredentialsType(4);
   static const CredentialsType NETBSD_UNPCBID = const CredentialsType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CredentialsType.INVALID';
       case 1: return 'CredentialsType.LINUX_UCRED';
       case 2: return 'CredentialsType.FREEBSD_CMSGCRED';
       case 3: return 'CredentialsType.OPENBSD_SOCKPEERCRED';
       case 4: return 'CredentialsType.SOLARIS_UCRED';
       case 5: return 'CredentialsType.NETBSD_UNPCBID';
-      default: return 'new CredentialsType($value)';
+      default: return 'new CredentialsType($index)';
     }
   }
 }
@@ -1188,11 +1188,11 @@ class DBusCallFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusCallFlags');
 
   static const DBusCallFlags NONE = const DBusCallFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusCallFlags NO_AUTO_START = const DBusCallFlags(1);
-  bool get noAutoStart => (value & 1) == 1;
+  bool get noAutoStart => (index & 1) == 1;
   static const DBusCallFlags ALLOW_INTERACTIVE_AUTHORIZATION = const DBusCallFlags(2);
-  bool get allowInteractiveAuthorization => (value & 2) == 2;
+  bool get allowInteractiveAuthorization => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusCallFlags.NO_AUTO_START';
@@ -1201,19 +1201,19 @@ class DBusCallFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusCallFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusCallFlags operator|(DBusCallFlags other) =>
-    new DBusCallFlags(value | other.value);
+    new DBusCallFlags(index | other.index);
   DBusCallFlags operator&(DBusCallFlags other) =>
-    new DBusCallFlags(value & other.value);
+    new DBusCallFlags(index & other.index);
 }
 
 class DBusCapabilityFlags extends GEnumBase {
@@ -1221,9 +1221,9 @@ class DBusCapabilityFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusCapabilityFlags');
 
   static const DBusCapabilityFlags NONE = const DBusCapabilityFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusCapabilityFlags UNIX_FD_PASSING = const DBusCapabilityFlags(1);
-  bool get unixFdPassing => (value & 1) == 1;
+  bool get unixFdPassing => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusCapabilityFlags.UNIX_FD_PASSING';
@@ -1231,19 +1231,19 @@ class DBusCapabilityFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusCapabilityFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusCapabilityFlags operator|(DBusCapabilityFlags other) =>
-    new DBusCapabilityFlags(value | other.value);
+    new DBusCapabilityFlags(index | other.index);
   DBusCapabilityFlags operator&(DBusCapabilityFlags other) =>
-    new DBusCapabilityFlags(value & other.value);
+    new DBusCapabilityFlags(index & other.index);
 }
 
 class DBusConnection extends GObjectObject with AsyncInitable, Initable {
@@ -1357,17 +1357,17 @@ class DBusConnectionFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusConnectionFlags');
 
   static const DBusConnectionFlags NONE = const DBusConnectionFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusConnectionFlags AUTHENTICATION_CLIENT = const DBusConnectionFlags(1);
-  bool get authenticationClient => (value & 1) == 1;
+  bool get authenticationClient => (index & 1) == 1;
   static const DBusConnectionFlags AUTHENTICATION_SERVER = const DBusConnectionFlags(2);
-  bool get authenticationServer => (value & 2) == 2;
+  bool get authenticationServer => (index & 2) == 2;
   static const DBusConnectionFlags AUTHENTICATION_ALLOW_ANONYMOUS = const DBusConnectionFlags(4);
-  bool get authenticationAllowAnonymous => (value & 4) == 4;
+  bool get authenticationAllowAnonymous => (index & 4) == 4;
   static const DBusConnectionFlags MESSAGE_BUS_CONNECTION = const DBusConnectionFlags(8);
-  bool get messageBusConnection => (value & 8) == 8;
+  bool get messageBusConnection => (index & 8) == 8;
   static const DBusConnectionFlags DELAY_MESSAGE_PROCESSING = const DBusConnectionFlags(16);
-  bool get delayMessageProcessing => (value & 16) == 16;
+  bool get delayMessageProcessing => (index & 16) == 16;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusConnectionFlags.AUTHENTICATION_CLIENT';
@@ -1379,19 +1379,19 @@ class DBusConnectionFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusConnectionFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 16; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusConnectionFlags operator|(DBusConnectionFlags other) =>
-    new DBusConnectionFlags(value | other.value);
+    new DBusConnectionFlags(index | other.index);
   DBusConnectionFlags operator&(DBusConnectionFlags other) =>
-    new DBusConnectionFlags(value & other.value);
+    new DBusConnectionFlags(index & other.index);
 }
 
 class DBusErrorCode extends GEnumBase {
@@ -1444,7 +1444,7 @@ class DBusErrorCode extends GEnumBase {
   static const DBusErrorCode UNKNOWN_PROPERTY = const DBusErrorCode(43);
   static const DBusErrorCode PROPERTY_READ_ONLY = const DBusErrorCode(44);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DBusErrorCode.FAILED';
       case 1: return 'DBusErrorCode.NO_MEMORY';
       case 2: return 'DBusErrorCode.SERVICE_UNKNOWN';
@@ -1490,7 +1490,7 @@ class DBusErrorCode extends GEnumBase {
       case 42: return 'DBusErrorCode.UNKNOWN_INTERFACE';
       case 43: return 'DBusErrorCode.UNKNOWN_PROPERTY';
       case 44: return 'DBusErrorCode.PROPERTY_READ_ONLY';
-      default: return 'new DBusErrorCode($value)';
+      default: return 'new DBusErrorCode($index)';
     }
   }
   static String encodeGerror(GErrorBase error) => _staticInfo.callStatic('encode_gerror', [error]);
@@ -1629,9 +1629,9 @@ class DBusInterfaceSkeletonFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusInterfaceSkeletonFlags');
 
   static const DBusInterfaceSkeletonFlags NONE = const DBusInterfaceSkeletonFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusInterfaceSkeletonFlags HANDLE_METHOD_INVOCATIONS_IN_THREAD = const DBusInterfaceSkeletonFlags(1);
-  bool get handleMethodInvocationsInThread => (value & 1) == 1;
+  bool get handleMethodInvocationsInThread => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusInterfaceSkeletonFlags.HANDLE_METHOD_INVOCATIONS_IN_THREAD';
@@ -1639,19 +1639,19 @@ class DBusInterfaceSkeletonFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusInterfaceSkeletonFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusInterfaceSkeletonFlags operator|(DBusInterfaceSkeletonFlags other) =>
-    new DBusInterfaceSkeletonFlags(value | other.value);
+    new DBusInterfaceSkeletonFlags(index | other.index);
   DBusInterfaceSkeletonFlags operator&(DBusInterfaceSkeletonFlags other) =>
-    new DBusInterfaceSkeletonFlags(value & other.value);
+    new DBusInterfaceSkeletonFlags(index & other.index);
 }
 
 class DBusInterfaceVTable extends GObjectBase {
@@ -1735,10 +1735,10 @@ class DBusMessageByteOrder extends GEnumBase {
   static const DBusMessageByteOrder BIG_ENDIAN = const DBusMessageByteOrder(66);
   static const DBusMessageByteOrder LITTLE_ENDIAN = const DBusMessageByteOrder(108);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 66: return 'DBusMessageByteOrder.BIG_ENDIAN';
       case 108: return 'DBusMessageByteOrder.LITTLE_ENDIAN';
-      default: return 'new DBusMessageByteOrder($value)';
+      default: return 'new DBusMessageByteOrder($index)';
     }
   }
 }
@@ -1749,13 +1749,13 @@ class DBusMessageFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusMessageFlags');
 
   static const DBusMessageFlags NONE = const DBusMessageFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusMessageFlags NO_REPLY_EXPECTED = const DBusMessageFlags(1);
-  bool get noReplyExpected => (value & 1) == 1;
+  bool get noReplyExpected => (index & 1) == 1;
   static const DBusMessageFlags NO_AUTO_START = const DBusMessageFlags(2);
-  bool get noAutoStart => (value & 2) == 2;
+  bool get noAutoStart => (index & 2) == 2;
   static const DBusMessageFlags ALLOW_INTERACTIVE_AUTHORIZATION = const DBusMessageFlags(4);
-  bool get allowInteractiveAuthorization => (value & 4) == 4;
+  bool get allowInteractiveAuthorization => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusMessageFlags.NO_REPLY_EXPECTED';
@@ -1765,19 +1765,19 @@ class DBusMessageFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusMessageFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusMessageFlags operator|(DBusMessageFlags other) =>
-    new DBusMessageFlags(value | other.value);
+    new DBusMessageFlags(index | other.index);
   DBusMessageFlags operator&(DBusMessageFlags other) =>
-    new DBusMessageFlags(value & other.value);
+    new DBusMessageFlags(index & other.index);
 }
 
 class DBusMessageHeaderField extends GEnumBase {
@@ -1795,7 +1795,7 @@ class DBusMessageHeaderField extends GEnumBase {
   static const DBusMessageHeaderField SIGNATURE = const DBusMessageHeaderField(8);
   static const DBusMessageHeaderField NUM_UNIX_FDS = const DBusMessageHeaderField(9);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DBusMessageHeaderField.INVALID';
       case 1: return 'DBusMessageHeaderField.PATH';
       case 2: return 'DBusMessageHeaderField.INTERFACE';
@@ -1806,7 +1806,7 @@ class DBusMessageHeaderField extends GEnumBase {
       case 7: return 'DBusMessageHeaderField.SENDER';
       case 8: return 'DBusMessageHeaderField.SIGNATURE';
       case 9: return 'DBusMessageHeaderField.NUM_UNIX_FDS';
-      default: return 'new DBusMessageHeaderField($value)';
+      default: return 'new DBusMessageHeaderField($index)';
     }
   }
 }
@@ -1821,13 +1821,13 @@ class DBusMessageType extends GEnumBase {
   static const DBusMessageType ERROR = const DBusMessageType(3);
   static const DBusMessageType SIGNAL = const DBusMessageType(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DBusMessageType.INVALID';
       case 1: return 'DBusMessageType.METHOD_CALL';
       case 2: return 'DBusMessageType.METHOD_RETURN';
       case 3: return 'DBusMessageType.ERROR';
       case 4: return 'DBusMessageType.SIGNAL';
-      default: return 'new DBusMessageType($value)';
+      default: return 'new DBusMessageType($index)';
     }
   }
 }
@@ -2243,9 +2243,9 @@ class DBusObjectManagerClientFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusObjectManagerClientFlags');
 
   static const DBusObjectManagerClientFlags NONE = const DBusObjectManagerClientFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusObjectManagerClientFlags DO_NOT_AUTO_START = const DBusObjectManagerClientFlags(1);
-  bool get doNotAutoStart => (value & 1) == 1;
+  bool get doNotAutoStart => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusObjectManagerClientFlags.DO_NOT_AUTO_START';
@@ -2253,19 +2253,19 @@ class DBusObjectManagerClientFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusObjectManagerClientFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusObjectManagerClientFlags operator|(DBusObjectManagerClientFlags other) =>
-    new DBusObjectManagerClientFlags(value | other.value);
+    new DBusObjectManagerClientFlags(index | other.index);
   DBusObjectManagerClientFlags operator&(DBusObjectManagerClientFlags other) =>
-    new DBusObjectManagerClientFlags(value & other.value);
+    new DBusObjectManagerClientFlags(index & other.index);
 }
 
 class DBusObjectManagerServer extends GObjectObject with DBusObjectManager {
@@ -2382,11 +2382,11 @@ class DBusPropertyInfoFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusPropertyInfoFlags');
 
   static const DBusPropertyInfoFlags NONE = const DBusPropertyInfoFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusPropertyInfoFlags READABLE = const DBusPropertyInfoFlags(1);
-  bool get readable => (value & 1) == 1;
+  bool get readable => (index & 1) == 1;
   static const DBusPropertyInfoFlags WRITABLE = const DBusPropertyInfoFlags(2);
-  bool get writable => (value & 2) == 2;
+  bool get writable => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusPropertyInfoFlags.READABLE';
@@ -2395,19 +2395,19 @@ class DBusPropertyInfoFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusPropertyInfoFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusPropertyInfoFlags operator|(DBusPropertyInfoFlags other) =>
-    new DBusPropertyInfoFlags(value | other.value);
+    new DBusPropertyInfoFlags(index | other.index);
   DBusPropertyInfoFlags operator&(DBusPropertyInfoFlags other) =>
-    new DBusPropertyInfoFlags(value & other.value);
+    new DBusPropertyInfoFlags(index & other.index);
 }
 
 class DBusProxy extends GObjectObject with AsyncInitable, DBusInterface, Initable {
@@ -2552,17 +2552,17 @@ class DBusProxyFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusProxyFlags');
 
   static const DBusProxyFlags NONE = const DBusProxyFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusProxyFlags DO_NOT_LOAD_PROPERTIES = const DBusProxyFlags(1);
-  bool get doNotLoadProperties => (value & 1) == 1;
+  bool get doNotLoadProperties => (index & 1) == 1;
   static const DBusProxyFlags DO_NOT_CONNECT_SIGNALS = const DBusProxyFlags(2);
-  bool get doNotConnectSignals => (value & 2) == 2;
+  bool get doNotConnectSignals => (index & 2) == 2;
   static const DBusProxyFlags DO_NOT_AUTO_START = const DBusProxyFlags(4);
-  bool get doNotAutoStart => (value & 4) == 4;
+  bool get doNotAutoStart => (index & 4) == 4;
   static const DBusProxyFlags GET_INVALIDATED_PROPERTIES = const DBusProxyFlags(8);
-  bool get getInvalidatedProperties => (value & 8) == 8;
+  bool get getInvalidatedProperties => (index & 8) == 8;
   static const DBusProxyFlags DO_NOT_AUTO_START_AT_CONSTRUCTION = const DBusProxyFlags(16);
-  bool get doNotAutoStartAtConstruction => (value & 16) == 16;
+  bool get doNotAutoStartAtConstruction => (index & 16) == 16;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusProxyFlags.DO_NOT_LOAD_PROPERTIES';
@@ -2574,19 +2574,19 @@ class DBusProxyFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusProxyFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 16; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusProxyFlags operator|(DBusProxyFlags other) =>
-    new DBusProxyFlags(value | other.value);
+    new DBusProxyFlags(index | other.index);
   DBusProxyFlags operator&(DBusProxyFlags other) =>
-    new DBusProxyFlags(value & other.value);
+    new DBusProxyFlags(index & other.index);
 }
 
 typedef int DBusProxyTypeFunc(DBusObjectManagerClient manager, String objectPath, String interfaceName);
@@ -2595,9 +2595,9 @@ class DBusSendMessageFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusSendMessageFlags');
 
   static const DBusSendMessageFlags NONE = const DBusSendMessageFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusSendMessageFlags PRESERVE_SERIAL = const DBusSendMessageFlags(1);
-  bool get preserveSerial => (value & 1) == 1;
+  bool get preserveSerial => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusSendMessageFlags.PRESERVE_SERIAL';
@@ -2605,19 +2605,19 @@ class DBusSendMessageFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusSendMessageFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusSendMessageFlags operator|(DBusSendMessageFlags other) =>
-    new DBusSendMessageFlags(value | other.value);
+    new DBusSendMessageFlags(index | other.index);
   DBusSendMessageFlags operator&(DBusSendMessageFlags other) =>
-    new DBusSendMessageFlags(value & other.value);
+    new DBusSendMessageFlags(index & other.index);
 }
 
 class DBusServer extends GObjectObject with Initable {
@@ -2695,11 +2695,11 @@ class DBusServerFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusServerFlags');
 
   static const DBusServerFlags NONE = const DBusServerFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusServerFlags RUN_IN_THREAD = const DBusServerFlags(1);
-  bool get runInThread => (value & 1) == 1;
+  bool get runInThread => (index & 1) == 1;
   static const DBusServerFlags AUTHENTICATION_ALLOW_ANONYMOUS = const DBusServerFlags(2);
-  bool get authenticationAllowAnonymous => (value & 2) == 2;
+  bool get authenticationAllowAnonymous => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusServerFlags.RUN_IN_THREAD';
@@ -2708,19 +2708,19 @@ class DBusServerFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusServerFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusServerFlags operator|(DBusServerFlags other) =>
-    new DBusServerFlags(value | other.value);
+    new DBusServerFlags(index | other.index);
   DBusServerFlags operator&(DBusServerFlags other) =>
-    new DBusServerFlags(value & other.value);
+    new DBusServerFlags(index & other.index);
 }
 
 typedef void DBusSignalCallback(DBusConnection connection, String senderName, String objectPath, String interfaceName, String signalName, Variant parameters);
@@ -2729,13 +2729,13 @@ class DBusSignalFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusSignalFlags');
 
   static const DBusSignalFlags NONE = const DBusSignalFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusSignalFlags NO_MATCH_RULE = const DBusSignalFlags(1);
-  bool get noMatchRule => (value & 1) == 1;
+  bool get noMatchRule => (index & 1) == 1;
   static const DBusSignalFlags MATCH_ARG0_NAMESPACE = const DBusSignalFlags(2);
-  bool get matchArg0Namespace => (value & 2) == 2;
+  bool get matchArg0Namespace => (index & 2) == 2;
   static const DBusSignalFlags MATCH_ARG0_PATH = const DBusSignalFlags(4);
-  bool get matchArg0Path => (value & 4) == 4;
+  bool get matchArg0Path => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusSignalFlags.NO_MATCH_RULE';
@@ -2745,19 +2745,19 @@ class DBusSignalFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusSignalFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusSignalFlags operator|(DBusSignalFlags other) =>
-    new DBusSignalFlags(value | other.value);
+    new DBusSignalFlags(index | other.index);
   DBusSignalFlags operator&(DBusSignalFlags other) =>
-    new DBusSignalFlags(value & other.value);
+    new DBusSignalFlags(index & other.index);
 }
 
 class DBusSignalInfo extends GObjectBase {
@@ -2782,9 +2782,9 @@ class DBusSubtreeFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DBusSubtreeFlags');
 
   static const DBusSubtreeFlags NONE = const DBusSubtreeFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const DBusSubtreeFlags DISPATCH_TO_UNENUMERATED_NODES = const DBusSubtreeFlags(1);
-  bool get dispatchToUnenumeratedNodes => (value & 1) == 1;
+  bool get dispatchToUnenumeratedNodes => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DBusSubtreeFlags.DISPATCH_TO_UNENUMERATED_NODES';
@@ -2792,19 +2792,19 @@ class DBusSubtreeFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DBusSubtreeFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DBusSubtreeFlags operator|(DBusSubtreeFlags other) =>
-    new DBusSubtreeFlags(value | other.value);
+    new DBusSubtreeFlags(index | other.index);
   DBusSubtreeFlags operator&(DBusSubtreeFlags other) =>
-    new DBusSubtreeFlags(value & other.value);
+    new DBusSubtreeFlags(index & other.index);
 }
 
 typedef DBusInterfaceInfo DBusSubtreeIntrospectFunc(DBusConnection connection, String sender, String objectPath, String node);
@@ -2878,11 +2878,11 @@ class DataStreamByteOrder extends GEnumBase {
   static const DataStreamByteOrder LITTLE_ENDIAN = const DataStreamByteOrder(1);
   static const DataStreamByteOrder HOST_ENDIAN = const DataStreamByteOrder(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DataStreamByteOrder.BIG_ENDIAN';
       case 1: return 'DataStreamByteOrder.LITTLE_ENDIAN';
       case 2: return 'DataStreamByteOrder.HOST_ENDIAN';
-      default: return 'new DataStreamByteOrder($value)';
+      default: return 'new DataStreamByteOrder($index)';
     }
   }
 }
@@ -2896,12 +2896,12 @@ class DataStreamNewlineType extends GEnumBase {
   static const DataStreamNewlineType CR_LF = const DataStreamNewlineType(2);
   static const DataStreamNewlineType ANY = const DataStreamNewlineType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DataStreamNewlineType.LF';
       case 1: return 'DataStreamNewlineType.CR';
       case 2: return 'DataStreamNewlineType.CR_LF';
       case 3: return 'DataStreamNewlineType.ANY';
-      default: return 'new DataStreamNewlineType($value)';
+      default: return 'new DataStreamNewlineType($index)';
     }
   }
 }
@@ -3107,26 +3107,26 @@ class DriveStartFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'DriveStartFlags');
 
   static const DriveStartFlags NONE = const DriveStartFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static _valueToString(int value) {
     switch(value) {
       default: return 'new DriveStartFlags($value)';
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DriveStartFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 0; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DriveStartFlags operator|(DriveStartFlags other) =>
-    new DriveStartFlags(value | other.value);
+    new DriveStartFlags(index | other.index);
   DriveStartFlags operator&(DriveStartFlags other) =>
-    new DriveStartFlags(value & other.value);
+    new DriveStartFlags(index & other.index);
 }
 
 class DriveStartStopType extends GEnumBase {
@@ -3139,13 +3139,13 @@ class DriveStartStopType extends GEnumBase {
   static const DriveStartStopType MULTIDISK = const DriveStartStopType(3);
   static const DriveStartStopType PASSWORD = const DriveStartStopType(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DriveStartStopType.UNKNOWN';
       case 1: return 'DriveStartStopType.SHUTDOWN';
       case 2: return 'DriveStartStopType.NETWORK';
       case 3: return 'DriveStartStopType.MULTIDISK';
       case 4: return 'DriveStartStopType.PASSWORD';
-      default: return 'new DriveStartStopType($value)';
+      default: return 'new DriveStartStopType($index)';
     }
   }
 }
@@ -3173,12 +3173,12 @@ class EmblemOrigin extends GEnumBase {
   static const EmblemOrigin LIVEMETADATA = const EmblemOrigin(2);
   static const EmblemOrigin TAG = const EmblemOrigin(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'EmblemOrigin.UNKNOWN';
       case 1: return 'EmblemOrigin.DEVICE';
       case 2: return 'EmblemOrigin.LIVEMETADATA';
       case 3: return 'EmblemOrigin.TAG';
-      default: return 'new EmblemOrigin($value)';
+      default: return 'new EmblemOrigin($index)';
     }
   }
 }
@@ -3341,11 +3341,11 @@ class FileAttributeInfoFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileAttributeInfoFlags');
 
   static const FileAttributeInfoFlags NONE = const FileAttributeInfoFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FileAttributeInfoFlags COPY_WITH_FILE = const FileAttributeInfoFlags(1);
-  bool get copyWithFile => (value & 1) == 1;
+  bool get copyWithFile => (index & 1) == 1;
   static const FileAttributeInfoFlags COPY_WHEN_MOVED = const FileAttributeInfoFlags(2);
-  bool get copyWhenMoved => (value & 2) == 2;
+  bool get copyWhenMoved => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileAttributeInfoFlags.COPY_WITH_FILE';
@@ -3354,19 +3354,19 @@ class FileAttributeInfoFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileAttributeInfoFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileAttributeInfoFlags operator|(FileAttributeInfoFlags other) =>
-    new FileAttributeInfoFlags(value | other.value);
+    new FileAttributeInfoFlags(index | other.index);
   FileAttributeInfoFlags operator&(FileAttributeInfoFlags other) =>
-    new FileAttributeInfoFlags(value & other.value);
+    new FileAttributeInfoFlags(index & other.index);
 }
 
 class FileAttributeInfoList extends GObjectBase {
@@ -3408,11 +3408,11 @@ class FileAttributeStatus extends GEnumBase {
   static const FileAttributeStatus SET = const FileAttributeStatus(1);
   static const FileAttributeStatus ERROR_SETTING = const FileAttributeStatus(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileAttributeStatus.UNSET';
       case 1: return 'FileAttributeStatus.SET';
       case 2: return 'FileAttributeStatus.ERROR_SETTING';
-      default: return 'new FileAttributeStatus($value)';
+      default: return 'new FileAttributeStatus($index)';
     }
   }
 }
@@ -3432,7 +3432,7 @@ class FileAttributeType extends GEnumBase {
   static const FileAttributeType OBJECT = const FileAttributeType(8);
   static const FileAttributeType STRINGV = const FileAttributeType(9);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileAttributeType.INVALID';
       case 1: return 'FileAttributeType.STRING';
       case 2: return 'FileAttributeType.BYTE_STRING';
@@ -3443,7 +3443,7 @@ class FileAttributeType extends GEnumBase {
       case 7: return 'FileAttributeType.INT64';
       case 8: return 'FileAttributeType.OBJECT';
       case 9: return 'FileAttributeType.STRINGV';
-      default: return 'new FileAttributeType($value)';
+      default: return 'new FileAttributeType($index)';
     }
   }
 }
@@ -3453,19 +3453,19 @@ class FileCopyFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileCopyFlags');
 
   static const FileCopyFlags NONE = const FileCopyFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FileCopyFlags OVERWRITE = const FileCopyFlags(1);
-  bool get overwrite => (value & 1) == 1;
+  bool get overwrite => (index & 1) == 1;
   static const FileCopyFlags BACKUP = const FileCopyFlags(2);
-  bool get backup => (value & 2) == 2;
+  bool get backup => (index & 2) == 2;
   static const FileCopyFlags NOFOLLOW_SYMLINKS = const FileCopyFlags(4);
-  bool get nofollowSymlinks => (value & 4) == 4;
+  bool get nofollowSymlinks => (index & 4) == 4;
   static const FileCopyFlags ALL_METADATA = const FileCopyFlags(8);
-  bool get allMetadata => (value & 8) == 8;
+  bool get allMetadata => (index & 8) == 8;
   static const FileCopyFlags NO_FALLBACK_FOR_MOVE = const FileCopyFlags(16);
-  bool get noFallbackForMove => (value & 16) == 16;
+  bool get noFallbackForMove => (index & 16) == 16;
   static const FileCopyFlags TARGET_DEFAULT_PERMS = const FileCopyFlags(32);
-  bool get targetDefaultPerms => (value & 32) == 32;
+  bool get targetDefaultPerms => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileCopyFlags.OVERWRITE';
@@ -3478,19 +3478,19 @@ class FileCopyFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileCopyFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileCopyFlags operator|(FileCopyFlags other) =>
-    new FileCopyFlags(value | other.value);
+    new FileCopyFlags(index | other.index);
   FileCopyFlags operator&(FileCopyFlags other) =>
-    new FileCopyFlags(value & other.value);
+    new FileCopyFlags(index & other.index);
 }
 
 class FileCreateFlags extends GEnumBase {
@@ -3498,11 +3498,11 @@ class FileCreateFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileCreateFlags');
 
   static const FileCreateFlags NONE = const FileCreateFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FileCreateFlags PRIVATE = const FileCreateFlags(1);
-  bool get private => (value & 1) == 1;
+  bool get private => (index & 1) == 1;
   static const FileCreateFlags REPLACE_DESTINATION = const FileCreateFlags(2);
-  bool get replaceDestination => (value & 2) == 2;
+  bool get replaceDestination => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileCreateFlags.PRIVATE';
@@ -3511,19 +3511,19 @@ class FileCreateFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileCreateFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileCreateFlags operator|(FileCreateFlags other) =>
-    new FileCreateFlags(value | other.value);
+    new FileCreateFlags(index | other.index);
   FileCreateFlags operator&(FileCreateFlags other) =>
-    new FileCreateFlags(value & other.value);
+    new FileCreateFlags(index & other.index);
 }
 
 abstract class FileDescriptorBased extends GObjectBase {
@@ -3657,13 +3657,13 @@ class FileMeasureFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileMeasureFlags');
 
   static const FileMeasureFlags NONE = const FileMeasureFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FileMeasureFlags REPORT_ANY_ERROR = const FileMeasureFlags(2);
-  bool get reportAnyError => (value & 2) == 2;
+  bool get reportAnyError => (index & 2) == 2;
   static const FileMeasureFlags APPARENT_SIZE = const FileMeasureFlags(4);
-  bool get apparentSize => (value & 4) == 4;
+  bool get apparentSize => (index & 4) == 4;
   static const FileMeasureFlags NO_XDEV = const FileMeasureFlags(8);
-  bool get noXdev => (value & 8) == 8;
+  bool get noXdev => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 2: return 'FileMeasureFlags.REPORT_ANY_ERROR';
@@ -3673,19 +3673,19 @@ class FileMeasureFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileMeasureFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileMeasureFlags operator|(FileMeasureFlags other) =>
-    new FileMeasureFlags(value | other.value);
+    new FileMeasureFlags(index | other.index);
   FileMeasureFlags operator&(FileMeasureFlags other) =>
-    new FileMeasureFlags(value & other.value);
+    new FileMeasureFlags(index & other.index);
 }
 
 typedef void FileMeasureProgressCallback(bool reporting, int currentSize, int numDirs, int numFiles);
@@ -3760,7 +3760,7 @@ class FileMonitorEvent extends GEnumBase {
   static const FileMonitorEvent MOVED_IN = const FileMonitorEvent(9);
   static const FileMonitorEvent MOVED_OUT = const FileMonitorEvent(10);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileMonitorEvent.CHANGED';
       case 1: return 'FileMonitorEvent.CHANGES_DONE_HINT';
       case 2: return 'FileMonitorEvent.DELETED';
@@ -3772,7 +3772,7 @@ class FileMonitorEvent extends GEnumBase {
       case 8: return 'FileMonitorEvent.RENAMED';
       case 9: return 'FileMonitorEvent.MOVED_IN';
       case 10: return 'FileMonitorEvent.MOVED_OUT';
-      default: return 'new FileMonitorEvent($value)';
+      default: return 'new FileMonitorEvent($index)';
     }
   }
 }
@@ -3782,15 +3782,15 @@ class FileMonitorFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileMonitorFlags');
 
   static const FileMonitorFlags NONE = const FileMonitorFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FileMonitorFlags WATCH_MOUNTS = const FileMonitorFlags(1);
-  bool get watchMounts => (value & 1) == 1;
+  bool get watchMounts => (index & 1) == 1;
   static const FileMonitorFlags SEND_MOVED = const FileMonitorFlags(2);
-  bool get sendMoved => (value & 2) == 2;
+  bool get sendMoved => (index & 2) == 2;
   static const FileMonitorFlags WATCH_HARD_LINKS = const FileMonitorFlags(4);
-  bool get watchHardLinks => (value & 4) == 4;
+  bool get watchHardLinks => (index & 4) == 4;
   static const FileMonitorFlags WATCH_MOVES = const FileMonitorFlags(8);
-  bool get watchMoves => (value & 8) == 8;
+  bool get watchMoves => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileMonitorFlags.WATCH_MOUNTS';
@@ -3801,19 +3801,19 @@ class FileMonitorFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileMonitorFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileMonitorFlags operator|(FileMonitorFlags other) =>
-    new FileMonitorFlags(value | other.value);
+    new FileMonitorFlags(index | other.index);
   FileMonitorFlags operator&(FileMonitorFlags other) =>
-    new FileMonitorFlags(value & other.value);
+    new FileMonitorFlags(index & other.index);
 }
 
 class FileOutputStream extends OutputStream with Seekable {
@@ -3832,9 +3832,9 @@ class FileQueryInfoFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'FileQueryInfoFlags');
 
   static const FileQueryInfoFlags NONE = const FileQueryInfoFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FileQueryInfoFlags NOFOLLOW_SYMLINKS = const FileQueryInfoFlags(1);
-  bool get nofollowSymlinks => (value & 1) == 1;
+  bool get nofollowSymlinks => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileQueryInfoFlags.NOFOLLOW_SYMLINKS';
@@ -3842,19 +3842,19 @@ class FileQueryInfoFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileQueryInfoFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileQueryInfoFlags operator|(FileQueryInfoFlags other) =>
-    new FileQueryInfoFlags(value | other.value);
+    new FileQueryInfoFlags(index | other.index);
   FileQueryInfoFlags operator&(FileQueryInfoFlags other) =>
-    new FileQueryInfoFlags(value & other.value);
+    new FileQueryInfoFlags(index & other.index);
 }
 
 typedef bool FileReadMoreCallback(String fileContents, int fileSize);
@@ -3870,7 +3870,7 @@ class FileType extends GEnumBase {
   static const FileType SHORTCUT = const FileType(5);
   static const FileType MOUNTABLE = const FileType(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileType.UNKNOWN';
       case 1: return 'FileType.REGULAR';
       case 2: return 'FileType.DIRECTORY';
@@ -3878,7 +3878,7 @@ class FileType extends GEnumBase {
       case 4: return 'FileType.SPECIAL';
       case 5: return 'FileType.SHORTCUT';
       case 6: return 'FileType.MOUNTABLE';
-      default: return 'new FileType($value)';
+      default: return 'new FileType($index)';
     }
   }
 }
@@ -3932,11 +3932,11 @@ class FilesystemPreviewType extends GEnumBase {
   static const FilesystemPreviewType IF_LOCAL = const FilesystemPreviewType(1);
   static const FilesystemPreviewType NEVER = const FilesystemPreviewType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FilesystemPreviewType.IF_ALWAYS';
       case 1: return 'FilesystemPreviewType.IF_LOCAL';
       case 2: return 'FilesystemPreviewType.NEVER';
-      default: return 'new FilesystemPreviewType($value)';
+      default: return 'new FilesystemPreviewType($index)';
     }
   }
 }
@@ -4017,7 +4017,7 @@ class IOErrorEnumCode extends GEnumBase {
   static const IOErrorEnumCode CONNECTION_CLOSED = const IOErrorEnumCode(44);
   static const IOErrorEnumCode NOT_CONNECTED = const IOErrorEnumCode(45);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IOErrorEnumCode.FAILED';
       case 1: return 'IOErrorEnumCode.NOT_FOUND';
       case 2: return 'IOErrorEnumCode.EXISTS';
@@ -4064,7 +4064,7 @@ class IOErrorEnumCode extends GEnumBase {
       case 43: return 'IOErrorEnumCode.PROXY_NOT_ALLOWED';
       case 44: return 'IOErrorEnumCode.CONNECTION_CLOSED';
       case 45: return 'IOErrorEnumCode.NOT_CONNECTED';
-      default: return 'new IOErrorEnumCode($value)';
+      default: return 'new IOErrorEnumCode($index)';
     }
   }
 }
@@ -4122,10 +4122,10 @@ class IOModuleScopeFlags extends GEnumBase {
   static const IOModuleScopeFlags NONE = const IOModuleScopeFlags(0);
   static const IOModuleScopeFlags BLOCK_DUPLICATES = const IOModuleScopeFlags(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IOModuleScopeFlags.NONE';
       case 1: return 'IOModuleScopeFlags.BLOCK_DUPLICATES';
-      default: return 'new IOModuleScopeFlags($value)';
+      default: return 'new IOModuleScopeFlags($index)';
     }
   }
 }
@@ -4171,13 +4171,13 @@ class IOStreamSpliceFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'IOStreamSpliceFlags');
 
   static const IOStreamSpliceFlags NONE = const IOStreamSpliceFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const IOStreamSpliceFlags CLOSE_STREAM1 = const IOStreamSpliceFlags(1);
-  bool get closeStream1 => (value & 1) == 1;
+  bool get closeStream1 => (index & 1) == 1;
   static const IOStreamSpliceFlags CLOSE_STREAM2 = const IOStreamSpliceFlags(2);
-  bool get closeStream2 => (value & 2) == 2;
+  bool get closeStream2 => (index & 2) == 2;
   static const IOStreamSpliceFlags WAIT_FOR_BOTH = const IOStreamSpliceFlags(4);
-  bool get waitForBoth => (value & 4) == 4;
+  bool get waitForBoth => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'IOStreamSpliceFlags.CLOSE_STREAM1';
@@ -4187,19 +4187,19 @@ class IOStreamSpliceFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'IOStreamSpliceFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   IOStreamSpliceFlags operator|(IOStreamSpliceFlags other) =>
-    new IOStreamSpliceFlags(value | other.value);
+    new IOStreamSpliceFlags(index | other.index);
   IOStreamSpliceFlags operator&(IOStreamSpliceFlags other) =>
-    new IOStreamSpliceFlags(value & other.value);
+    new IOStreamSpliceFlags(index & other.index);
 }
 
 abstract class Icon extends GObjectBase {
@@ -4692,26 +4692,26 @@ class MountMountFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'MountMountFlags');
 
   static const MountMountFlags NONE = const MountMountFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static _valueToString(int value) {
     switch(value) {
       default: return 'new MountMountFlags($value)';
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'MountMountFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 0; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   MountMountFlags operator|(MountMountFlags other) =>
-    new MountMountFlags(value | other.value);
+    new MountMountFlags(index | other.index);
   MountMountFlags operator&(MountMountFlags other) =>
-    new MountMountFlags(value & other.value);
+    new MountMountFlags(index & other.index);
 }
 
 class MountOperation extends GObjectObject {
@@ -4974,11 +4974,11 @@ class MountOperationResult extends GEnumBase {
   static const MountOperationResult ABORTED = const MountOperationResult(1);
   static const MountOperationResult UNHANDLED = const MountOperationResult(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'MountOperationResult.HANDLED';
       case 1: return 'MountOperationResult.ABORTED';
       case 2: return 'MountOperationResult.UNHANDLED';
-      default: return 'new MountOperationResult($value)';
+      default: return 'new MountOperationResult($index)';
     }
   }
 }
@@ -4988,9 +4988,9 @@ class MountUnmountFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'MountUnmountFlags');
 
   static const MountUnmountFlags NONE = const MountUnmountFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const MountUnmountFlags FORCE = const MountUnmountFlags(1);
-  bool get force => (value & 1) == 1;
+  bool get force => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'MountUnmountFlags.FORCE';
@@ -4998,19 +4998,19 @@ class MountUnmountFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'MountUnmountFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   MountUnmountFlags operator|(MountUnmountFlags other) =>
-    new MountUnmountFlags(value | other.value);
+    new MountUnmountFlags(index | other.index);
   MountUnmountFlags operator&(MountUnmountFlags other) =>
-    new MountUnmountFlags(value & other.value);
+    new MountUnmountFlags(index & other.index);
 }
 
 class NativeSocketAddress extends GObjectBase {
@@ -5053,12 +5053,12 @@ class NetworkConnectivity extends GEnumBase {
   static const NetworkConnectivity PORTAL = const NetworkConnectivity(3);
   static const NetworkConnectivity FULL = const NetworkConnectivity(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 1: return 'NetworkConnectivity.LOCAL';
       case 2: return 'NetworkConnectivity.LIMITED';
       case 3: return 'NetworkConnectivity.PORTAL';
       case 4: return 'NetworkConnectivity.FULL';
-      default: return 'new NetworkConnectivity($value)';
+      default: return 'new NetworkConnectivity($index)';
     }
   }
 }
@@ -5155,12 +5155,12 @@ class NotificationPriority extends GEnumBase {
   static const NotificationPriority HIGH = const NotificationPriority(2);
   static const NotificationPriority URGENT = const NotificationPriority(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'NotificationPriority.NORMAL';
       case 1: return 'NotificationPriority.LOW';
       case 2: return 'NotificationPriority.HIGH';
       case 3: return 'NotificationPriority.URGENT';
-      default: return 'new NotificationPriority($value)';
+      default: return 'new NotificationPriority($index)';
     }
   }
 }
@@ -5217,11 +5217,11 @@ class OutputStreamSpliceFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'OutputStreamSpliceFlags');
 
   static const OutputStreamSpliceFlags NONE = const OutputStreamSpliceFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const OutputStreamSpliceFlags CLOSE_SOURCE = const OutputStreamSpliceFlags(1);
-  bool get closeSource => (value & 1) == 1;
+  bool get closeSource => (index & 1) == 1;
   static const OutputStreamSpliceFlags CLOSE_TARGET = const OutputStreamSpliceFlags(2);
-  bool get closeTarget => (value & 2) == 2;
+  bool get closeTarget => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'OutputStreamSpliceFlags.CLOSE_SOURCE';
@@ -5230,19 +5230,19 @@ class OutputStreamSpliceFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'OutputStreamSpliceFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   OutputStreamSpliceFlags operator|(OutputStreamSpliceFlags other) =>
-    new OutputStreamSpliceFlags(value | other.value);
+    new OutputStreamSpliceFlags(index | other.index);
   OutputStreamSpliceFlags operator&(OutputStreamSpliceFlags other) =>
-    new OutputStreamSpliceFlags(value & other.value);
+    new OutputStreamSpliceFlags(index & other.index);
 }
 
 class OutputVector extends GObjectBase {
@@ -5263,11 +5263,11 @@ class PasswordSave extends GEnumBase {
   static const PasswordSave FOR_SESSION = const PasswordSave(1);
   static const PasswordSave PERMANENTLY = const PasswordSave(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PasswordSave.NEVER';
       case 1: return 'PasswordSave.FOR_SESSION';
       case 2: return 'PasswordSave.PERMANENTLY';
-      default: return 'new PasswordSave($value)';
+      default: return 'new PasswordSave($index)';
     }
   }
 }
@@ -5477,11 +5477,11 @@ class ResolverErrorCode extends GEnumBase {
   static const ResolverErrorCode TEMPORARY_FAILURE = const ResolverErrorCode(1);
   static const ResolverErrorCode INTERNAL = const ResolverErrorCode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ResolverErrorCode.NOT_FOUND';
       case 1: return 'ResolverErrorCode.TEMPORARY_FAILURE';
       case 2: return 'ResolverErrorCode.INTERNAL';
-      default: return 'new ResolverErrorCode($value)';
+      default: return 'new ResolverErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -5503,13 +5503,13 @@ class ResolverRecordType extends GEnumBase {
   static const ResolverRecordType SOA = const ResolverRecordType(4);
   static const ResolverRecordType NS = const ResolverRecordType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 1: return 'ResolverRecordType.SRV';
       case 2: return 'ResolverRecordType.MX';
       case 3: return 'ResolverRecordType.TXT';
       case 4: return 'ResolverRecordType.SOA';
       case 5: return 'ResolverRecordType.NS';
-      default: return 'new ResolverRecordType($value)';
+      default: return 'new ResolverRecordType($index)';
     }
   }
 }
@@ -5537,10 +5537,10 @@ class ResourceErrorCode extends GEnumBase {
   static const ResourceErrorCode NOT_FOUND = const ResourceErrorCode(0);
   static const ResourceErrorCode INTERNAL = const ResourceErrorCode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ResourceErrorCode.NOT_FOUND';
       case 1: return 'ResourceErrorCode.INTERNAL';
-      default: return 'new ResourceErrorCode($value)';
+      default: return 'new ResourceErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -5557,9 +5557,9 @@ class ResourceFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ResourceFlags');
 
   static const ResourceFlags NONE = const ResourceFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const ResourceFlags COMPRESSED = const ResourceFlags(1);
-  bool get compressed => (value & 1) == 1;
+  bool get compressed => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ResourceFlags.COMPRESSED';
@@ -5567,19 +5567,19 @@ class ResourceFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ResourceFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ResourceFlags operator|(ResourceFlags other) =>
-    new ResourceFlags(value | other.value);
+    new ResourceFlags(index | other.index);
   ResourceFlags operator&(ResourceFlags other) =>
-    new ResourceFlags(value & other.value);
+    new ResourceFlags(index & other.index);
 }
 
 class ResourceLookupFlags extends GEnumBase {
@@ -5587,26 +5587,26 @@ class ResourceLookupFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'ResourceLookupFlags');
 
   static const ResourceLookupFlags NONE = const ResourceLookupFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static _valueToString(int value) {
     switch(value) {
       default: return 'new ResourceLookupFlags($value)';
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ResourceLookupFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 0; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ResourceLookupFlags operator|(ResourceLookupFlags other) =>
-    new ResourceLookupFlags(value | other.value);
+    new ResourceLookupFlags(index | other.index);
   ResourceLookupFlags operator&(ResourceLookupFlags other) =>
-    new ResourceLookupFlags(value & other.value);
+    new ResourceLookupFlags(index & other.index);
 }
 
 abstract class Seekable extends GObjectBase {
@@ -5847,17 +5847,17 @@ class SettingsBindFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SettingsBindFlags');
 
   static const SettingsBindFlags DEFAULT = const SettingsBindFlags(0);
-  bool get default_ => (value & 0) == 0;
+  bool get default_ => (index & 0) == 0;
   static const SettingsBindFlags GET = const SettingsBindFlags(1);
-  bool get get_ => (value & 1) == 1;
+  bool get get_ => (index & 1) == 1;
   static const SettingsBindFlags SET = const SettingsBindFlags(2);
-  bool get set_ => (value & 2) == 2;
+  bool get set_ => (index & 2) == 2;
   static const SettingsBindFlags NO_SENSITIVITY = const SettingsBindFlags(4);
-  bool get noSensitivity => (value & 4) == 4;
+  bool get noSensitivity => (index & 4) == 4;
   static const SettingsBindFlags GET_NO_CHANGES = const SettingsBindFlags(8);
-  bool get getNoChanges => (value & 8) == 8;
+  bool get getNoChanges => (index & 8) == 8;
   static const SettingsBindFlags INVERT_BOOLEAN = const SettingsBindFlags(16);
-  bool get invertBoolean => (value & 16) == 16;
+  bool get invertBoolean => (index & 16) == 16;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'SettingsBindFlags.GET';
@@ -5869,19 +5869,19 @@ class SettingsBindFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'SettingsBindFlags.DEFAULT';
     }
     List codes = [];
     for (var i=1; i <= 16; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   SettingsBindFlags operator|(SettingsBindFlags other) =>
-    new SettingsBindFlags(value | other.value);
+    new SettingsBindFlags(index | other.index);
   SettingsBindFlags operator&(SettingsBindFlags other) =>
-    new SettingsBindFlags(value & other.value);
+    new SettingsBindFlags(index & other.index);
 }
 
 typedef bool SettingsBindGetMapping(Value value, Variant variant);
@@ -6280,7 +6280,7 @@ class SocketClientEvent extends GEnumBase {
   static const SocketClientEvent TLS_HANDSHAKED = const SocketClientEvent(7);
   static const SocketClientEvent COMPLETE = const SocketClientEvent(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SocketClientEvent.RESOLVING';
       case 1: return 'SocketClientEvent.RESOLVED';
       case 2: return 'SocketClientEvent.CONNECTING';
@@ -6290,7 +6290,7 @@ class SocketClientEvent extends GEnumBase {
       case 6: return 'SocketClientEvent.TLS_HANDSHAKING';
       case 7: return 'SocketClientEvent.TLS_HANDSHAKED';
       case 8: return 'SocketClientEvent.COMPLETE';
-      default: return 'new SocketClientEvent($value)';
+      default: return 'new SocketClientEvent($index)';
     }
   }
 }
@@ -6341,12 +6341,12 @@ class SocketFamily extends GEnumBase {
   static const SocketFamily IPV4 = const SocketFamily(2);
   static const SocketFamily IPV6 = const SocketFamily(10);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SocketFamily.INVALID';
       case 1: return 'SocketFamily.UNIX';
       case 2: return 'SocketFamily.IPV4';
       case 10: return 'SocketFamily.IPV6';
-      default: return 'new SocketFamily($value)';
+      default: return 'new SocketFamily($index)';
     }
   }
 }
@@ -6422,12 +6422,12 @@ class SocketListenerEvent extends GEnumBase {
   static const SocketListenerEvent LISTENING = const SocketListenerEvent(2);
   static const SocketListenerEvent LISTENED = const SocketListenerEvent(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SocketListenerEvent.BINDING';
       case 1: return 'SocketListenerEvent.BOUND';
       case 2: return 'SocketListenerEvent.LISTENING';
       case 3: return 'SocketListenerEvent.LISTENED';
-      default: return 'new SocketListenerEvent($value)';
+      default: return 'new SocketListenerEvent($index)';
     }
   }
 }
@@ -6437,13 +6437,13 @@ class SocketMsgFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SocketMsgFlags');
 
   static const SocketMsgFlags NONE = const SocketMsgFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const SocketMsgFlags OOB = const SocketMsgFlags(1);
-  bool get oob => (value & 1) == 1;
+  bool get oob => (index & 1) == 1;
   static const SocketMsgFlags PEEK = const SocketMsgFlags(2);
-  bool get peek => (value & 2) == 2;
+  bool get peek => (index & 2) == 2;
   static const SocketMsgFlags DONTROUTE = const SocketMsgFlags(4);
-  bool get dontroute => (value & 4) == 4;
+  bool get dontroute => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'SocketMsgFlags.OOB';
@@ -6453,19 +6453,19 @@ class SocketMsgFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'SocketMsgFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   SocketMsgFlags operator|(SocketMsgFlags other) =>
-    new SocketMsgFlags(value | other.value);
+    new SocketMsgFlags(index | other.index);
   SocketMsgFlags operator&(SocketMsgFlags other) =>
-    new SocketMsgFlags(value & other.value);
+    new SocketMsgFlags(index & other.index);
 }
 
 class SocketProtocol extends GEnumBase {
@@ -6478,13 +6478,13 @@ class SocketProtocol extends GEnumBase {
   static const SocketProtocol UDP = const SocketProtocol(17);
   static const SocketProtocol SCTP = const SocketProtocol(132);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'SocketProtocol.UNKNOWN';
       case 0: return 'SocketProtocol.DEFAULT';
       case 6: return 'SocketProtocol.TCP';
       case 17: return 'SocketProtocol.UDP';
       case 132: return 'SocketProtocol.SCTP';
-      default: return 'new SocketProtocol($value)';
+      default: return 'new SocketProtocol($index)';
     }
   }
 }
@@ -6557,12 +6557,12 @@ class SocketType extends GEnumBase {
   static const SocketType DATAGRAM = const SocketType(2);
   static const SocketType SEQPACKET = const SocketType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SocketType.INVALID';
       case 1: return 'SocketType.STREAM';
       case 2: return 'SocketType.DATAGRAM';
       case 3: return 'SocketType.SEQPACKET';
-      default: return 'new SocketType($value)';
+      default: return 'new SocketType($index)';
     }
   }
 }
@@ -6633,23 +6633,23 @@ class SubprocessFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'SubprocessFlags');
 
   static const SubprocessFlags NONE = const SubprocessFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const SubprocessFlags STDIN_PIPE = const SubprocessFlags(1);
-  bool get stdinPipe => (value & 1) == 1;
+  bool get stdinPipe => (index & 1) == 1;
   static const SubprocessFlags STDIN_INHERIT = const SubprocessFlags(2);
-  bool get stdinInherit => (value & 2) == 2;
+  bool get stdinInherit => (index & 2) == 2;
   static const SubprocessFlags STDOUT_PIPE = const SubprocessFlags(4);
-  bool get stdoutPipe => (value & 4) == 4;
+  bool get stdoutPipe => (index & 4) == 4;
   static const SubprocessFlags STDOUT_SILENCE = const SubprocessFlags(8);
-  bool get stdoutSilence => (value & 8) == 8;
+  bool get stdoutSilence => (index & 8) == 8;
   static const SubprocessFlags STDERR_PIPE = const SubprocessFlags(16);
-  bool get stderrPipe => (value & 16) == 16;
+  bool get stderrPipe => (index & 16) == 16;
   static const SubprocessFlags STDERR_SILENCE = const SubprocessFlags(32);
-  bool get stderrSilence => (value & 32) == 32;
+  bool get stderrSilence => (index & 32) == 32;
   static const SubprocessFlags STDERR_MERGE = const SubprocessFlags(64);
-  bool get stderrMerge => (value & 64) == 64;
+  bool get stderrMerge => (index & 64) == 64;
   static const SubprocessFlags INHERIT_FDS = const SubprocessFlags(128);
-  bool get inheritFds => (value & 128) == 128;
+  bool get inheritFds => (index & 128) == 128;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'SubprocessFlags.STDIN_PIPE';
@@ -6664,19 +6664,19 @@ class SubprocessFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'SubprocessFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 128; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   SubprocessFlags operator|(SubprocessFlags other) =>
-    new SubprocessFlags(value | other.value);
+    new SubprocessFlags(index | other.index);
   SubprocessFlags operator&(SubprocessFlags other) =>
-    new SubprocessFlags(value & other.value);
+    new SubprocessFlags(index & other.index);
 }
 
 class SubprocessLauncher extends GObjectObject {
@@ -6776,26 +6776,26 @@ class TestDBusFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TestDBusFlags');
 
   static const TestDBusFlags NONE = const TestDBusFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static _valueToString(int value) {
     switch(value) {
       default: return 'new TestDBusFlags($value)';
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TestDBusFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 0; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TestDBusFlags operator|(TestDBusFlags other) =>
-    new TestDBusFlags(value | other.value);
+    new TestDBusFlags(index | other.index);
   TestDBusFlags operator&(TestDBusFlags other) =>
-    new TestDBusFlags(value & other.value);
+    new TestDBusFlags(index & other.index);
 }
 
 class ThemedIcon extends GObjectObject with Icon {
@@ -6880,11 +6880,11 @@ class TlsAuthenticationMode extends GEnumBase {
   static const TlsAuthenticationMode REQUESTED = const TlsAuthenticationMode(1);
   static const TlsAuthenticationMode REQUIRED = const TlsAuthenticationMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TlsAuthenticationMode.NONE';
       case 1: return 'TlsAuthenticationMode.REQUESTED';
       case 2: return 'TlsAuthenticationMode.REQUIRED';
-      default: return 'new TlsAuthenticationMode($value)';
+      default: return 'new TlsAuthenticationMode($index)';
     }
   }
 }
@@ -6934,21 +6934,21 @@ class TlsCertificateFlags extends GEnumBase {
 
   static const TlsCertificateFlags NULL = const TlsCertificateFlags(0);
   static const TlsCertificateFlags UNKNOWN_CA = const TlsCertificateFlags(1);
-  bool get unknownCa => (value & 1) == 1;
+  bool get unknownCa => (index & 1) == 1;
   static const TlsCertificateFlags BAD_IDENTITY = const TlsCertificateFlags(2);
-  bool get badIdentity => (value & 2) == 2;
+  bool get badIdentity => (index & 2) == 2;
   static const TlsCertificateFlags NOT_ACTIVATED = const TlsCertificateFlags(4);
-  bool get notActivated => (value & 4) == 4;
+  bool get notActivated => (index & 4) == 4;
   static const TlsCertificateFlags EXPIRED = const TlsCertificateFlags(8);
-  bool get expired => (value & 8) == 8;
+  bool get expired => (index & 8) == 8;
   static const TlsCertificateFlags REVOKED = const TlsCertificateFlags(16);
-  bool get revoked => (value & 16) == 16;
+  bool get revoked => (index & 16) == 16;
   static const TlsCertificateFlags INSECURE = const TlsCertificateFlags(32);
-  bool get insecure => (value & 32) == 32;
+  bool get insecure => (index & 32) == 32;
   static const TlsCertificateFlags GENERIC_ERROR = const TlsCertificateFlags(64);
-  bool get genericError => (value & 64) == 64;
+  bool get genericError => (index & 64) == 64;
   static const TlsCertificateFlags VALIDATE_ALL = const TlsCertificateFlags(127);
-  bool get validateAll => (value & 127) == 127;
+  bool get validateAll => (index & 127) == 127;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TlsCertificateFlags.UNKNOWN_CA';
@@ -6962,19 +6962,19 @@ class TlsCertificateFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TlsCertificateFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 64; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TlsCertificateFlags operator|(TlsCertificateFlags other) =>
-    new TlsCertificateFlags(value | other.value);
+    new TlsCertificateFlags(index | other.index);
   TlsCertificateFlags operator&(TlsCertificateFlags other) =>
-    new TlsCertificateFlags(value & other.value);
+    new TlsCertificateFlags(index & other.index);
 }
 
 class TlsCertificateRequestFlags extends GEnumBase {
@@ -6983,9 +6983,9 @@ class TlsCertificateRequestFlags extends GEnumBase {
 
   static const TlsCertificateRequestFlags NONE = const TlsCertificateRequestFlags(0);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TlsCertificateRequestFlags.NONE';
-      default: return 'new TlsCertificateRequestFlags($value)';
+      default: return 'new TlsCertificateRequestFlags($index)';
     }
   }
 }
@@ -7116,10 +7116,10 @@ class TlsDatabaseLookupFlags extends GEnumBase {
   static const TlsDatabaseLookupFlags NONE = const TlsDatabaseLookupFlags(0);
   static const TlsDatabaseLookupFlags KEYPAIR = const TlsDatabaseLookupFlags(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TlsDatabaseLookupFlags.NONE';
       case 1: return 'TlsDatabaseLookupFlags.KEYPAIR';
-      default: return 'new TlsDatabaseLookupFlags($value)';
+      default: return 'new TlsDatabaseLookupFlags($index)';
     }
   }
 }
@@ -7129,26 +7129,26 @@ class TlsDatabaseVerifyFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsDatabaseVerifyFlags');
 
   static const TlsDatabaseVerifyFlags NONE = const TlsDatabaseVerifyFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static _valueToString(int value) {
     switch(value) {
       default: return 'new TlsDatabaseVerifyFlags($value)';
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TlsDatabaseVerifyFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 0; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TlsDatabaseVerifyFlags operator|(TlsDatabaseVerifyFlags other) =>
-    new TlsDatabaseVerifyFlags(value | other.value);
+    new TlsDatabaseVerifyFlags(index | other.index);
   TlsDatabaseVerifyFlags operator&(TlsDatabaseVerifyFlags other) =>
-    new TlsDatabaseVerifyFlags(value & other.value);
+    new TlsDatabaseVerifyFlags(index & other.index);
 }
 
 class TlsErrorCode extends GEnumBase {
@@ -7163,7 +7163,7 @@ class TlsErrorCode extends GEnumBase {
   static const TlsErrorCode CERTIFICATE_REQUIRED = const TlsErrorCode(5);
   static const TlsErrorCode EOF = const TlsErrorCode(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TlsErrorCode.UNAVAILABLE';
       case 1: return 'TlsErrorCode.MISC';
       case 2: return 'TlsErrorCode.BAD_CERTIFICATE';
@@ -7171,7 +7171,7 @@ class TlsErrorCode extends GEnumBase {
       case 4: return 'TlsErrorCode.HANDSHAKE';
       case 5: return 'TlsErrorCode.CERTIFICATE_REQUIRED';
       case 6: return 'TlsErrorCode.EOF';
-      default: return 'new TlsErrorCode($value)';
+      default: return 'new TlsErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -7216,11 +7216,11 @@ class TlsInteractionResult extends GEnumBase {
   static const TlsInteractionResult HANDLED = const TlsInteractionResult(1);
   static const TlsInteractionResult FAILED = const TlsInteractionResult(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TlsInteractionResult.UNHANDLED';
       case 1: return 'TlsInteractionResult.HANDLED';
       case 2: return 'TlsInteractionResult.FAILED';
-      default: return 'new TlsInteractionResult($value)';
+      default: return 'new TlsInteractionResult($index)';
     }
   }
 }
@@ -7249,13 +7249,13 @@ class TlsPasswordFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gio', 'TlsPasswordFlags');
 
   static const TlsPasswordFlags NONE = const TlsPasswordFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const TlsPasswordFlags RETRY = const TlsPasswordFlags(2);
-  bool get retry => (value & 2) == 2;
+  bool get retry => (index & 2) == 2;
   static const TlsPasswordFlags MANY_TRIES = const TlsPasswordFlags(4);
-  bool get manyTries => (value & 4) == 4;
+  bool get manyTries => (index & 4) == 4;
   static const TlsPasswordFlags FINAL_TRY = const TlsPasswordFlags(8);
-  bool get finalTry => (value & 8) == 8;
+  bool get finalTry => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 2: return 'TlsPasswordFlags.RETRY';
@@ -7265,19 +7265,19 @@ class TlsPasswordFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TlsPasswordFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TlsPasswordFlags operator|(TlsPasswordFlags other) =>
-    new TlsPasswordFlags(value | other.value);
+    new TlsPasswordFlags(index | other.index);
   TlsPasswordFlags operator&(TlsPasswordFlags other) =>
-    new TlsPasswordFlags(value & other.value);
+    new TlsPasswordFlags(index & other.index);
 }
 
 class TlsRehandshakeMode extends GEnumBase {
@@ -7288,11 +7288,11 @@ class TlsRehandshakeMode extends GEnumBase {
   static const TlsRehandshakeMode SAFELY = const TlsRehandshakeMode(1);
   static const TlsRehandshakeMode UNSAFELY = const TlsRehandshakeMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TlsRehandshakeMode.NEVER';
       case 1: return 'TlsRehandshakeMode.SAFELY';
       case 2: return 'TlsRehandshakeMode.UNSAFELY';
-      default: return 'new TlsRehandshakeMode($value)';
+      default: return 'new TlsRehandshakeMode($index)';
     }
   }
 }
@@ -7516,13 +7516,13 @@ class UnixSocketAddressType extends GEnumBase {
   static const UnixSocketAddressType ABSTRACT = const UnixSocketAddressType(3);
   static const UnixSocketAddressType ABSTRACT_PADDED = const UnixSocketAddressType(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'UnixSocketAddressType.INVALID';
       case 1: return 'UnixSocketAddressType.ANONYMOUS';
       case 2: return 'UnixSocketAddressType.PATH';
       case 3: return 'UnixSocketAddressType.ABSTRACT';
       case 4: return 'UnixSocketAddressType.ABSTRACT_PADDED';
-      default: return 'new UnixSocketAddressType($value)';
+      default: return 'new UnixSocketAddressType($index)';
     }
   }
 }
@@ -8037,11 +8037,11 @@ class ZlibCompressorFormat extends GEnumBase {
   static const ZlibCompressorFormat GZIP = const ZlibCompressorFormat(1);
   static const ZlibCompressorFormat RAW = const ZlibCompressorFormat(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ZlibCompressorFormat.ZLIB';
       case 1: return 'ZlibCompressorFormat.GZIP';
       case 2: return 'ZlibCompressorFormat.RAW';
-      default: return 'new ZlibCompressorFormat($value)';
+      default: return 'new ZlibCompressorFormat($index)';
     }
   }
 }

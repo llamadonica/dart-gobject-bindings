@@ -15,11 +15,11 @@ class Alignment extends GEnumBase {
   static const Alignment CENTER = const Alignment(1);
   static const Alignment RIGHT = const Alignment(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Alignment.LEFT';
       case 1: return 'Alignment.CENTER';
       case 2: return 'Alignment.RIGHT';
-      default: return 'new Alignment($value)';
+      default: return 'new Alignment($index)';
     }
   }
 }
@@ -215,7 +215,7 @@ class AttrType extends GEnumBase {
   static const AttrType FOREGROUND_ALPHA = const AttrType(24);
   static const AttrType BACKGROUND_ALPHA = const AttrType(25);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'AttrType.INVALID';
       case 1: return 'AttrType.LANGUAGE';
       case 2: return 'AttrType.FAMILY';
@@ -242,7 +242,7 @@ class AttrType extends GEnumBase {
       case 23: return 'AttrType.FONT_FEATURES';
       case 24: return 'AttrType.FOREGROUND_ALPHA';
       case 25: return 'AttrType.BACKGROUND_ALPHA';
-      default: return 'new AttrType($value)';
+      default: return 'new AttrType($index)';
     }
   }
   static String getName(AttrType type) => _staticInfo.callStatic('get_name', [type]);
@@ -288,7 +288,7 @@ class BidiType extends GEnumBase {
   static const BidiType WS = const BidiType(17);
   static const BidiType ON = const BidiType(18);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'BidiType.L';
       case 1: return 'BidiType.LRE';
       case 2: return 'BidiType.LRO';
@@ -308,7 +308,7 @@ class BidiType extends GEnumBase {
       case 16: return 'BidiType.S';
       case 17: return 'BidiType.WS';
       case 18: return 'BidiType.ON';
-      default: return 'new BidiType($value)';
+      default: return 'new BidiType($index)';
     }
   }
   static BidiType forUnichar(int ch) => _staticInfo.callStatic('for_unichar', [ch]);
@@ -378,12 +378,12 @@ class CoverageLevel extends GEnumBase {
   static const CoverageLevel APPROXIMATE = const CoverageLevel(2);
   static const CoverageLevel EXACT = const CoverageLevel(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CoverageLevel.NONE';
       case 1: return 'CoverageLevel.FALLBACK';
       case 2: return 'CoverageLevel.APPROXIMATE';
       case 3: return 'CoverageLevel.EXACT';
-      default: return 'new CoverageLevel($value)';
+      default: return 'new CoverageLevel($index)';
     }
   }
 }
@@ -400,7 +400,7 @@ class Direction extends GEnumBase {
   static const Direction WEAK_RTL = const Direction(5);
   static const Direction NEUTRAL = const Direction(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Direction.LTR';
       case 1: return 'Direction.RTL';
       case 2: return 'Direction.TTB_LTR';
@@ -408,7 +408,7 @@ class Direction extends GEnumBase {
       case 4: return 'Direction.WEAK_LTR';
       case 5: return 'Direction.WEAK_RTL';
       case 6: return 'Direction.NEUTRAL';
-      default: return 'new Direction($value)';
+      default: return 'new Direction($index)';
     }
   }
 }
@@ -422,12 +422,12 @@ class EllipsizeMode extends GEnumBase {
   static const EllipsizeMode MIDDLE = const EllipsizeMode(2);
   static const EllipsizeMode END = const EllipsizeMode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'EllipsizeMode.NONE';
       case 1: return 'EllipsizeMode.START';
       case 2: return 'EllipsizeMode.MIDDLE';
       case 3: return 'EllipsizeMode.END';
-      default: return 'new EllipsizeMode($value)';
+      default: return 'new EllipsizeMode($index)';
     }
   }
 }
@@ -563,19 +563,19 @@ class FontMask extends GEnumBase {
 
   static const FontMask NULL = const FontMask(0);
   static const FontMask FAMILY = const FontMask(1);
-  bool get family => (value & 1) == 1;
+  bool get family => (index & 1) == 1;
   static const FontMask STYLE = const FontMask(2);
-  bool get style => (value & 2) == 2;
+  bool get style => (index & 2) == 2;
   static const FontMask VARIANT = const FontMask(4);
-  bool get variant => (value & 4) == 4;
+  bool get variant => (index & 4) == 4;
   static const FontMask WEIGHT = const FontMask(8);
-  bool get weight => (value & 8) == 8;
+  bool get weight => (index & 8) == 8;
   static const FontMask STRETCH = const FontMask(16);
-  bool get stretch => (value & 16) == 16;
+  bool get stretch => (index & 16) == 16;
   static const FontMask SIZE = const FontMask(32);
-  bool get size => (value & 32) == 32;
+  bool get size => (index & 32) == 32;
   static const FontMask GRAVITY = const FontMask(64);
-  bool get gravity => (value & 64) == 64;
+  bool get gravity => (index & 64) == 64;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FontMask.FAMILY';
@@ -589,19 +589,19 @@ class FontMask extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FontMask.NULL';
     }
     List codes = [];
     for (var i=1; i <= 64; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FontMask operator|(FontMask other) =>
-    new FontMask(value | other.value);
+    new FontMask(index | other.index);
   FontMask operator&(FontMask other) =>
-    new FontMask(value & other.value);
+    new FontMask(index & other.index);
 }
 
 class FontMetrics extends GObjectBase {
@@ -750,13 +750,13 @@ class Gravity extends GEnumBase {
   static const Gravity WEST = const Gravity(3);
   static const Gravity AUTO = const Gravity(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Gravity.SOUTH';
       case 1: return 'Gravity.EAST';
       case 2: return 'Gravity.NORTH';
       case 3: return 'Gravity.WEST';
       case 4: return 'Gravity.AUTO';
-      default: return 'new Gravity($value)';
+      default: return 'new Gravity($index)';
     }
   }
   static Gravity getForMatrix(Matrix matrix) => _staticInfo.callStatic('get_for_matrix', [matrix]);
@@ -773,11 +773,11 @@ class GravityHint extends GEnumBase {
   static const GravityHint STRONG = const GravityHint(1);
   static const GravityHint LINE = const GravityHint(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'GravityHint.NATURAL';
       case 1: return 'GravityHint.STRONG';
       case 2: return 'GravityHint.LINE';
-      default: return 'new GravityHint($value)';
+      default: return 'new GravityHint($index)';
     }
   }
 }
@@ -1031,12 +1031,12 @@ class RenderPart extends GEnumBase {
   static const RenderPart UNDERLINE = const RenderPart(2);
   static const RenderPart STRIKETHROUGH = const RenderPart(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RenderPart.FOREGROUND';
       case 1: return 'RenderPart.BACKGROUND';
       case 2: return 'RenderPart.UNDERLINE';
       case 3: return 'RenderPart.STRIKETHROUGH';
-      default: return 'new RenderPart($value)';
+      default: return 'new RenderPart($index)';
     }
   }
 }
@@ -1170,7 +1170,7 @@ class Script extends GEnumBase {
   static const Script SORA_SOMPENG = const Script(86);
   static const Script TAKRI = const Script(87);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'Script.INVALID_CODE';
       case 0: return 'Script.COMMON';
       case 1: return 'Script.INHERITED';
@@ -1260,7 +1260,7 @@ class Script extends GEnumBase {
       case 85: return 'Script.SHARADA';
       case 86: return 'Script.SORA_SOMPENG';
       case 87: return 'Script.TAKRI';
-      default: return 'new Script($value)';
+      default: return 'new Script($index)';
     }
   }
   static Script forUnichar(int ch) => _staticInfo.callStatic('for_unichar', [ch]);
@@ -1300,7 +1300,7 @@ class Stretch extends GEnumBase {
   static const Stretch EXTRA_EXPANDED = const Stretch(7);
   static const Stretch ULTRA_EXPANDED = const Stretch(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Stretch.ULTRA_CONDENSED';
       case 1: return 'Stretch.EXTRA_CONDENSED';
       case 2: return 'Stretch.CONDENSED';
@@ -1310,7 +1310,7 @@ class Stretch extends GEnumBase {
       case 6: return 'Stretch.EXPANDED';
       case 7: return 'Stretch.EXTRA_EXPANDED';
       case 8: return 'Stretch.ULTRA_EXPANDED';
-      default: return 'new Stretch($value)';
+      default: return 'new Stretch($index)';
     }
   }
 }
@@ -1323,11 +1323,11 @@ class Style extends GEnumBase {
   static const Style OBLIQUE = const Style(1);
   static const Style ITALIC = const Style(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Style.NORMAL';
       case 1: return 'Style.OBLIQUE';
       case 2: return 'Style.ITALIC';
-      default: return 'new Style($value)';
+      default: return 'new Style($index)';
     }
   }
 }
@@ -1338,9 +1338,9 @@ class TabAlign extends GEnumBase {
 
   static const TabAlign LEFT = const TabAlign(0);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TabAlign.LEFT';
-      default: return 'new TabAlign($value)';
+      default: return 'new TabAlign($index)';
     }
   }
 }
@@ -1370,13 +1370,13 @@ class Underline extends GEnumBase {
   static const Underline LOW = const Underline(3);
   static const Underline ERROR = const Underline(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Underline.NONE';
       case 1: return 'Underline.SINGLE';
       case 2: return 'Underline.DOUBLE';
       case 3: return 'Underline.LOW';
       case 4: return 'Underline.ERROR';
-      default: return 'new Underline($value)';
+      default: return 'new Underline($index)';
     }
   }
 }
@@ -1388,10 +1388,10 @@ class Variant extends GEnumBase {
   static const Variant NORMAL = const Variant(0);
   static const Variant SMALL_CAPS = const Variant(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Variant.NORMAL';
       case 1: return 'Variant.SMALL_CAPS';
-      default: return 'new Variant($value)';
+      default: return 'new Variant($index)';
     }
   }
 }
@@ -1413,7 +1413,7 @@ class Weight extends GEnumBase {
   static const Weight HEAVY = const Weight(900);
   static const Weight ULTRAHEAVY = const Weight(1000);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 100: return 'Weight.THIN';
       case 200: return 'Weight.ULTRALIGHT';
       case 300: return 'Weight.LIGHT';
@@ -1426,7 +1426,7 @@ class Weight extends GEnumBase {
       case 800: return 'Weight.ULTRABOLD';
       case 900: return 'Weight.HEAVY';
       case 1000: return 'Weight.ULTRAHEAVY';
-      default: return 'new Weight($value)';
+      default: return 'new Weight($index)';
     }
   }
 }
@@ -1439,11 +1439,11 @@ class WrapMode extends GEnumBase {
   static const WrapMode CHAR = const WrapMode(1);
   static const WrapMode WORD_CHAR = const WrapMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WrapMode.WORD';
       case 1: return 'WrapMode.CHAR';
       case 2: return 'WrapMode.WORD_CHAR';
-      default: return 'new WrapMode($value)';
+      default: return 'new WrapMode($index)';
     }
   }
 }

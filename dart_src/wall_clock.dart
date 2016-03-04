@@ -4,16 +4,19 @@
 library gjs_integration.test;
 
 import 'dart:async';
-import 'dart:js';
 import 'dart:math';
+import 'dart:io';
 
 import 'gdart.dart';
 import 'cairo.dart';
 import 'gdk.dart' hide Window, WindowType;
 import 'gdk.dart' as gdk show Window;
-import 'rsvg.dart';
-import 'gtk.dart' hide main, init;
-import 'gtk.dart' as gtk show main, init;
+import 'rsvg.dart' hide initLibrary;
+import 'rsvg.dart' as rsvg show initLibrary;
+import 'gtk.dart' hide main, init, initLibrary;
+import 'gtk.dart' as gtk show main, init, initLibrary;
+import 'glib.dart' hide main, init, initLibrary;
+import 'glib.dart' as glib show main, init, initLibrary;
 
 class ClockApp {
   ClockApp() ;
@@ -26,12 +29,12 @@ class ClockApp {
   }
 
   scheduleRedraws() {
-    new Timer.periodic(new Duration(milliseconds: 250), _face.scheduleRedraw);
+    new Timer.periodic(new Duration(milliseconds: 250), (_) => _face.scheduleRedraw());
   }
 }
 
 class ClockFace {
-  final int width;
+  int width;
   ClockApp _app;
   Window window;
   DrawingArea drawingArea;
@@ -58,41 +61,48 @@ class ClockFace {
     final scale = min(width, height).toDouble() / targetWidth.toDouble();
     context
       ..save()
-      ..scale(scale / 2, scale / 2)
-      ..setOperator(Operator.OVER);
-    svg.render(context);
+      ..scale(1 / scale, 1 / scale)
+      ..operator = Operator.OVER;
+    svg.renderCairo(context);
     context.restore();
   }
 
-  ClockFace(int width, this._app) : width = width {
-    var circleMap = new ImageSurface(Format.A1, width, width);
+  ClockFace(int width_, this._app) : width = width_ {
+    var geo = new Geometry();
+    var circleMap = new ImageSurface(Format.A1, width_, width_);
     var drawingContext = new Context(circleMap);
-    drawingContext.arc(width / 2, width / 2, width / 2, 0.0, 2 * PI);
+    drawingContext.arc(width_ / 2, width_ / 2, width_ / 2, 0.0, 2 * PI);
     drawingContext.fill();
-    var pixbuf = Pixbuf.getFromSurface(circleMap, 0, 0, width, width);
+    var pixbuf = pixbufGetFromSurface(circleMap, 0, 0, width_, width_);
     drawingArea = new DrawingArea()
-      ..widthRequest = width
-      ..heightRequest = width
+      ..widthRequest = width_
+      ..heightRequest = width_
       ..visible = true
       ..canFocus = false
-      ..events = EventMask.STRUCTURE_MASK.value
-      ..halign = Align.START
-      ..onDraw.listen(redrawSurface);
+      ..events = EventMask.STRUCTURE_MASK
+      ..onDraw.listen(redrawSurface)
+      ..onConfigureEvent.listen((WidgetConfigureEventEvent event) {
+        var width_ = event.event.width;
+        var height_ = event.event.height;
+        width = min(width_, height_);
+        loadImageSurface();
+        scheduleRedraw();
+      });
     window = new Window(WindowType.TOPLEVEL)
       ..gravity = Gravity.SOUTH_EAST
-      ..defaultHeight = width
-      ..defaultHeight = width
+      ..defaultHeight = width_
+      ..defaultHeight = width_
       ..opacity = 1.0
       ..decorated = false
       ..title = "wallclock"
       ..acceptFocus = true
-      ..skipPagerHint = true
-      ..skipTaskbarHint = true
+      //..skipPagerHint = true
+      //..skipTaskbarHint = true
       ..role = "clock"
       ..appPaintable = true
       ..stick()
       ..setKeepAbove(true)
-      ..setGeometryHints(
+/*      ..setGeometryHints(
           null,
           new Geometry(
               minHeight: 100,
@@ -102,8 +112,13 @@ class ClockFace {
               minAspect: 1.0,
               maxAspect: 1.0),
           WindowHints.MAX_SIZE | WindowHints.MIN_SIZE | WindowHints.ASPECT)
-      ..add(drawingArea);
-    //..onDestroy.listen((_) => destroy());
+*/
+      ..add(drawingArea)
+/*      ..onConfigureEvent.listen((event) {
+        event.event.height.
+      })
+*/
+      ..onDestroy.listen((_) => destroy());
     var windowVisual = window.screen.rgbaVisual;
     if (windowVisual == null) {
       windowVisual = window.screen.systemVisual;
@@ -119,7 +134,7 @@ class ClockFace {
   }
 
   void destroy() {
-    //_app.quitMainloop();
+    glibMainQuit();
   }
 
   void realizeWindow() {
@@ -132,18 +147,17 @@ class ClockFace {
     var gdkWindow = event.window;
   }
 
-  void redrawSurface(DrawEvent event) {
-    gjsPrint('Redrawing');
+  void redrawSurface(WidgetDrawEvent event) {
     final context = event.cr;
     context
       ..save()
-      ..setOperator(Operator.SOURCE)
-      ..setSourceRGBA(0, 0, 0, 0)
-      ..setSourceSurface(imageSurface, 0, 0)
+      ..operator = (Operator.SOURCE)
+      ..setSourceRgba(0.0,  0.0, 0.0, 0.0)
+      ..setSourceSurface(imageSurface, 0.0, 0.0)
       ..paint()
       ..restore();
     redrawHands(context, width);
-    event.stopPropagation();
+    event.cancelPropagation();
   }
 
   void redrawHands(Context context, int width) {
@@ -161,7 +175,7 @@ class ClockFace {
       ..save()
       ..rotate(
           seconds * PI / 21600 + minutes * PI / 360 + hours * PI / 6 - PI / 2)
-      ..setSourceRGB(0, 0, 0)
+      ..setSourceRgb(0.0, 0.0, 0.0)
       ..moveTo(-0.057, 0.0115)
       ..lineTo(-0.057, -0.0115)
       ..lineTo(0.2275, -0.00725)
@@ -171,7 +185,7 @@ class ClockFace {
     //Draw the minutes
       ..save()
       ..rotate(seconds * PI / 1800 + minutes * PI / 30 - PI / 2)
-      ..setSourceRGB(0, 0, 0)
+      ..setSourceRgb(0.0, 0.0, 0.0)
       ..moveTo(-0.065, 0.00833)
       ..lineTo(-0.065, -0.00833)
       ..lineTo(0.3265, -0.00433)
@@ -182,25 +196,50 @@ class ClockFace {
       ..save();
     context
       ..rotate(seconds * PI / 30 - PI / 2)
-      ..setSourceRGB(0.83, 0, 0)
+      ..setSourceRgb(0.83, 0.0, 0.0)
       ..moveTo(-0.075, 0.0)
       ..lineTo(0.415, 0.0)
-      ..setLineWidth(0.0075)
-      ..setLineCap(LineCap.ROUND)
+      ..lineWidth = (0.0075)
+      ..lineCap = (LineCap.ROUND)
       ..stroke()
       ..restore()
       ..restore();
   }
 
-  void scheduleRedraw(Timer timer) {
+  void scheduleRedraw() {
     if (drawingArea.visible) {
       drawingArea.queueDraw();
     }
   }
+
+
 }
 
 void main(List args) {
-  gtk.init();
+  gtk.initLibrary();
+  rsvg.initLibrary();
+  gtk.init(args);
   var app = new ClockApp();
+
   app.activate();
-  gtk.main();
+  glibMainLoop().then((_) {
+    exit(0);
+  });
+
+}
+
+bool _glibMainLoopHasQuit = false;
+
+Future glibMainLoop() async {
+  var context = MainContext.default_();
+  var controller = new StreamController();
+  new Timer.periodic(new Duration(milliseconds: 50), (_) => controller.add(null));
+  await for (var _ in controller.stream) {
+    if (_glibMainLoopHasQuit) return;
+    context.iteration(false);
+  }
+}
+
+glibMainQuit() {
+  _glibMainLoopHasQuit = true;
+}

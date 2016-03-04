@@ -240,6 +240,9 @@ gboolean _gdart_marshaller_check_argument_struct_from_gtype(
     return FALSE;
   }
   object_info = (GdartBridgeContextWrappedObject*) raw_pointer->raw_pointer;
+  /* TODO: This is super-unreliable because there is no way to trust the gtype
+   * given.
+   * 
   if (object_info->type != type) {
     *dart_error_out = gdart_bridge_context_create_error_handle(self,
                       "%s: got an argument of the wrong type. This might be due to a problem in the GIR file", G_STRFUNC);
@@ -247,6 +250,7 @@ gboolean _gdart_marshaller_check_argument_struct_from_gtype(
                 "%s: got an argument of the wrong type. This might be due to a problem in the GIR file", G_STRFUNC);
     goto error;
   }
+  */
   return TRUE;
 error:
   return FALSE;
@@ -512,7 +516,7 @@ gboolean _gdart_marshaller_check_argument_flags(
                 "%s: received an unexpected base info type", G_STRFUNC);
     goto error;
   }
-  name_handle = Dart_NewStringFromCString("value");
+  name_handle = Dart_NewStringFromCString("index");
   if (Dart_IsError(name_handle)) {
     *dart_error_out = name_handle;
     g_set_error(error, GDART_ERROR, 1, "Error from Dart operation.");

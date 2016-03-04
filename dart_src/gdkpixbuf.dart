@@ -16,9 +16,9 @@ class Colorspace extends GEnumBase {
 
   static const Colorspace RGB = const Colorspace(0);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Colorspace.RGB';
-      default: return 'new Colorspace($value)';
+      default: return 'new Colorspace($index)';
     }
   }
 }
@@ -32,12 +32,12 @@ class InterpType extends GEnumBase {
   static const InterpType BILINEAR = const InterpType(2);
   static const InterpType HYPER = const InterpType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'InterpType.NEAREST';
       case 1: return 'InterpType.TILES';
       case 2: return 'InterpType.BILINEAR';
       case 3: return 'InterpType.HYPER';
-      default: return 'new InterpType($value)';
+      default: return 'new InterpType($index)';
     }
   }
 }
@@ -125,10 +125,10 @@ class PixbufAlphaMode extends GEnumBase {
   static const PixbufAlphaMode BILEVEL = const PixbufAlphaMode(0);
   static const PixbufAlphaMode FULL = const PixbufAlphaMode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PixbufAlphaMode.BILEVEL';
       case 1: return 'PixbufAlphaMode.FULL';
-      default: return 'new PixbufAlphaMode($value)';
+      default: return 'new PixbufAlphaMode($index)';
     }
   }
 }
@@ -171,14 +171,14 @@ class PixbufErrorCode extends GEnumBase {
   static const PixbufErrorCode UNSUPPORTED_OPERATION = const PixbufErrorCode(4);
   static const PixbufErrorCode FAILED = const PixbufErrorCode(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PixbufErrorCode.CORRUPT_IMAGE';
       case 1: return 'PixbufErrorCode.INSUFFICIENT_MEMORY';
       case 2: return 'PixbufErrorCode.BAD_OPTION';
       case 3: return 'PixbufErrorCode.UNKNOWN_TYPE';
       case 4: return 'PixbufErrorCode.UNSUPPORTED_OPERATION';
       case 5: return 'PixbufErrorCode.FAILED';
-      default: return 'new PixbufErrorCode($value)';
+      default: return 'new PixbufErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -376,12 +376,12 @@ class PixbufRotation extends GEnumBase {
   static const PixbufRotation UPSIDEDOWN = const PixbufRotation(180);
   static const PixbufRotation CLOCKWISE = const PixbufRotation(270);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PixbufRotation.NONE';
       case 90: return 'PixbufRotation.COUNTERCLOCKWISE';
       case 180: return 'PixbufRotation.UPSIDEDOWN';
       case 270: return 'PixbufRotation.CLOCKWISE';
-      default: return 'new PixbufRotation($value)';
+      default: return 'new PixbufRotation($index)';
     }
   }
 }
@@ -432,21 +432,21 @@ class PixdataDumpType extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GdkPixbuf', 'PixdataDumpType');
 
   static const PixdataDumpType PIXDATA_STREAM = const PixdataDumpType(0);
-  bool get pixdataStream => (value & 0) == 0;
+  bool get pixdataStream => (index & 0) == 0;
   static const PixdataDumpType PIXDATA_STRUCT = const PixdataDumpType(1);
-  bool get pixdataStruct => (value & 1) == 1;
+  bool get pixdataStruct => (index & 1) == 1;
   static const PixdataDumpType MACROS = const PixdataDumpType(2);
-  bool get macros => (value & 2) == 2;
+  bool get macros => (index & 2) == 2;
   static const PixdataDumpType GTYPES = const PixdataDumpType(0);
-  bool get gtypes => (value & 0) == 0;
+  bool get gtypes => (index & 0) == 0;
   static const PixdataDumpType CTYPES = const PixdataDumpType(256);
-  bool get ctypes => (value & 256) == 256;
+  bool get ctypes => (index & 256) == 256;
   static const PixdataDumpType STATIC = const PixdataDumpType(512);
-  bool get static_ => (value & 512) == 512;
+  bool get static_ => (index & 512) == 512;
   static const PixdataDumpType CONST = const PixdataDumpType(1024);
-  bool get const_ => (value & 1024) == 1024;
+  bool get const_ => (index & 1024) == 1024;
   static const PixdataDumpType RLE_DECODER = const PixdataDumpType(65536);
-  bool get rleDecoder => (value & 65536) == 65536;
+  bool get rleDecoder => (index & 65536) == 65536;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'PixdataDumpType.PIXDATA_STRUCT';
@@ -455,19 +455,19 @@ class PixdataDumpType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'PixdataDumpType.PIXDATA_STREAM';
     }
     List codes = [];
     for (var i=1; i <= 65536; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   PixdataDumpType operator|(PixdataDumpType other) =>
-    new PixdataDumpType(value | other.value);
+    new PixdataDumpType(index | other.index);
   PixdataDumpType operator&(PixdataDumpType other) =>
-    new PixdataDumpType(value & other.value);
+    new PixdataDumpType(index & other.index);
 }
 
 class PixdataType extends GEnumBase {
@@ -476,21 +476,21 @@ class PixdataType extends GEnumBase {
 
   static const PixdataType NULL = const PixdataType(0);
   static const PixdataType COLOR_TYPE_RGB = const PixdataType(1);
-  bool get colorTypeRgb => (value & 1) == 1;
+  bool get colorTypeRgb => (index & 1) == 1;
   static const PixdataType COLOR_TYPE_RGBA = const PixdataType(2);
-  bool get colorTypeRgba => (value & 2) == 2;
+  bool get colorTypeRgba => (index & 2) == 2;
   static const PixdataType COLOR_TYPE_MASK = const PixdataType(255);
-  bool get colorTypeMask => (value & 255) == 255;
+  bool get colorTypeMask => (index & 255) == 255;
   static const PixdataType SAMPLE_WIDTH_8 = const PixdataType(65536);
-  bool get sampleWidth_8 => (value & 65536) == 65536;
+  bool get sampleWidth_8 => (index & 65536) == 65536;
   static const PixdataType SAMPLE_WIDTH_MASK = const PixdataType(983040);
-  bool get sampleWidthMask => (value & 983040) == 983040;
+  bool get sampleWidthMask => (index & 983040) == 983040;
   static const PixdataType ENCODING_RAW = const PixdataType(16777216);
-  bool get encodingRaw => (value & 16777216) == 16777216;
+  bool get encodingRaw => (index & 16777216) == 16777216;
   static const PixdataType ENCODING_RLE = const PixdataType(33554432);
-  bool get encodingRle => (value & 33554432) == 33554432;
+  bool get encodingRle => (index & 33554432) == 33554432;
   static const PixdataType ENCODING_MASK = const PixdataType(251658240);
-  bool get encodingMask => (value & 251658240) == 251658240;
+  bool get encodingMask => (index & 251658240) == 251658240;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'PixdataType.COLOR_TYPE_RGB';
@@ -499,19 +499,19 @@ class PixdataType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'PixdataType.NULL';
     }
     List codes = [];
     for (var i=1; i <= 134217728; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   PixdataType operator|(PixdataType other) =>
-    new PixdataType(value | other.value);
+    new PixdataType(index | other.index);
   PixdataType operator&(PixdataType other) =>
-    new PixdataType(value & other.value);
+    new PixdataType(index & other.index);
 }
 
 int pixbufErrorQuark() => callStaticGlobal('GdkPixbuf', 'pixbuf_error_quark', []);

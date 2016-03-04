@@ -70,7 +70,7 @@ static gboolean _gdart_array_fill_num_in_buffer (
   if (Dart_IsInteger (element)) {
     int64_t raw_result;
     temp_result = Dart_IntegerToInt64 (element, &raw_result);
-    if (G_UNLIKELY(Dart_IsError (temp_result))) {
+    if (G_UNLIKELY (Dart_IsError (temp_result))) {
       *dart_error_out = temp_result;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       goto error;
@@ -78,7 +78,7 @@ static gboolean _gdart_array_fill_num_in_buffer (
     double_result = (gdouble) raw_result;
   } else { // Double
     temp_result = Dart_DoubleValue (element, &double_result);
-    if (G_UNLIKELY(Dart_IsError (temp_result))) {
+    if (G_UNLIKELY (Dart_IsError (temp_result))) {
       *dart_error_out = temp_result;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       goto error;
@@ -111,7 +111,7 @@ static gboolean _gdart_array_fill_boolean_in_buffer (
   bool result;
   Dart_Handle temp_result;
   temp_result = Dart_BooleanValue (element, &result);
-  if (G_UNLIKELY(Dart_IsError (temp_result))) {
+  if (G_UNLIKELY (Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
@@ -221,7 +221,7 @@ static gboolean _gdart_array_fill_int_in_buffer (
   } else {
     temp_result = Dart_IntegerToInt64 (element, &raw_result);
   }
-  if (G_UNLIKELY(Dart_IsError (temp_result))) {
+  if (G_UNLIKELY (Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     goto error;
@@ -255,8 +255,9 @@ gsize gdart_array_get_size_multiplier (
                                   self,
                                   &type_tag,
                                   dart_error_out,
-                                  error))
+                                  error)) {
     return 0;
+  }
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
     return sizeof (gboolean);
@@ -292,8 +293,9 @@ gsize gdart_array_get_size_multiplier (
                                           &base_info,
                                           &base_info_klass,
                                           dart_error_out,
-                                          error))
+                                          error)) {
       return 0;
+    }
 
     if (!base_info_klass->get_type (base_info,
                                     self,
@@ -410,7 +412,7 @@ gboolean gdart_array_fill_in_parameters (
 
   for (; elem_i < list_length; elem_i++) {
     element = Dart_ListGetAt (dart_list, elem_i);
-    if (G_UNLIKELY(Dart_IsError (element))) {
+    if (G_UNLIKELY (Dart_IsError (element))) {
       *dart_error_out = element;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       goto error;
@@ -457,19 +459,19 @@ static gboolean _gdart_array_fill_wrapped_pointer_in_buffer (
     return TRUE;
   }
   name_handle = Dart_NewStringFromCString ("_internal");
-  if (G_UNLIKELY(Dart_IsError (name_handle))) {
+  if (G_UNLIKELY (Dart_IsError (name_handle))) {
     *dart_error_out = name_handle;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
   inner_container = Dart_GetField (element, name_handle);
-  if (G_UNLIKELY(Dart_IsError (inner_container))) {
+  if (G_UNLIKELY (Dart_IsError (inner_container))) {
     *dart_error_out = inner_container;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
   temp_result = Dart_GetNativeInstanceField (inner_container, 0, (intptr_t *) &raw_pointer);
-  if (G_UNLIKELY(Dart_IsError (temp_result))) {
+  if (G_UNLIKELY (Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -493,8 +495,9 @@ gboolean gdart_array_zero_element (GdartBridgeContext *self,
                                 self,
                                 &type_tag,
                                 dart_error_out,
-                                error))
+                                error)) {
     return FALSE;
+  }
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
     _gdart_array_fill_boolean_raw_in_buffer (
@@ -558,17 +561,17 @@ static gboolean _gdart_array_fill_flags_in_buffer (
   Dart_Handle *dart_error_out,
   GError **error)
 {
-  Dart_Handle inner_container, name_handle;
+  Dart_Handle inner_container, index_symbol;
   GITypeTag storage_type;
   storage_type = g_enum_info_get_storage_type (enum_info);
-  name_handle = Dart_NewStringFromCString ("value");
-  if (G_UNLIKELY(Dart_IsError (name_handle))) {
-    *dart_error_out = name_handle;
+  index_symbol = Dart_NewStringFromCString ("index");
+  if (G_UNLIKELY (Dart_IsError (index_symbol))) {
+    *dart_error_out = index_symbol;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
   }
-  inner_container = Dart_GetField (element, name_handle);
-  if (G_UNLIKELY(Dart_IsError (inner_container))) {
+  inner_container = Dart_GetField (element, index_symbol);
+  if (G_UNLIKELY (Dart_IsError (inner_container))) {
     *dart_error_out = inner_container;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -602,8 +605,9 @@ static gboolean _gdart_array_fill_interface_in_buffer (
                                       &base_info,
                                       &base_info_klass,
                                       dart_error_out,
-                                      error))
+                                      error)) {
     return FALSE;
+  }
   if (!base_info_klass->get_type (base_info,
                                   self,
                                   &base_info_type,
@@ -675,7 +679,7 @@ static gboolean _gdart_array_fill_string_in_buffer (
     return TRUE;
   }
   temp_result = Dart_StringToUTF8 (element, &original_string, &string_length);
-  if (G_UNLIKELY(Dart_IsError (temp_result))) {
+  if (G_UNLIKELY (Dart_IsError (temp_result))) {
     *dart_error_out = temp_result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
     return FALSE;
@@ -746,7 +750,7 @@ static gboolean _gdart_array_fill_array_in_buffer (
     list_length = 0;
   } else {
     temp_result = Dart_ListLength (element, &list_length);
-    if (G_UNLIKELY(Dart_IsError (temp_result))) {
+    if (G_UNLIKELY (Dart_IsError (temp_result))) {
       *dart_error_out = temp_result;
       g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
       goto error;
@@ -759,8 +763,9 @@ static gboolean _gdart_array_fill_array_in_buffer (
                                        &param_type,
                                        &param_type_klass,
                                        dart_error_out,
-                                       error))
+                                       error)) {
     return FALSE;
+  }
   size_per_cell = gdart_array_get_size_multiplier (self,
                   param_type,
                   param_type_klass,
@@ -901,8 +906,9 @@ static gboolean _gdart_array_unfill_array_in_buffer (
                                        &param_type,
                                        &param_type_klass,
                                        dart_error_out,
-                                       error))
+                                       error)) {
     return FALSE;
+  }
 
   if (!gdart_array_unfill_in_array_parameters (self,
       param_type,
@@ -945,8 +951,9 @@ static gboolean _gdart_array_remove_array_element (GdartBridgeContext *self,
                                 self,
                                 &type_tag,
                                 dart_error_out,
-                                error))
+                                error)) {
     return FALSE;
+  }
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
   case GI_TYPE_TAG_INT8:
@@ -1002,7 +1009,7 @@ gboolean gdart_array_unfill_in_array_parameters (
                                             &buffer,
                                             dart_error_out,
                                             error)) {
-      if (*error != NULL) return FALSE;
+      if (*error != NULL) { return FALSE; }
       return TRUE;
     }
   }
@@ -1228,15 +1235,15 @@ static gboolean _gdart_array_load_enum_from_buffer (GdartBridgeContext *self,
   GITypeTag type_tag;
   Dart_Handle value, wrapper, result;
   gboolean is_end_out_inner;
-  gchar* namespace_;
-  GType gtype;
+  gchar *namespace_;
 
   if (!base_info_klass->get_storage_type (base_info,
                                           self,
                                           &type_tag,
                                           dart_error_out,
-                                          error))
+                                          error)) {
     return FALSE;
+  }
   if (!_gdart_array_load_int_from_buffer (self,
                                           name_prefix,
                                           is_null_terminated,
@@ -1252,31 +1259,27 @@ static gboolean _gdart_array_load_enum_from_buffer (GdartBridgeContext *self,
     *is_end_out = TRUE;
     return TRUE;
   }
-  if (G_UNLIKELY(!base_info_klass->get_namespace(base_info,
-                                      self,
-				      &namespace_,
-				      dart_error_out,
-				      error)))
+  if (G_UNLIKELY (!base_info_klass->get_namespace (base_info,
+                  self,
+                  &namespace_,
+                  dart_error_out,
+                  error))) {
+    g_free (namespace_);
     return FALSE;
-  if (G_UNLIKELY(!base_info_klass->get_gtype(base_info,
-                                  self,
-				  &gtype,
-				  dart_error_out,
-				  error)))
+  }
+  if (G_UNLIKELY (!base_info_klass->retrieve_wrapping_class (base_info,
+                  self,
+                  namespace_,
+                  &wrapper,
+                  dart_error_out,
+                  error))) {
+    g_free (namespace_);
     return FALSE;
-  wrapper = gdart_bridge_context_retrieve_wrapping_class (
-              self,
-              namespace_,
-              gtype,
-              base_info,
-	      base_info_klass->cast_to_registered_type_info(base_info),
-              TRUE,
-              dart_error_out,
-              error);
-  g_free(namespace_);
-  if (wrapper == NULL) return FALSE;
+  }
+  g_free (namespace_);
+  if (wrapper == NULL) { return FALSE; }
   result = Dart_New (wrapper, Dart_Null(), 1, &value);
-  if (G_UNLIKELY(Dart_IsError (result))) {
+  if (G_UNLIKELY (Dart_IsError (result))) {
     g_warning ("%s: dart threw an error", name_prefix);
     *dart_error_out = result;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
@@ -1306,6 +1309,7 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
   GdartBridgeContextWrappedObject *object_wrapper;
   Dart_Handle internal_container, wrapped_object;
   gchar *namespace_;
+  const StructUnionInfoKlass *klass;
 
   _GDART_FUNCTION_READ_BUFFER_AND_ADVANCE (gpointer, buffer, raw_result);
 
@@ -1336,21 +1340,28 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
       &namespace_,
       dart_error_out,
       error)) {
-    g_slice_free(GdartBridgeContextWrappedObject, object_wrapper);
+    g_slice_free (GdartBridgeContextWrappedObject, object_wrapper);
     return FALSE;
   }
-  object_wrapper->copy_func_ref = 
-  gdart_bridge_context_retrieve_copy_func (self,
-					   g_base_info_get_namespace ( (GIBaseInfo *) registered_type_info),
-					   (GIBaseInfo *) registered_type_info,
-					   &gi_registered_type_info_registered_type_info,
-					   gtype);
-  object_wrapper->free_func_ref = 
-  gdart_bridge_context_retrieve_free_func (self,
-					   g_base_info_get_namespace ( (GIBaseInfo *) object_wrapper->object_info),
-					   (GIBaseInfo *) registered_type_info,
-					   &gi_registered_type_info_registered_type_info,
-					   gtype);
+
+  klass = registered_type_info_klass->cast_to_struct_union_info (registered_type_info);
+  if (G_UNLIKELY (!klass->retrieve_copy_function (registered_type_info,
+                  self,
+                  &object_wrapper->copy_func_ref,
+                  dart_error_out,
+                  error))) {
+    g_free (namespace_);
+    return FALSE;
+  }
+  if (G_UNLIKELY (!klass->retrieve_free_function (registered_type_info,
+                  self,
+                  &object_wrapper->free_func_ref,
+                  dart_error_out,
+                  error))) {
+    gdart_function_reference_unref (object_wrapper->copy_func_ref);
+    g_free (namespace_);
+    return FALSE;
+  }
   if (object_wrapper->copy_func_ref != NULL) {
     object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
   } else {
@@ -1361,7 +1372,7 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
   } else {
     object_wrapper->free_func = NULL;
   }
-  
+
   if (must_copy && is_boxed_type) {
     object_wrapper->object = g_boxed_copy (gtype, raw_result);
     internal_container = gdart_bridge_context_wrap_pointer (self,
@@ -1377,8 +1388,8 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
           &name,
           dart_error_out,
           error)) {
-        g_slice_free(GdartBridgeContextWrappedObject, object_wrapper);
-        g_free(namespace_);
+        g_slice_free (GdartBridgeContextWrappedObject, object_wrapper);
+        g_free (namespace_);
         return FALSE;
       }
       g_warning ("%s: The GI type of an object to be bound was an [unowned %s."
@@ -1388,7 +1399,7 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
                  name_prefix,
                  namespace_,
                  name);
-      g_free(name);
+      g_free (name);
       object_wrapper->object = raw_result;
       internal_container = gdart_bridge_context_wrap_pointer (self,
                            object_wrapper,
@@ -1421,7 +1432,7 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
   }
   if (internal_container == NULL) {
     return FALSE;
-  g_free(namespace_);
+    g_free (namespace_);
   }
   wrapped_object = gdart_bridge_context_wrap_internal_pointer (self,
                    internal_container,
@@ -1431,7 +1442,7 @@ static gboolean _gdart_array_load_wrapped_pointer_with_g_type_from_buffer (
                    registered_type_info_klass,
                    dart_error_out,
                    error);
-  g_free(namespace_);
+  g_free (namespace_);
   if (wrapped_object == NULL) {
     return FALSE;
   }
@@ -1479,8 +1490,9 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
       self,
       &gtype,
       dart_error_out,
-      error))
+      error)) {
     return FALSE;
+  }
 
   if ( (info_type == GI_INFO_TYPE_OBJECT && g_type_is_a (gtype, G_TYPE_OBJECT))
        || (info_type == GI_INFO_TYPE_INTERFACE)) {
@@ -1503,29 +1515,37 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
   }
   gchar *namespace_;
   if (!registered_type_info_klass->get_namespace (registered_type_info,
-        self,
-        &namespace_,
-        dart_error_out,
-        error)) {
-      registered_type_info_klass->free (object_wrapper->object_info);
-      return FALSE;
+      self,
+      &namespace_,
+      dart_error_out,
+      error)) {
+    registered_type_info_klass->free (object_wrapper->object_info);
+    return FALSE;
   }
 
   switch (info_type) {
   case GI_INFO_TYPE_UNION:
   case GI_INFO_TYPE_STRUCT: {
-    object_wrapper->copy_func_ref = 
-                                gdart_bridge_context_retrieve_copy_func (self,
-                                    g_base_info_get_namespace ( (GIBaseInfo *) registered_type_info),
-                                    (GIBaseInfo *) registered_type_info,
-									 &gi_registered_type_info_registered_type_info,
-                                    gtype);
-    object_wrapper->free_func_ref = 
-                                gdart_bridge_context_retrieve_free_func (self,
-                                    g_base_info_get_namespace ( (GIBaseInfo *) object_wrapper->object_info),
-                                    (GIBaseInfo *) registered_type_info,
-									 &gi_registered_type_info_registered_type_info,
-                                    gtype);
+    const StructUnionInfoKlass *klass;
+
+    klass = registered_type_info_klass->cast_to_struct_union_info (registered_type_info);
+    if (G_UNLIKELY (!klass->retrieve_copy_function (registered_type_info,
+                    self,
+                    &object_wrapper->copy_func_ref,
+                    dart_error_out,
+                    error))) {
+      registered_type_info_klass->free (object_wrapper->object_info);
+      return FALSE;
+    }
+    if (G_UNLIKELY (!klass->retrieve_free_function (registered_type_info,
+                    self,
+                    &object_wrapper->free_func_ref,
+                    dart_error_out,
+                    error))) {
+      gdart_function_reference_unref (object_wrapper->copy_func_ref);
+      registered_type_info_klass->free (object_wrapper->object_info);
+      return FALSE;
+    }
     if (object_wrapper->copy_func_ref != NULL) {
       object_wrapper->copy_func = object_wrapper->copy_func_ref->function_pointer;
     } else {
@@ -1544,7 +1564,7 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
             &name,
             dart_error_out,
             error)) {
-	  g_free(namespace_);
+          g_free (namespace_);
           registered_type_info_klass->free (object_wrapper->object_info);
           return FALSE;
         }
@@ -1562,7 +1582,7 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
                              gdart_bridge_context_finalize_wrapped_unowned_struct,
                              dart_error_out,
                              error);
-	g_free(name);
+        g_free (name);
       } else {
         object_wrapper->object = object_wrapper->copy_func (raw_result);
         internal_container = gdart_bridge_context_wrap_pointer (self,
@@ -1605,16 +1625,16 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
     if (must_copy) {
       GIObjectInfoRefFunction refer;
       GdartFunctionReference *ref_reference;
-      
-      if (G_UNLIKELY(
-	!registered_type_info_klass->
-	  cast_to_object_info(registered_type_info)->
-          get_ref_function_pointer(registered_type_info,
-	    self,
-	    &refer,
-	    &ref_reference,
-	    dart_error_out,
-	    error))) {
+
+      if (G_UNLIKELY (
+            !registered_type_info_klass->
+            cast_to_object_info (registered_type_info)->
+            get_ref_function_pointer (registered_type_info,
+                                      self,
+                                      &refer,
+                                      &ref_reference,
+                                      dart_error_out,
+                                      error))) {
         registered_type_info_klass->free (object_wrapper->object_info);
         return FALSE;
       }
@@ -1624,7 +1644,7 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
         raw_result = g_object_ref_sink (raw_result);
         //if this is the main result, assume we are given a floating reference.
       }
-      gdart_function_reference_unref(ref_reference);
+      gdart_function_reference_unref (ref_reference);
     }
     object_wrapper->object = raw_result;
     internal_container = gdart_bridge_context_wrap_pointer (self,
@@ -1644,10 +1664,10 @@ static gboolean _gdart_array_load_wrapped_pointer_from_buffer (
                    namespace_,
                    gtype,
                    registered_type_info,
-		   registered_type_info_klass,
+                   registered_type_info_klass,
                    dart_error_out,
                    error);
-  g_free(namespace_);
+  g_free (namespace_);
   if (wrapped_object == NULL) {
     return FALSE;
   }
@@ -1681,8 +1701,9 @@ static gboolean _gdart_function_result_load_interface_from_buffer (
                                        &base_info,
                                        &base_info_klass,
                                        dart_error_out,
-                                       error))
+                                       error)) {
     return FALSE;
+  }
   if (!base_info_klass->get_type (base_info,
                                   self,
                                   &info_type,
@@ -1707,7 +1728,7 @@ static gboolean _gdart_function_result_load_interface_from_buffer (
              name_prefix,
              is_null_terminated,
              base_info,
-             base_info_klass->cast_to_registered_type_info(base_info),
+             base_info_klass->cast_to_registered_type_info (base_info),
              info_type,
              must_copy,
              buffer,
@@ -1753,7 +1774,7 @@ static gboolean _gdart_function_result_load_interface_from_buffer (
 }
 
 
-static gboolean _gdart_array_load_element (
+gboolean gdart_array_load_element (
   GdartBridgeContext *self,
   const gchar *name_prefix,
   gpointer param_type,
@@ -1771,8 +1792,9 @@ static gboolean _gdart_array_load_element (
                                   self,
                                   &type_tag,
                                   dart_error_out,
-                                  error))
+                                  error)) {
     return FALSE;
+  }
   switch (type_tag) {
   case GI_TYPE_TAG_BOOLEAN:
     return _gdart_array_load_boolean_from_buffer (self,
@@ -1965,7 +1987,7 @@ gboolean gdart_array_load_parameters (
       list_elements = g_renew (Dart_Handle, list_elements, initial_length);
     }
     dart_elem_out = &list_elements[elem_i];
-    if (!_gdart_array_load_element (self,
+    if (!gdart_array_load_element (self,
                                     name_prefix,
                                     param_type,
                                     param_type_klass,
@@ -1979,7 +2001,7 @@ gboolean gdart_array_load_parameters (
       g_free (list_elements);
       return FALSE;
     }
-    if (is_at_end) break;
+    if (is_at_end) { break; }
   }
   dart_list = Dart_NewList (elem_i);
   for (elem_i--; elem_i >= 0; elem_i--) {

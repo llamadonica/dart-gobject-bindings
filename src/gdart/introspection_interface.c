@@ -21,28 +21,6 @@ typedef struct {
   gpointer writable_self;
 } DartClosureWrapper;
 
-static gchar *_gi_base_info_print_name (GIBaseInfo *base_info)
-{
-  gchar *current_name, *previous_name;
-  GIBaseInfo *parent;
-  current_name = g_strdup (g_base_info_get_name (base_info));
-  parent = g_base_info_get_container (base_info);
-  while (parent != NULL) {
-    previous_name = current_name;
-
-    current_name = g_strdup_printf ("%s.%s", g_base_info_get_name (parent), 
-previous_name);
-    parent = g_base_info_get_container (parent);
-
-    g_free (previous_name);
-  }
-  previous_name = current_name;
-  current_name = g_strdup_printf ("%s.%s", g_base_info_get_namespace 
-(base_info), previous_name);
-  g_free (previous_name);
-  return current_name;
-}
-
 static void _gi_base_info_interface_info_free (gpointer object)
 {
   /*
@@ -187,12 +165,6 @@ temp_value;
     return FALSE;
   }
 
-  if (!Dart_IsString (field_value)) {
-    gdart_bridge_context_create_error_handle (self,
-        "%s: value was not a String", G_STRFUNC);
-    g_set_error (error, GDART_ERROR, 1, "%s: value was not a String", 
-G_STRFUNC);
-  }
   index_symbol = Dart_NewStringFromCString ("index");
   if (Dart_IsError (index_symbol)) {
     *dart_error_out = index_symbol;
@@ -647,7 +619,7 @@ static gboolean _dart_type_get_interface (gpointer object,
 {
 
   Dart_Handle dart_object, field_name, field_value, expected_type, temp_value;
-  gboolean is_of_type;
+  bool is_of_type;
 
   dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
   if (Dart_IsError (dart_object)) {
@@ -675,7 +647,7 @@ static gboolean _dart_type_get_interface (gpointer object,
   }
   temp_value = Dart_ObjectIsType (field_value, 
 				  expected_type, 
-				  (bool*) &is_of_type);
+				  &is_of_type);
   if (Dart_IsError (temp_value)) {
     *dart_error_out = temp_value;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
@@ -689,7 +661,7 @@ static gboolean _dart_type_get_interface (gpointer object,
                        dart_error_out,
                        error);
     if (result_base_info == NULL) { return FALSE; }
-    *result_out = result_base_info;
+    *result_out = g_base_info_ref(result_base_info);
     *result_klass_out = &gi_base_info_interface_info;
     return TRUE;
   }
@@ -1237,7 +1209,7 @@ static gboolean _dart_arg_info_get_type (gpointer object,
     Dart_Handle *dart_error_out,
     GError **error)
 {
-  Dart_Handle dart_object, function_name, field_value, index_storage;
+  Dart_Handle dart_object, function_name, field_value;
 
   dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
   if (Dart_IsError (dart_object)) {
@@ -1252,7 +1224,7 @@ static gboolean _dart_arg_info_get_type (gpointer object,
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
     return FALSE;
   }
-  field_value = Dart_Invoke (dart_object, function_name, 1, &index_storage);
+  field_value = Dart_GetField (dart_object, function_name);
   if (Dart_IsError (field_value)) {
     *dart_error_out = field_value;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
@@ -1674,14 +1646,18 @@ object,
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
     return FALSE;
   }
-  atypes = _dart_callable_info_prepare_closure_get_arg_types(
-    ffi_arg_value,
-    list_length,
-    dart_error_out,
-    error
-  );
-  if (atypes == NULL) {
-    return FALSE;
+  if (list_length > 0) {
+    atypes = _dart_callable_info_prepare_closure_get_arg_types(
+      ffi_arg_value,
+      list_length,
+      dart_error_out,
+      error
+    );
+    if (atypes == NULL) {
+      return FALSE;
+    }
+  } else {
+    atypes = NULL;
   }
   ffi_return_type_symbol = Dart_NewStringFromCString ("ffiReturnType");
   if (Dart_IsError (ffi_return_type_symbol)) {
@@ -1945,7 +1921,7 @@ static gboolean _dart_callable_info_is_method (gpointer object,
     GError **error)
 {
   Dart_Handle dart_object, field_name, field_value, temp_value;
-  gboolean raw_result;
+  bool raw_result;
 
   dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
   if (Dart_IsError (dart_object)) {
@@ -1968,7 +1944,7 @@ static gboolean _dart_callable_info_is_method (gpointer object,
     return FALSE;
   }
 
-  temp_value = Dart_BooleanValue (field_value, (bool*) &raw_result);
+  temp_value = Dart_BooleanValue (field_value, &raw_result);
   if (Dart_IsError (temp_value)) {
     *dart_error_out = temp_value;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
@@ -2063,7 +2039,7 @@ static gboolean _dart_callable_info_can_throw_gerror (
     GError **error)
 {
   Dart_Handle dart_object, field_name, field_value, temp_value;
-  gboolean raw_result;
+  bool raw_result;
 
   dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
   if (Dart_IsError (dart_object)) {
@@ -2086,7 +2062,7 @@ static gboolean _dart_callable_info_can_throw_gerror (
     return FALSE;
   }
 
-  temp_value = Dart_BooleanValue (field_value, (bool*) &raw_result);
+  temp_value = Dart_BooleanValue (field_value, &raw_result);
   if (Dart_IsError (temp_value)) {
     *dart_error_out = temp_value;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
@@ -2120,7 +2096,7 @@ static gboolean _dart_callable_info_get_return_type (
     Dart_Handle *dart_error_out,
     GError **error)
 {
-  Dart_Handle dart_object, function_name, field_value, index_storage;
+  Dart_Handle dart_object, function_name, field_value;
 
   dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
   if (Dart_IsError (dart_object)) {
@@ -2135,7 +2111,7 @@ static gboolean _dart_callable_info_get_return_type (
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
     return FALSE;
   }
-  field_value = Dart_Invoke (dart_object, function_name, 1, &index_storage);
+  field_value = Dart_GetField (dart_object, function_name);
   if (Dart_IsError (field_value)) {
     *dart_error_out = field_value;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
@@ -2358,6 +2334,69 @@ static gboolean _dart_registered_type_info_get_gtype
   }
   *result_out = raw_result;
   return TRUE;
+}
+
+static gboolean _gi_registered_type_info_registered_type_info_retrieve_wrapping_class(gpointer object,
+				       GdartBridgeContext* self,
+				       const gchar* namespace_,
+				       Dart_Handle* result_out,
+				       Dart_Handle* dart_error,
+				       GError **error)
+{
+  Dart_Handle result;
+  GIInfoType info_type;
+  
+  info_type = g_base_info_get_type((GIBaseInfo*) object);
+  result = gdart_bridge_context_retrieve_wrapping_class(
+    self,
+    namespace_,
+    g_registered_type_info_get_g_type((GIRegisteredTypeInfo*) object),
+    object,
+    &gi_registered_type_info_registered_type_info,
+    (info_type == GI_INFO_TYPE_FLAGS || info_type == GI_INFO_TYPE_ENUM),
+    dart_error,
+    error
+  );
+  if (result == NULL) return FALSE;
+  *result_out = result;
+  return TRUE;
+}
+
+static gboolean _dart_registered_type_info_retrieve_wrapping_class(gpointer object,
+				       GdartBridgeContext* self,
+				       const gchar* namespace_,
+				       Dart_Handle* result_out,
+				       Dart_Handle* dart_error,
+				       GError **error)
+{
+  Dart_Handle dart_object, dart_type_symbol, dart_type_value;
+
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  dart_type_symbol = Dart_NewStringFromCString("dartType");
+  if (Dart_IsError (dart_type_symbol)) {
+    *dart_error = dart_type_symbol;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  dart_type_value = Dart_GetField(dart_object, dart_type_symbol);
+  if (Dart_IsError (dart_type_value)) {
+    *dart_error = dart_type_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  *result_out = dart_type_value;
+  return TRUE;
+}
+
+static gboolean _null_registered_type_info_retrieve_wrapping_class (gpointer object,
+    GdartBridgeContext *self,
+    const gchar* namespace_,
+    Dart_Handle* result_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  return _null_no_such_method (object, self, "retrieve_wrapping_class", dart_error_out, 
+error);
 }
 
 static gboolean _gi_registered_type_info_registered_type_info_get_hash_code 
@@ -2688,7 +2727,7 @@ static gboolean _dart_get_function_from_function_entity (
   dl_filename_trimmed[dl_filename_length] = '\0';
   
   dlerror();
-  dl_handle = dlopen(dl_filename_trimmed, RTLD_LOCAL);
+  dl_handle = dlopen(dl_filename_trimmed, RTLD_LOCAL | RTLD_NOW);
   if (dl_handle == NULL) {
     gchar* error_string;
     
@@ -2763,7 +2802,7 @@ static gboolean _dart_function_info_prep_invoker (gpointer object,
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
     return FALSE;
   }
-  if (_dart_get_function_from_function_entity(
+  if (!_dart_get_function_from_function_entity(
       self,
       function_value,
       &dl_handle,
@@ -2851,14 +2890,18 @@ static gboolean _dart_v_func_info_new_invoker_for_address (
     g_set_error (error, GDART_ERROR, 1, "Error from Dart");
     return FALSE;
   }
-  atypes = _dart_callable_info_prepare_closure_get_arg_types(
-    ffi_arg_value,
-    list_length,
-    dart_error_out,
-    error
-  );
-  if (atypes == NULL) {
-    return FALSE;
+  if (list_length > 0) {
+    atypes = _dart_callable_info_prepare_closure_get_arg_types(
+      ffi_arg_value,
+      list_length,
+      dart_error_out,
+      error
+    );
+    if (atypes == NULL) {
+      return FALSE;
+    }
+  } else {
+    atypes = NULL;
   }
   ffi_return_type_symbol = Dart_NewStringFromCString ("ffiReturnType");
   if (Dart_IsError (ffi_return_type_symbol)) {
@@ -3401,6 +3444,456 @@ static gboolean _null_struct_union_info_get_size (gpointer object,
   return _null_no_such_method (object, self, "get_size", dart_error_out, error);
 }
 
+static gboolean _gi_struct_info_struct_union_info_get_n_fields (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error,
+    GError **error)
+{
+  *result_out = g_struct_info_get_n_fields (object);
+  return TRUE;
+}
+
+static gboolean _gi_union_info_struct_union_info_get_n_fields (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error,
+    GError **error)
+{
+  *result_out = g_union_info_get_n_fields (object);
+  return TRUE;
+}
+
+static gboolean _dart_struct_union_info_get_n_fields (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  Dart_Handle dart_object, field_name, field_value, temp_value;
+  gintptr raw_result;
+
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_name = Dart_NewStringFromCString ("fields");
+  if (Dart_IsError (field_name)) {
+    *dart_error_out = field_name;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_value = Dart_GetField (dart_object, field_name);
+  if (Dart_IsError (field_value)) {
+    *dart_error_out = field_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  temp_value = Dart_ListLength(field_value, &raw_result);
+  if (Dart_IsError (temp_value)) {
+    *dart_error_out = temp_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  *result_out = raw_result;
+  return TRUE;
+}
+
+static gboolean _null_struct_union_info_get_n_fields (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  return _null_no_such_method (object, self, "get_n_fields", dart_error_out, error);
+}
+
+static gboolean _gi_struct_info_struct_union_info_get_field (gpointer object,
+    GdartBridgeContext *self,
+    gint n,
+    gpointer *result_out,
+    const FieldInfoKlass **result_klass_out,
+    Dart_Handle *dart_error,
+    GError **error)
+{
+  *result_out = g_struct_info_get_field (object, n);
+  *result_klass_out = &gi_field_info_field_info;
+  return TRUE;
+}
+
+static gboolean _gi_union_info_struct_union_info_get_field (gpointer object,
+    GdartBridgeContext *self,
+    gint n,
+    gpointer *result_out,
+    const FieldInfoKlass **result_klass_out,
+    Dart_Handle *dart_error,
+    GError **error)
+{
+  *result_out = g_union_info_get_field (object, n);
+  *result_klass_out = &gi_field_info_field_info;
+  return TRUE;
+}
+
+static gboolean _dart_struct_union_info_get_field (gpointer object,
+    GdartBridgeContext *self,
+    gint n,
+    gpointer *result_out,
+    const FieldInfoKlass **result_klass_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  Dart_Handle dart_object, field_name, field_value, temp_value;
+
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_name = Dart_NewStringFromCString ("fields");
+  if (Dart_IsError (field_name)) {
+    *dart_error_out = field_name;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_value = Dart_GetField (dart_object, field_name);
+  if (Dart_IsError (field_value)) {
+    *dart_error_out = field_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  temp_value = Dart_ListGetAt(field_value, n);
+  if (Dart_IsError (temp_value)) {
+    *dart_error_out = temp_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  *result_out = Dart_NewPersistentHandle(temp_value);
+  *result_klass_out = &dart_field_info;
+  return TRUE;
+}
+
+static gboolean _null_struct_union_info_get_field (gpointer object,
+    GdartBridgeContext *self,
+    gint n,
+    gpointer *result_out,
+    const FieldInfoKlass **result_klass_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  return _null_no_such_method (object, self, "get_field", dart_error_out, error);
+}
+
+static gboolean _gi_struct_union_info_struct_union_info_retrieve_copy_function(
+  gpointer object,
+  GdartBridgeContext *self,
+  GdartFunctionReference **result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
+{
+  GIRegisteredTypeInfo* registered_type_info = object;
+  GdartFunctionReference *function_reference;
+  
+  function_reference = gdart_bridge_context_retrieve_copy_func (self,
+                                    g_base_info_get_namespace((GIBaseInfo*) registered_type_info),
+                                    registered_type_info,
+                                    &gi_registered_type_info_registered_type_info,
+                                    g_registered_type_info_get_g_type(registered_type_info));
+  *result_out = function_reference;
+  return TRUE;
+}
+
+static gboolean _null_struct_union_info_retrieve_copy_function(
+  gpointer object,
+  GdartBridgeContext *self,
+  GdartFunctionReference **result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
+{
+  return _null_no_such_method (object, self, "retrieve_copy_function", dart_error_out, error);
+}
+
+static gboolean _dart_struct_union_info_retrieve_copy_function(
+  gpointer object,
+  GdartBridgeContext *self,
+  GdartFunctionReference **result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
+{
+  Dart_Handle dart_object, function_symbol, function_value;
+  gpointer dl_handle, dl_sym;
+  GdartFunctionReference *reference_out;
+  
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  function_symbol = Dart_NewStringFromCString ("copyFunction");
+  if (Dart_IsError (function_symbol)) {
+    *dart_error_out = function_symbol;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  function_value = Dart_GetField(dart_object, function_symbol);
+  if (Dart_IsError (function_value)) {
+    *dart_error_out = function_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  if (!_dart_get_function_from_function_entity(
+      self,
+      function_value,
+      &dl_handle,
+      &dl_sym,
+      dart_error_out,
+      error))
+    return FALSE;
+  if (dl_sym == NULL && dl_handle == NULL) {
+    reference_out = NULL;
+  } else {
+    reference_out = g_slice_new(GdartFunctionReference);
+    reference_out->dl_handle = NULL;
+    reference_out->function_pointer = dl_sym;
+    g_atomic_int_set(&reference_out->ref_count, 1);
+  }
+  *result_out = reference_out;
+  return TRUE;
+}
+
+static gboolean _gi_struct_union_info_struct_union_info_retrieve_free_function(
+  gpointer object,
+  GdartBridgeContext *self,
+  GdartFunctionReference **result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
+{
+  GIRegisteredTypeInfo* registered_type_info = object;
+  GdartFunctionReference *function_reference;
+  
+  function_reference = gdart_bridge_context_retrieve_free_func (self,
+                                    g_base_info_get_namespace((GIBaseInfo*) registered_type_info),
+                                    registered_type_info,
+                                    &gi_registered_type_info_registered_type_info,
+                                    g_registered_type_info_get_g_type(registered_type_info));
+  *result_out = function_reference;
+  return TRUE;
+}
+
+static gboolean _null_struct_union_info_retrieve_free_function(
+  gpointer object,
+  GdartBridgeContext *self,
+  GdartFunctionReference **result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
+{
+  return _null_no_such_method (object, self, "retrieve_free_function", dart_error_out, error);
+}
+
+static gboolean _dart_struct_union_info_retrieve_free_function(
+  gpointer object,
+  GdartBridgeContext *self,
+  GdartFunctionReference **result_out,
+  Dart_Handle *dart_error_out,
+  GError **error)
+{
+  Dart_Handle dart_object, function_symbol, function_value;
+  gpointer dl_handle, dl_sym;
+  GdartFunctionReference *reference_out;
+  
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  function_symbol = Dart_NewStringFromCString ("freeFunction");
+  if (Dart_IsError (function_symbol)) {
+    *dart_error_out = function_symbol;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  function_value = Dart_GetField(dart_object, function_symbol);
+  if (Dart_IsError (function_value)) {
+    *dart_error_out = function_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  if (!_dart_get_function_from_function_entity(
+      self,
+      function_value,
+      &dl_handle,
+      &dl_sym,
+      dart_error_out,
+      error))
+    return FALSE;
+  if (dl_handle == NULL && dl_sym == NULL) {
+    reference_out = NULL;
+  } else {
+    reference_out = g_slice_new(GdartFunctionReference);
+    reference_out->dl_handle = NULL;
+    reference_out->function_pointer = dl_sym;
+    g_atomic_int_set(&reference_out->ref_count, 1);
+  }
+  *result_out = reference_out;
+  return TRUE;
+}
+
+static gboolean _gi_field_info_field_info_get_size (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error,
+    GError **error)
+{
+  *result_out = g_field_info_get_size (object);
+  return TRUE;
+}
+
+static gboolean _dart_field_info_get_size (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  Dart_Handle dart_object, field_name, field_value, temp_value;
+  gint64 raw_result;
+
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_name = Dart_NewStringFromCString ("size");
+  if (Dart_IsError (field_name)) {
+    *dart_error_out = field_name;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_value = Dart_GetField (dart_object, field_name);
+  if (Dart_IsError (field_value)) {
+    *dart_error_out = field_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  temp_value = Dart_IntegerToInt64 (field_value, &raw_result);
+  if (Dart_IsError (temp_value)) {
+    *dart_error_out = temp_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  *result_out = raw_result;
+  return TRUE;
+}
+
+static gboolean _gi_field_info_field_info_get_offset (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error,
+    GError **error)
+{
+  *result_out = g_field_info_get_offset (object);
+  return TRUE;
+}
+
+static gboolean _dart_field_info_get_offset (gpointer object,
+    GdartBridgeContext *self,
+    gint *result_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  Dart_Handle dart_object, field_name, field_value, temp_value;
+  gint64 raw_result;
+
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_name = Dart_NewStringFromCString ("offset");
+  if (Dart_IsError (field_name)) {
+    *dart_error_out = field_name;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  field_value = Dart_GetField (dart_object, field_name);
+  if (Dart_IsError (field_value)) {
+    *dart_error_out = field_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  temp_value = Dart_IntegerToInt64 (field_value, &raw_result);
+  if (Dart_IsError (temp_value)) {
+    *dart_error_out = temp_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  } 
+  *result_out = raw_result;
+  return TRUE;
+}
+
+static gboolean _gi_field_info_field_info_get_type (gpointer 
+object,
+    GdartBridgeContext *self,
+    gpointer *result_out,
+    const TypeInfoKlass **result_klass_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  *result_out = g_field_info_get_type ( (GIFieldInfo *) object);
+  //gchar *name = _gi_base_info_print_name(*result_out);
+  //printf("Got (anonymous type) from get return type. Ref count is now %i\n", 
+  //g_free(name);
+  *result_klass_out = &gi_type_info_type_info;
+  return TRUE;
+}
+
+static gboolean _dart_field_info_get_type (
+    gpointer object,
+    GdartBridgeContext *self,
+    gpointer *result_out,
+    const TypeInfoKlass **result_klass_out,
+    Dart_Handle *dart_error_out,
+    GError **error)
+{
+  Dart_Handle dart_object, function_name, field_value;
+
+  dart_object = Dart_HandleFromPersistent ( (Dart_PersistentHandle) object);
+  if (Dart_IsError (dart_object)) {
+    *dart_error_out = dart_object;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+
+  function_name = Dart_NewStringFromCString ("fieldType");
+  if (Dart_IsError (function_name)) {
+    *dart_error_out = function_name;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  field_value = Dart_GetField (dart_object, function_name);
+  if (Dart_IsError (field_value)) {
+    *dart_error_out = field_value;
+    g_set_error (error, GDART_ERROR, 1, "Error from Dart");
+    return FALSE;
+  }
+  *result_out = Dart_NewPersistentHandle (field_value);
+  *result_klass_out = &dart_type_info;
+  return TRUE;
+}
+
 const RegisteredTypeInfoKlass gi_registered_type_info_registered_type_info = {
   _gi_base_info_interface_info_copy,
   _gi_base_info_interface_info_free,
@@ -3408,9 +3901,11 @@ const RegisteredTypeInfoKlass gi_registered_type_info_registered_type_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
   _gi_registered_type_info_registered_type_info_get_hash_code,
   _gi_registered_type_info_registered_type_info_equals,
-  _gi_base_info_interface_info_cast_interface_to_object_info
+  _gi_base_info_interface_info_cast_interface_to_object_info,
+  _gi_base_info_interface_info_cast_interface_to_struct_union_info
 };
 
 const RegisteredTypeInfoKlass gi_base_info_registered_type_info = {
@@ -3420,9 +3915,11 @@ const RegisteredTypeInfoKlass gi_base_info_registered_type_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
+  _null_registered_type_info_retrieve_wrapping_class,
   _gi_registered_type_info_registered_type_info_get_hash_code,
   _gi_registered_type_info_registered_type_info_equals,
-  _gi_base_info_interface_info_cast_interface_to_object_info
+  _gi_base_info_interface_info_cast_interface_to_object_info,
+  _gi_base_info_interface_info_cast_interface_to_struct_union_info
 };
 
 const RegisteredTypeInfoKlass null_registered_type_info = {
@@ -3432,9 +3929,11 @@ const RegisteredTypeInfoKlass null_registered_type_info = {
   _null_interface_info_get_type,
   _null_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
+  _null_registered_type_info_retrieve_wrapping_class,
   _null_registered_type_info_get_hash_code,
   _null_registered_type_info_equals,
-  _null_interface_info_cast_interface_to_object_info
+  _null_interface_info_cast_interface_to_object_info,
+  _null_interface_info_cast_interface_to_struct_union_info
 };
 
 const RegisteredTypeInfoKlass dart_registered_type_info = {
@@ -3444,9 +3943,11 @@ const RegisteredTypeInfoKlass dart_registered_type_info = {
   _dart_interface_info_get_type,
   _dart_interface_info_get_namespace,
   _dart_registered_type_info_get_gtype,
+  _dart_registered_type_info_retrieve_wrapping_class,
   _dart_registered_type_info_get_hash_code,
   _dart_registered_type_info_equals,
-  _dart_interface_info_cast_interface_to_object_info
+  _dart_interface_info_cast_interface_to_object_info,
+  _dart_interface_info_cast_interface_to_struct_union_info
 };
 
 const ObjectInfoKlass gi_object_info_object_info = {
@@ -3456,6 +3957,7 @@ const ObjectInfoKlass gi_object_info_object_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
   _gi_object_info_object_info_get_ref_function_pointer,
   _gi_object_info_object_info_get_unref_function_pointer
 };
@@ -3467,6 +3969,7 @@ const ObjectInfoKlass gi_registered_type_info_object_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
   _null_object_info_get_ref_function_pointer,
   _null_object_info_get_unref_function_pointer
 };
@@ -3478,6 +3981,7 @@ const ObjectInfoKlass gi_base_info_object_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
+  _null_registered_type_info_retrieve_wrapping_class,
   _null_object_info_get_ref_function_pointer,
   _null_object_info_get_unref_function_pointer
 };
@@ -3489,6 +3993,7 @@ const ObjectInfoKlass null_object_info = {
   _null_interface_info_get_type,
   _null_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
+  _null_registered_type_info_retrieve_wrapping_class,
   _null_object_info_get_ref_function_pointer,
   _null_object_info_get_unref_function_pointer
 };
@@ -3500,6 +4005,7 @@ const ObjectInfoKlass dart_object_info = {
   _dart_interface_info_get_type,
   _dart_interface_info_get_namespace,
   _dart_registered_type_info_get_gtype,
+  _dart_registered_type_info_retrieve_wrapping_class,
   _dart_object_info_get_ref_function_pointer,
   _dart_object_info_get_unref_function_pointer
 };
@@ -3511,7 +4017,12 @@ const StructUnionInfoKlass gi_union_info_struct_union_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
-  _gi_union_info_struct_union_info_get_size
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
+  _gi_struct_union_info_struct_union_info_retrieve_copy_function,
+  _gi_struct_union_info_struct_union_info_retrieve_free_function,
+  _gi_union_info_struct_union_info_get_size,
+  _gi_union_info_struct_union_info_get_n_fields,
+  _gi_union_info_struct_union_info_get_field
 };
 
 const StructUnionInfoKlass gi_struct_info_struct_union_info = {
@@ -3521,7 +4032,12 @@ const StructUnionInfoKlass gi_struct_info_struct_union_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
-  _gi_struct_info_struct_union_info_get_size
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
+  _gi_struct_union_info_struct_union_info_retrieve_copy_function,
+  _gi_struct_union_info_struct_union_info_retrieve_free_function,
+  _gi_struct_info_struct_union_info_get_size,
+  _gi_struct_info_struct_union_info_get_n_fields,
+  _gi_struct_info_struct_union_info_get_field
 };
 
 const StructUnionInfoKlass gi_registered_type_info_struct_union_info = {
@@ -3531,7 +4047,12 @@ const StructUnionInfoKlass gi_registered_type_info_struct_union_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
-  _null_struct_union_info_get_size
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
+  _null_struct_union_info_retrieve_copy_function,
+  _null_struct_union_info_retrieve_free_function,
+  _null_struct_union_info_get_size,
+  _null_struct_union_info_get_n_fields,
+  _null_struct_union_info_get_field
 };
 
 const StructUnionInfoKlass gi_base_info_struct_union_info = {
@@ -3541,7 +4062,12 @@ const StructUnionInfoKlass gi_base_info_struct_union_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
-  _null_struct_union_info_get_size
+  _null_registered_type_info_retrieve_wrapping_class,
+  _null_struct_union_info_retrieve_copy_function,
+  _null_struct_union_info_retrieve_free_function,
+  _null_struct_union_info_get_size,
+  _null_struct_union_info_get_n_fields,
+  _null_struct_union_info_get_field
 };
 
 const StructUnionInfoKlass null_struct_union_info = {
@@ -3551,7 +4077,12 @@ const StructUnionInfoKlass null_struct_union_info = {
   _null_interface_info_get_type,
   _null_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
-  _null_struct_union_info_get_size
+  _null_registered_type_info_retrieve_wrapping_class,
+  _null_struct_union_info_retrieve_copy_function,
+  _null_struct_union_info_retrieve_free_function,
+  _null_struct_union_info_get_size,
+  _null_struct_union_info_get_n_fields,
+  _null_struct_union_info_get_field
 };
 
 const StructUnionInfoKlass dart_struct_union_info = {
@@ -3561,7 +4092,12 @@ const StructUnionInfoKlass dart_struct_union_info = {
   _dart_interface_info_get_type,
   _dart_interface_info_get_namespace,
   _dart_registered_type_info_get_gtype,
-  _dart_struct_union_info_get_size
+  _dart_registered_type_info_retrieve_wrapping_class,
+  _dart_struct_union_info_retrieve_copy_function,
+  _dart_struct_union_info_retrieve_free_function,
+  _dart_struct_union_info_get_size,
+  _dart_struct_union_info_get_n_fields,
+  _dart_struct_union_info_get_field
 };
 
 const EnumInfoKlass gi_enum_info_enum_info = {
@@ -3571,6 +4107,7 @@ const EnumInfoKlass gi_enum_info_enum_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _gi_registered_type_info_registered_type_info_get_gtype,
+  _gi_registered_type_info_registered_type_info_retrieve_wrapping_class,
   _gi_enum_info_enum_info_get_storage_type,
   _gi_base_info_interface_info_cast_interface_to_registered_type_info
 };
@@ -3582,6 +4119,7 @@ const EnumInfoKlass gi_base_info_enum_info = {
   _gi_base_info_interface_info_get_type,
   _gi_base_info_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
+  _null_registered_type_info_retrieve_wrapping_class,
   _null_enum_info_get_storage_type,
   _gi_base_info_interface_info_cast_interface_to_registered_type_info
 };
@@ -3593,6 +4131,7 @@ const EnumInfoKlass null_enum_info = {
   _null_interface_info_get_type,
   _null_interface_info_get_namespace,
   _null_registered_type_info_get_gtype,
+  _null_registered_type_info_retrieve_wrapping_class,
   _null_enum_info_get_storage_type,
   _null_interface_info_cast_interface_to_registered_info,
 };
@@ -3604,6 +4143,7 @@ const EnumInfoKlass dart_enum_info = {
   _dart_interface_info_get_type,
   _dart_interface_info_get_namespace,
   _dart_registered_type_info_get_gtype,
+  _dart_registered_type_info_retrieve_wrapping_class,
   _dart_enum_info_get_storage_type,
   _dart_interface_info_cast_interface_to_registered_type_info
 };
@@ -3977,4 +4517,26 @@ const ArgInfoKlass null_arg_info = {
   _null_arg_info_get_type,
   _null_arg_info_get_ownership_transfer,
   _null_arg_info_is_caller_allocates
+};
+
+const FieldInfoKlass gi_field_info_field_info = {
+  _gi_base_info_interface_info_copy,
+  _gi_base_info_interface_info_free,
+  _gi_base_info_interface_info_get_name,
+  _gi_base_info_interface_info_get_type,
+  _gi_base_info_interface_info_get_namespace,
+  _gi_field_info_field_info_get_offset,
+  _gi_field_info_field_info_get_size,
+  _gi_field_info_field_info_get_type,
+};
+
+const FieldInfoKlass dart_field_info = {
+  _dart_interface_info_copy,
+  _dart_interface_info_free,
+  _dart_interface_info_get_name,
+  _dart_interface_info_get_type,
+  _dart_interface_info_get_namespace,
+  _dart_field_info_get_offset,
+  _dart_field_info_get_size,
+  _dart_field_info_get_type,
 };

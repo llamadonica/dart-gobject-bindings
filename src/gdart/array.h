@@ -59,4 +59,16 @@ gboolean gdart_array_load_parameters(
   Dart_Handle *dart_list_out,
   Dart_Handle *dart_error_out,
   GError **error);
+gboolean gdart_array_load_element (
+  GdartBridgeContext *self,
+  const gchar *name_prefix,
+  gpointer param_type,
+  const TypeInfoKlass *param_type_klass,
+  gboolean is_null_terminated,
+  gboolean deallocate_members,
+  gpointer *buffer,
+  gboolean *is_end,
+  Dart_Handle *dart_elem_out,
+  Dart_Handle *dart_error_out,
+  GError **error);
 #endif

@@ -19,22 +19,34 @@ void initLibrary() {
   registerInterceptorTypeForNamedType("GObject", "ParamFlags", ParamFlags);
 }
 
-class _BaseInfo extends GObjectBase {
+abstract class HasInfoType {
+  InfoType get type;
+  HasInfoType realize();
+}
+
+abstract class HasStorageType {
+  TypeTag get storageType;
+}
+
+class _BaseInfo extends GObjectBase with GIObjectInfo implements HasInfoType {
   _BaseInfo.fromNative();
 
   InfoType _getType() => callMethod('get_type', []);
   String _getName() => callMethod('get_name', []);
   String _getNamespace() => callMethod('get_namespace', []);
   bool _equal(_BaseInfo other) => callMethod('equal', [other]);
+
+  InfoType get type => _getType();
+  HasInfoType realize() => new BaseInfo(this);
 }
 
-class BaseInfo {
+class BaseInfo implements GIObjectInfo, HasInfoType {
   final _BaseInfo _baseInfo;
   BaseInfo._fromNative(_BaseInfo this._baseInfo);
 
   factory BaseInfo(_BaseInfo baseInfo) {
     if (baseInfo == null) return null;
-    switch(baseInfo._getType().value) {
+    switch(baseInfo._getType().index) {
     case 1: return new FunctionInfo._fromNative(baseInfo);
     case 2: return new CallbackInfo._fromNative(baseInfo);
     case 3: return new StructInfo._fromNative(baseInfo);
@@ -57,9 +69,25 @@ class BaseInfo {
     }
   }
 
+  InfoType get type => _baseInfo._getType();
   String get name => _baseInfo._getName();
   String get namespace => _baseInfo._getNamespace();
   bool operator==(Object other) => other is BaseInfo && _baseInfo._equal(other._baseInfo);
+
+
+  @override
+  callMethodOnReceiver(String name, receiver, List args) => _baseInfo.callMethodOnReceiver(name, receiver, args);
+
+  @override
+  callStatic(String name, List args) => _baseInfo.callStatic(name, args);
+
+  @override
+  getGPropertyOnReceiver(String name, receiver) => _baseInfo.getGPropertyOnReceiver(name, receiver);
+
+  @override
+  void setGPropertyOnReceiver(String name, receiver, value) => _baseInfo.setGPropertyOnReceiver(name, receiver, value);
+
+  HasInfoType realize() => this;
 }
 
 class CallableInfo extends BaseInfo {
@@ -97,7 +125,7 @@ class BoxedInfo extends BaseInfo {
   BoxedInfo._fromNative(_BaseInfo baseInfo)  : super._fromNative(baseInfo);
 }
 
-class EnumInfo extends BaseInfo {
+class EnumInfo extends BaseInfo implements HasStorageType {
   EnumInfo._fromNative(_BaseInfo baseInfo)  : super._fromNative(baseInfo);
   Iterable<ValueInfo> get values => new Iterable.generate(
       _enumInfoGetNValues(_baseInfo),
@@ -106,9 +134,10 @@ class EnumInfo extends BaseInfo {
       _enumInfoGetNMethods(_baseInfo),
       (i) => new BaseInfo(_enumInfoGetMethod(_baseInfo, i)));
   String get errorDomain => _enumInfoGetErrorDomain(_baseInfo);
+  TypeTag get storageType => _enumInfoGetStorageType(_baseInfo);
 }
 
-class FlagsInfo extends BaseInfo {
+class FlagsInfo extends BaseInfo implements HasStorageType {
   FlagsInfo._fromNative(_BaseInfo baseInfo)  : super._fromNative(baseInfo);
   Iterable<ValueInfo> get values => new Iterable.generate(
       _enumInfoGetNValues(_baseInfo),
@@ -116,6 +145,7 @@ class FlagsInfo extends BaseInfo {
   Iterable<FunctionInfo> get methods => new Iterable.generate(
       _enumInfoGetNMethods(_baseInfo),
       (i) => new BaseInfo(_enumInfoGetMethod(_baseInfo, i)));
+  TypeTag get storageType => _enumInfoGetStorageType(_baseInfo);
 }
 
 class ObjectInfo extends BaseInfo {
@@ -201,7 +231,7 @@ class PropertyInfo extends BaseInfo {
   PropertyInfo._fromNative(_BaseInfo baseInfo)  : super._fromNative(baseInfo);
 
   ParamFlags get flags => _propertyInfoGetFlags(_baseInfo);
-  TypeInfo get type => new BaseInfo(_propertyInfoGetType(_baseInfo));
+  TypeInfo get propertyType => new BaseInfo(_propertyInfoGetType(_baseInfo));
 }
 
 class FieldInfo extends BaseInfo {
@@ -215,11 +245,10 @@ class ArgInfo extends BaseInfo {
   ArgInfo._fromNative(_BaseInfo baseInfo)  : super._fromNative(baseInfo);
 
   Direction get direction => _argInfoGetDirection(_baseInfo);
-  TypeInfo get type => new BaseInfo(_argInfoGetType(_baseInfo));
+  TypeInfo get argType => new BaseInfo(_argInfoGetType(_baseInfo));
   int get closure => _argInfoGetClosure(_baseInfo);
   int get destroy => _argInfoGetDestroy(_baseInfo);
 }
-
 
 class TypeInfo extends BaseInfo {
   TypeInfo._fromNative(_BaseInfo baseInfo)  : super._fromNative(baseInfo);
@@ -229,7 +258,6 @@ class TypeInfo extends BaseInfo {
   BaseInfo get interface => new BaseInfo(_typeInfoGetInterface(_baseInfo));
   TypeInfo getParamType(int n) => new BaseInfo(_typeInfoGetParamType(_baseInfo, n));
 }
-
 
 class Typelib extends GObjectBase {
   Typelib.fromNative();
@@ -245,7 +273,7 @@ class Direction extends GEnumBase {
   static const List<Direction> values = const <Direction>[IN, OUT, INOUT];
 
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Direction.IN';
       case 1: return 'Direction.OUT';
       case 2: return 'Direction.INOUT';
@@ -315,7 +343,7 @@ class ScopeType  extends GEnumBase {
   static const List<ScopeType> values = const <ScopeType>[INVALID, CALL, ASYNC, NOTIFIED];
 
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ScopeType.INVALID';
       case 1: return 'ScopeType.CALL';
       case 2: return 'ScopeType.ASYNC';
@@ -335,7 +363,7 @@ class Transfer  extends GEnumBase {
   static const List<Transfer> values = const <Transfer>[NOTHING, CONTAINER, EVERYTHING];
 
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Transfer.NOTHING';
       case 1: return 'Transfer.CONTAINER';
       case 2: return 'Transfer.EVERYTHING';
@@ -353,7 +381,7 @@ class RepositoryLoadFlags extends GEnumBase {
   static const List<RepositoryLoadFlags> values = const <RepositoryLoadFlags>[NULL, LAZY];
 
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RepositoryLoadFlags.NULL';
       case 1: return 'RepositoryLoadFlags.LAZY';
       default: return super.toString();
@@ -372,20 +400,20 @@ class FunctionInfoFlags extends GEnumBase {
   static const FunctionInfoFlags WRAPS_VFUNC = const FunctionInfoFlags(16);
   static const FunctionInfoFlags THROWS = const FunctionInfoFlags(32);
 
-  bool get isMethod => value & 1 != 0;
-  bool get isConstructor => value & 2 != 0;
-  bool get isGetter => value & 4 != 0;
-  bool get isSetter => value & 8 != 0;
-  bool get wrapsVFunc => value & 16 != 0;
-  bool get throws => value & 32 != 0;
+  bool get isMethod => index & 1 != 0;
+  bool get isConstructor => index & 2 != 0;
+  bool get isGetter => index & 4 != 0;
+  bool get isSetter => index & 8 != 0;
+  bool get wrapsVFunc => index & 16 != 0;
+  bool get throws => index & 32 != 0;
 
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FunctionInfoFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i *= 2) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
@@ -401,12 +429,11 @@ class FunctionInfoFlags extends GEnumBase {
     }
   }
   FunctionInfoFlags operator|(FunctionInfoFlags other) =>
-    new FunctionInfoFlags(value | other.value);
+    new FunctionInfoFlags(index | other.index);
   FunctionInfoFlags operator&(FunctionInfoFlags other) =>
-    new FunctionInfoFlags(value & other.value);
+    new FunctionInfoFlags(index & other.index);
 
 }
-
 
 class ParamFlags extends GEnumBase {
   const ParamFlags(int value) : super(value);
@@ -424,24 +451,24 @@ class ParamFlags extends GEnumBase {
   static const ParamFlags STATIC_BLURB = const ParamFlags(128);
   static const ParamFlags EXPLICIT_NOTIFY = const ParamFlags(1073741824);
 
-  bool get readable => value & 1 != 0;
-  bool get writable=> value & 2 != 0;
-  bool get construct => value & 4 != 0;
-  bool get constructOnly => value & 8 != 0;
-  bool get laxValidations => value & 16 != 0;
-  bool get staticName => value & 32 != 0;
-  bool get private => value & 32 != 0;
-  bool get staticNick => value & 64 != 0;
-  bool get staticBlurb => value & 128 != 0;
-  bool get explicitNotify => value & 1073741824 != 0;
+  bool get readable => index & 1 != 0;
+  bool get writable=> index & 2 != 0;
+  bool get construct => index & 4 != 0;
+  bool get constructOnly => index & 8 != 0;
+  bool get laxValidations => index & 16 != 0;
+  bool get staticName => index & 32 != 0;
+  bool get private => index & 32 != 0;
+  bool get staticNick => index & 64 != 0;
+  bool get staticBlurb => index & 128 != 0;
+  bool get explicitNotify => index & 1073741824 != 0;
 
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ParamFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 1073741824; i *= 2) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
@@ -461,9 +488,9 @@ class ParamFlags extends GEnumBase {
     }
   }
   ParamFlags operator|(ParamFlags other) =>
-      new ParamFlags(value | other.value);
+      new ParamFlags(index | other.index);
   ParamFlags operator&(ParamFlags other) =>
-      new ParamFlags(value & other.value);
+      new ParamFlags(index & other.index);
 
 }
 
@@ -474,15 +501,15 @@ class FieldInfoFlags extends GEnumBase {
   static const FieldInfoFlags IS_READABLE = const FieldInfoFlags(1);
   static const FieldInfoFlags IS_WRITABLE = const FieldInfoFlags(2);
 
-  bool get isReadable => value & 1 != 0;
-  bool get isWritable => value & 2 != 0;
+  bool get isReadable => index & 1 != 0;
+  bool get isWritable => index & 2 != 0;
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FieldInfoFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2; i *= 2) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
@@ -494,9 +521,9 @@ class FieldInfoFlags extends GEnumBase {
     }
   }
   FieldInfoFlags operator|(FieldInfoFlags other) =>
-      new FieldInfoFlags(value | other.value);
+      new FieldInfoFlags(index | other.index);
   FieldInfoFlags operator&(FieldInfoFlags other) =>
-      new FieldInfoFlags(value & other.value);
+      new FieldInfoFlags(index & other.index);
 
 }
 
@@ -713,6 +740,10 @@ String _enumInfoGetErrorDomain(_BaseInfo info) => callStaticGlobal(
 
 int _enumInfoGetNMethods(_BaseInfo info) => callStaticGlobal(
     'GIRepository', 'enum_info_get_n_methods', [info]);
+
+TypeTag _enumInfoGetStorageType(_BaseInfo info) => callStaticGlobal(
+    'GIRepository', 'enum_info_get_storage_type', [info]);
+
 
 _BaseInfo _enumInfoGetMethod(_BaseInfo info, int index) => callStaticGlobal(
     'GIRepository', 'enum_info_get_method', [info, index]);

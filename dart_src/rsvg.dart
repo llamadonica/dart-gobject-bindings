@@ -35,9 +35,9 @@ class ErrorCode extends GEnumBase {
 
   static const ErrorCode FAILED = const ErrorCode(0);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ErrorCode.FAILED';
-      default: return 'new ErrorCode($value)';
+      default: return 'new ErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -108,11 +108,11 @@ class HandleFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Rsvg', 'HandleFlags');
 
   static const HandleFlags FLAGS_NONE = const HandleFlags(0);
-  bool get flagsNone => (value & 0) == 0;
+  bool get flagsNone => (index & 0) == 0;
   static const HandleFlags FLAG_UNLIMITED = const HandleFlags(1);
-  bool get flagUnlimited => (value & 1) == 1;
+  bool get flagUnlimited => (index & 1) == 1;
   static const HandleFlags FLAG_KEEP_IMAGE_DATA = const HandleFlags(2);
-  bool get flagKeepImageData => (value & 2) == 2;
+  bool get flagKeepImageData => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'HandleFlags.FLAG_UNLIMITED';
@@ -121,19 +121,19 @@ class HandleFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'HandleFlags.FLAGS_NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   HandleFlags operator|(HandleFlags other) =>
-    new HandleFlags(value | other.value);
+    new HandleFlags(index | other.index);
   HandleFlags operator&(HandleFlags other) =>
-    new HandleFlags(value & other.value);
+    new HandleFlags(index & other.index);
 }
 
 class HandlePrivate extends GObjectBase {

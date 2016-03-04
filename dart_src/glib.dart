@@ -1,7 +1,7 @@
 library glib.gdart;
 
 import "gdart.dart";
-
+import "girepository.dart" as girepository;
 
 class Array extends GObjectBase {
   Array.fromNative();
@@ -19,27 +19,27 @@ class AsciiType extends GEnumBase {
 
   static const AsciiType NULL = const AsciiType(0);
   static const AsciiType ALNUM = const AsciiType(1);
-  bool get alnum => (value & 1) == 1;
+  bool get alnum => (index & 1) == 1;
   static const AsciiType ALPHA = const AsciiType(2);
-  bool get alpha => (value & 2) == 2;
+  bool get alpha => (index & 2) == 2;
   static const AsciiType CNTRL = const AsciiType(4);
-  bool get cntrl => (value & 4) == 4;
+  bool get cntrl => (index & 4) == 4;
   static const AsciiType DIGIT = const AsciiType(8);
-  bool get digit => (value & 8) == 8;
+  bool get digit => (index & 8) == 8;
   static const AsciiType GRAPH = const AsciiType(16);
-  bool get graph => (value & 16) == 16;
+  bool get graph => (index & 16) == 16;
   static const AsciiType LOWER = const AsciiType(32);
-  bool get lower => (value & 32) == 32;
+  bool get lower => (index & 32) == 32;
   static const AsciiType PRINT = const AsciiType(64);
-  bool get print => (value & 64) == 64;
+  bool get print => (index & 64) == 64;
   static const AsciiType PUNCT = const AsciiType(128);
-  bool get punct => (value & 128) == 128;
+  bool get punct => (index & 128) == 128;
   static const AsciiType SPACE = const AsciiType(256);
-  bool get space => (value & 256) == 256;
+  bool get space => (index & 256) == 256;
   static const AsciiType UPPER = const AsciiType(512);
-  bool get upper => (value & 512) == 512;
+  bool get upper => (index & 512) == 512;
   static const AsciiType XDIGIT = const AsciiType(1024);
-  bool get xdigit => (value & 1024) == 1024;
+  bool get xdigit => (index & 1024) == 1024;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'AsciiType.ALNUM';
@@ -54,19 +54,19 @@ class AsciiType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'AsciiType.NULL';
     }
     List codes = [];
     for (var i=1; i <= 1024; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   AsciiType operator|(AsciiType other) =>
-    new AsciiType(value | other.value);
+    new AsciiType(index | other.index);
   AsciiType operator&(AsciiType other) =>
-    new AsciiType(value & other.value);
+    new AsciiType(index & other.index);
 }
 
 class AsyncQueue extends GObjectBase {
@@ -146,7 +146,7 @@ class BookmarkFileErrorCode extends GEnumBase {
   static const BookmarkFileErrorCode WRITE = const BookmarkFileErrorCode(6);
   static const BookmarkFileErrorCode FILE_NOT_FOUND = const BookmarkFileErrorCode(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'BookmarkFileErrorCode.INVALID_URI';
       case 1: return 'BookmarkFileErrorCode.INVALID_VALUE';
       case 2: return 'BookmarkFileErrorCode.APP_NOT_REGISTERED';
@@ -155,7 +155,7 @@ class BookmarkFileErrorCode extends GEnumBase {
       case 5: return 'BookmarkFileErrorCode.UNKNOWN_ENCODING';
       case 6: return 'BookmarkFileErrorCode.WRITE';
       case 7: return 'BookmarkFileErrorCode.FILE_NOT_FOUND';
-      default: return 'new BookmarkFileErrorCode($value)';
+      default: return 'new BookmarkFileErrorCode($index)';
     }
   }
 }
@@ -221,12 +221,12 @@ class ChecksumType extends GEnumBase {
   static const ChecksumType SHA256 = const ChecksumType(2);
   static const ChecksumType SHA512 = const ChecksumType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ChecksumType.MD5';
       case 1: return 'ChecksumType.SHA1';
       case 2: return 'ChecksumType.SHA256';
       case 3: return 'ChecksumType.SHA512';
-      default: return 'new ChecksumType($value)';
+      default: return 'new ChecksumType($index)';
     }
   }
 }
@@ -260,7 +260,7 @@ class ConvertErrorCode extends GEnumBase {
   static const ConvertErrorCode NOT_ABSOLUTE_PATH = const ConvertErrorCode(5);
   static const ConvertErrorCode NO_MEMORY = const ConvertErrorCode(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ConvertErrorCode.NO_CONVERSION';
       case 1: return 'ConvertErrorCode.ILLEGAL_SEQUENCE';
       case 2: return 'ConvertErrorCode.FAILED';
@@ -268,7 +268,7 @@ class ConvertErrorCode extends GEnumBase {
       case 4: return 'ConvertErrorCode.BAD_URI';
       case 5: return 'ConvertErrorCode.NOT_ABSOLUTE_PATH';
       case 6: return 'ConvertErrorCode.NO_MEMORY';
-      default: return 'new ConvertErrorCode($value)';
+      default: return 'new ConvertErrorCode($index)';
     }
   }
 }
@@ -350,11 +350,11 @@ class DateDMY extends GEnumBase {
   static const DateDMY MONTH = const DateDMY(1);
   static const DateDMY YEAR = const DateDMY(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DateDMY.DAY';
       case 1: return 'DateDMY.MONTH';
       case 2: return 'DateDMY.YEAR';
-      default: return 'new DateDMY($value)';
+      default: return 'new DateDMY($index)';
     }
   }
 }
@@ -377,7 +377,7 @@ class DateMonth extends GEnumBase {
   static const DateMonth NOVEMBER = const DateMonth(11);
   static const DateMonth DECEMBER = const DateMonth(12);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DateMonth.BAD_MONTH';
       case 1: return 'DateMonth.JANUARY';
       case 2: return 'DateMonth.FEBRUARY';
@@ -391,7 +391,7 @@ class DateMonth extends GEnumBase {
       case 10: return 'DateMonth.OCTOBER';
       case 11: return 'DateMonth.NOVEMBER';
       case 12: return 'DateMonth.DECEMBER';
-      default: return 'new DateMonth($value)';
+      default: return 'new DateMonth($index)';
     }
   }
 }
@@ -462,7 +462,7 @@ class DateWeekday extends GEnumBase {
   static const DateWeekday SATURDAY = const DateWeekday(6);
   static const DateWeekday SUNDAY = const DateWeekday(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DateWeekday.BAD_WEEKDAY';
       case 1: return 'DateWeekday.MONDAY';
       case 2: return 'DateWeekday.TUESDAY';
@@ -471,7 +471,7 @@ class DateWeekday extends GEnumBase {
       case 5: return 'DateWeekday.FRIDAY';
       case 6: return 'DateWeekday.SATURDAY';
       case 7: return 'DateWeekday.SUNDAY';
-      default: return 'new DateWeekday($value)';
+      default: return 'new DateWeekday($index)';
     }
   }
 }
@@ -535,7 +535,7 @@ class ErrorType extends GEnumBase {
   static const ErrorType FLOAT_RADIX = const ErrorType(6);
   static const ErrorType FLOAT_MALFORMED = const ErrorType(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ErrorType.UNKNOWN';
       case 1: return 'ErrorType.UNEXP_EOF';
       case 2: return 'ErrorType.UNEXP_EOF_IN_STRING';
@@ -544,7 +544,7 @@ class ErrorType extends GEnumBase {
       case 5: return 'ErrorType.DIGIT_RADIX';
       case 6: return 'ErrorType.FLOAT_RADIX';
       case 7: return 'ErrorType.FLOAT_MALFORMED';
-      default: return 'new ErrorType($value)';
+      default: return 'new ErrorType($index)';
     }
   }
 }
@@ -579,7 +579,7 @@ class FileErrorCode extends GEnumBase {
   static const FileErrorCode NOSYS = const FileErrorCode(23);
   static const FileErrorCode FAILED = const FileErrorCode(24);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileErrorCode.EXIST';
       case 1: return 'FileErrorCode.ISDIR';
       case 2: return 'FileErrorCode.ACCES';
@@ -605,7 +605,7 @@ class FileErrorCode extends GEnumBase {
       case 22: return 'FileErrorCode.PERM';
       case 23: return 'FileErrorCode.NOSYS';
       case 24: return 'FileErrorCode.FAILED';
-      default: return 'new FileErrorCode($value)';
+      default: return 'new FileErrorCode($index)';
     }
   }
 }
@@ -622,15 +622,15 @@ class FileTest extends GEnumBase {
 
   static const FileTest NULL = const FileTest(0);
   static const FileTest IS_REGULAR = const FileTest(1);
-  bool get isRegular => (value & 1) == 1;
+  bool get isRegular => (index & 1) == 1;
   static const FileTest IS_SYMLINK = const FileTest(2);
-  bool get isSymlink => (value & 2) == 2;
+  bool get isSymlink => (index & 2) == 2;
   static const FileTest IS_DIR = const FileTest(4);
-  bool get isDir => (value & 4) == 4;
+  bool get isDir => (index & 4) == 4;
   static const FileTest IS_EXECUTABLE = const FileTest(8);
-  bool get isExecutable => (value & 8) == 8;
+  bool get isExecutable => (index & 8) == 8;
   static const FileTest EXISTS = const FileTest(16);
-  bool get exists => (value & 16) == 16;
+  bool get exists => (index & 16) == 16;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileTest.IS_REGULAR';
@@ -642,19 +642,19 @@ class FileTest extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileTest.NULL';
     }
     List codes = [];
     for (var i=1; i <= 16; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileTest operator|(FileTest other) =>
-    new FileTest(value | other.value);
+    new FileTest(index | other.index);
   FileTest operator&(FileTest other) =>
-    new FileTest(value & other.value);
+    new FileTest(index & other.index);
 }
 
 class FloatIEEE754 extends GObjectBase {
@@ -670,11 +670,11 @@ class FormatSizeFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GLib', 'FormatSizeFlags');
 
   static const FormatSizeFlags DEFAULT = const FormatSizeFlags(0);
-  bool get default_ => (value & 0) == 0;
+  bool get default_ => (index & 0) == 0;
   static const FormatSizeFlags LONG_FORMAT = const FormatSizeFlags(1);
-  bool get longFormat => (value & 1) == 1;
+  bool get longFormat => (index & 1) == 1;
   static const FormatSizeFlags IEC_UNITS = const FormatSizeFlags(2);
-  bool get iecUnits => (value & 2) == 2;
+  bool get iecUnits => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FormatSizeFlags.LONG_FORMAT';
@@ -683,19 +683,19 @@ class FormatSizeFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FormatSizeFlags.DEFAULT';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FormatSizeFlags operator|(FormatSizeFlags other) =>
-    new FormatSizeFlags(value | other.value);
+    new FormatSizeFlags(index | other.index);
   FormatSizeFlags operator&(FormatSizeFlags other) =>
-    new FormatSizeFlags(value & other.value);
+    new FormatSizeFlags(index & other.index);
 }
 
 typedef void FreeFunc();
@@ -786,11 +786,11 @@ class HookFlagMask extends GEnumBase {
 
   static const HookFlagMask NULL = const HookFlagMask(0);
   static const HookFlagMask ACTIVE = const HookFlagMask(1);
-  bool get active => (value & 1) == 1;
+  bool get active => (index & 1) == 1;
   static const HookFlagMask IN_CALL = const HookFlagMask(2);
-  bool get inCall => (value & 2) == 2;
+  bool get inCall => (index & 2) == 2;
   static const HookFlagMask MASK = const HookFlagMask(15);
-  bool get mask => (value & 15) == 15;
+  bool get mask => (index & 15) == 15;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'HookFlagMask.ACTIVE';
@@ -799,19 +799,19 @@ class HookFlagMask extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'HookFlagMask.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   HookFlagMask operator|(HookFlagMask other) =>
-    new HookFlagMask(value | other.value);
+    new HookFlagMask(index | other.index);
   HookFlagMask operator&(HookFlagMask other) =>
-    new HookFlagMask(value & other.value);
+    new HookFlagMask(index & other.index);
 }
 
 typedef void HookFunc();
@@ -921,7 +921,7 @@ class IOChannelErrorCode extends GEnumBase {
   static const IOChannelErrorCode PIPE = const IOChannelErrorCode(7);
   static const IOChannelErrorCode FAILED = const IOChannelErrorCode(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IOChannelErrorCode.FBIG';
       case 1: return 'IOChannelErrorCode.INVAL';
       case 2: return 'IOChannelErrorCode.IO';
@@ -931,7 +931,7 @@ class IOChannelErrorCode extends GEnumBase {
       case 6: return 'IOChannelErrorCode.OVERFLOW';
       case 7: return 'IOChannelErrorCode.PIPE';
       case 8: return 'IOChannelErrorCode.FAILED';
-      default: return 'new IOChannelErrorCode($value)';
+      default: return 'new IOChannelErrorCode($index)';
     }
   }
 }
@@ -948,17 +948,17 @@ class IOCondition extends GEnumBase {
 
   static const IOCondition NULL = const IOCondition(0);
   static const IOCondition IN = const IOCondition(1);
-  bool get in_ => (value & 1) == 1;
+  bool get in_ => (index & 1) == 1;
   static const IOCondition OUT = const IOCondition(4);
-  bool get out => (value & 4) == 4;
+  bool get out => (index & 4) == 4;
   static const IOCondition PRI = const IOCondition(2);
-  bool get pri => (value & 2) == 2;
+  bool get pri => (index & 2) == 2;
   static const IOCondition ERR = const IOCondition(8);
-  bool get err => (value & 8) == 8;
+  bool get err => (index & 8) == 8;
   static const IOCondition HUP = const IOCondition(16);
-  bool get hup => (value & 16) == 16;
+  bool get hup => (index & 16) == 16;
   static const IOCondition NVAL = const IOCondition(32);
-  bool get nval => (value & 32) == 32;
+  bool get nval => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'IOCondition.IN';
@@ -971,19 +971,19 @@ class IOCondition extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'IOCondition.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   IOCondition operator|(IOCondition other) =>
-    new IOCondition(value | other.value);
+    new IOCondition(index | other.index);
   IOCondition operator&(IOCondition other) =>
-    new IOCondition(value & other.value);
+    new IOCondition(index & other.index);
 }
 
 class IOError extends GEnumBase {
@@ -995,12 +995,12 @@ class IOError extends GEnumBase {
   static const IOError INVAL = const IOError(2);
   static const IOError UNKNOWN = const IOError(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IOError.NONE';
       case 1: return 'IOError.AGAIN';
       case 2: return 'IOError.INVAL';
       case 3: return 'IOError.UNKNOWN';
-      default: return 'new IOError($value)';
+      default: return 'new IOError($index)';
     }
   }
 }
@@ -1011,23 +1011,23 @@ class IOFlags extends GEnumBase {
 
   static const IOFlags NULL = const IOFlags(0);
   static const IOFlags APPEND = const IOFlags(1);
-  bool get append => (value & 1) == 1;
+  bool get append => (index & 1) == 1;
   static const IOFlags NONBLOCK = const IOFlags(2);
-  bool get nonblock => (value & 2) == 2;
+  bool get nonblock => (index & 2) == 2;
   static const IOFlags IS_READABLE = const IOFlags(4);
-  bool get isReadable => (value & 4) == 4;
+  bool get isReadable => (index & 4) == 4;
   static const IOFlags IS_WRITABLE = const IOFlags(8);
-  bool get isWritable => (value & 8) == 8;
+  bool get isWritable => (index & 8) == 8;
   static const IOFlags IS_WRITEABLE = const IOFlags(8);
-  bool get isWriteable => (value & 8) == 8;
+  bool get isWriteable => (index & 8) == 8;
   static const IOFlags IS_SEEKABLE = const IOFlags(16);
-  bool get isSeekable => (value & 16) == 16;
+  bool get isSeekable => (index & 16) == 16;
   static const IOFlags MASK = const IOFlags(31);
-  bool get mask => (value & 31) == 31;
+  bool get mask => (index & 31) == 31;
   static const IOFlags GET_MASK = const IOFlags(31);
-  bool get getMask => (value & 31) == 31;
+  bool get getMask => (index & 31) == 31;
   static const IOFlags SET_MASK = const IOFlags(3);
-  bool get setMask => (value & 3) == 3;
+  bool get setMask => (index & 3) == 3;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'IOFlags.APPEND';
@@ -1039,19 +1039,19 @@ class IOFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'IOFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 16; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   IOFlags operator|(IOFlags other) =>
-    new IOFlags(value | other.value);
+    new IOFlags(index | other.index);
   IOFlags operator&(IOFlags other) =>
-    new IOFlags(value & other.value);
+    new IOFlags(index & other.index);
 }
 
 typedef bool IOFunc(IOChannel source, IOCondition condition);
@@ -1069,12 +1069,12 @@ class IOStatus extends GEnumBase {
   static const IOStatus EOF = const IOStatus(2);
   static const IOStatus AGAIN = const IOStatus(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IOStatus.ERROR';
       case 1: return 'IOStatus.NORMAL';
       case 2: return 'IOStatus.EOF';
       case 3: return 'IOStatus.AGAIN';
-      default: return 'new IOStatus($value)';
+      default: return 'new IOStatus($index)';
     }
   }
 }
@@ -1141,14 +1141,14 @@ class KeyFileErrorCode extends GEnumBase {
   static const KeyFileErrorCode GROUP_NOT_FOUND = const KeyFileErrorCode(4);
   static const KeyFileErrorCode INVALID_VALUE = const KeyFileErrorCode(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'KeyFileErrorCode.UNKNOWN_ENCODING';
       case 1: return 'KeyFileErrorCode.PARSE';
       case 2: return 'KeyFileErrorCode.NOT_FOUND';
       case 3: return 'KeyFileErrorCode.KEY_NOT_FOUND';
       case 4: return 'KeyFileErrorCode.GROUP_NOT_FOUND';
       case 5: return 'KeyFileErrorCode.INVALID_VALUE';
-      default: return 'new KeyFileErrorCode($value)';
+      default: return 'new KeyFileErrorCode($index)';
     }
   }
 }
@@ -1164,11 +1164,11 @@ class KeyFileFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GLib', 'KeyFileFlags');
 
   static const KeyFileFlags NONE = const KeyFileFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const KeyFileFlags KEEP_COMMENTS = const KeyFileFlags(1);
-  bool get keepComments => (value & 1) == 1;
+  bool get keepComments => (index & 1) == 1;
   static const KeyFileFlags KEEP_TRANSLATIONS = const KeyFileFlags(2);
-  bool get keepTranslations => (value & 2) == 2;
+  bool get keepTranslations => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'KeyFileFlags.KEEP_COMMENTS';
@@ -1177,19 +1177,19 @@ class KeyFileFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'KeyFileFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   KeyFileFlags operator|(KeyFileFlags other) =>
-    new KeyFileFlags(value | other.value);
+    new KeyFileFlags(index | other.index);
   KeyFileFlags operator&(KeyFileFlags other) =>
-    new KeyFileFlags(value & other.value);
+    new KeyFileFlags(index & other.index);
 }
 
 class GLibList extends GObjectBase {
@@ -1211,23 +1211,23 @@ class LogLevelFlags extends GEnumBase {
 
   static const LogLevelFlags NULL = const LogLevelFlags(0);
   static const LogLevelFlags FLAG_RECURSION = const LogLevelFlags(1);
-  bool get flagRecursion => (value & 1) == 1;
+  bool get flagRecursion => (index & 1) == 1;
   static const LogLevelFlags FLAG_FATAL = const LogLevelFlags(2);
-  bool get flagFatal => (value & 2) == 2;
+  bool get flagFatal => (index & 2) == 2;
   static const LogLevelFlags LEVEL_ERROR = const LogLevelFlags(4);
-  bool get levelError => (value & 4) == 4;
+  bool get levelError => (index & 4) == 4;
   static const LogLevelFlags LEVEL_CRITICAL = const LogLevelFlags(8);
-  bool get levelCritical => (value & 8) == 8;
+  bool get levelCritical => (index & 8) == 8;
   static const LogLevelFlags LEVEL_WARNING = const LogLevelFlags(16);
-  bool get levelWarning => (value & 16) == 16;
+  bool get levelWarning => (index & 16) == 16;
   static const LogLevelFlags LEVEL_MESSAGE = const LogLevelFlags(32);
-  bool get levelMessage => (value & 32) == 32;
+  bool get levelMessage => (index & 32) == 32;
   static const LogLevelFlags LEVEL_INFO = const LogLevelFlags(64);
-  bool get levelInfo => (value & 64) == 64;
+  bool get levelInfo => (index & 64) == 64;
   static const LogLevelFlags LEVEL_DEBUG = const LogLevelFlags(128);
-  bool get levelDebug => (value & 128) == 128;
+  bool get levelDebug => (index & 128) == 128;
   static const LogLevelFlags LEVEL_MASK = const LogLevelFlags(-4);
-  bool get levelMask => (value & -4) == -4;
+  bool get levelMask => (index & -4) == -4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'LogLevelFlags.FLAG_RECURSION';
@@ -1242,19 +1242,19 @@ class LogLevelFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'LogLevelFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 128; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   LogLevelFlags operator|(LogLevelFlags other) =>
-    new LogLevelFlags(value | other.value);
+    new LogLevelFlags(index | other.index);
   LogLevelFlags operator&(LogLevelFlags other) =>
-    new LogLevelFlags(value & other.value);
+    new LogLevelFlags(index & other.index);
 }
 
 class MainContext extends GObjectBase {
@@ -1320,17 +1320,17 @@ class MarkupCollectType extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GLib', 'MarkupCollectType');
 
   static const MarkupCollectType INVALID = const MarkupCollectType(0);
-  bool get invalid => (value & 0) == 0;
+  bool get invalid => (index & 0) == 0;
   static const MarkupCollectType STRING = const MarkupCollectType(1);
-  bool get string => (value & 1) == 1;
+  bool get string => (index & 1) == 1;
   static const MarkupCollectType STRDUP = const MarkupCollectType(2);
-  bool get strdup => (value & 2) == 2;
+  bool get strdup => (index & 2) == 2;
   static const MarkupCollectType BOOLEAN = const MarkupCollectType(3);
-  bool get boolean => (value & 3) == 3;
+  bool get boolean => (index & 3) == 3;
   static const MarkupCollectType TRISTATE = const MarkupCollectType(4);
-  bool get tristate => (value & 4) == 4;
+  bool get tristate => (index & 4) == 4;
   static const MarkupCollectType OPTIONAL = const MarkupCollectType(65536);
-  bool get optional => (value & 65536) == 65536;
+  bool get optional => (index & 65536) == 65536;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'MarkupCollectType.STRING';
@@ -1340,19 +1340,19 @@ class MarkupCollectType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'MarkupCollectType.INVALID';
     }
     List codes = [];
     for (var i=1; i <= 65536; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   MarkupCollectType operator|(MarkupCollectType other) =>
-    new MarkupCollectType(value | other.value);
+    new MarkupCollectType(index | other.index);
   MarkupCollectType operator&(MarkupCollectType other) =>
-    new MarkupCollectType(value & other.value);
+    new MarkupCollectType(index & other.index);
 }
 
 class MarkupErrorCode extends GEnumBase {
@@ -1367,7 +1367,7 @@ class MarkupErrorCode extends GEnumBase {
   static const MarkupErrorCode INVALID_CONTENT = const MarkupErrorCode(5);
   static const MarkupErrorCode MISSING_ATTRIBUTE = const MarkupErrorCode(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'MarkupErrorCode.BAD_UTF8';
       case 1: return 'MarkupErrorCode.EMPTY';
       case 2: return 'MarkupErrorCode.PARSE';
@@ -1375,7 +1375,7 @@ class MarkupErrorCode extends GEnumBase {
       case 4: return 'MarkupErrorCode.UNKNOWN_ATTRIBUTE';
       case 5: return 'MarkupErrorCode.INVALID_CONTENT';
       case 6: return 'MarkupErrorCode.MISSING_ATTRIBUTE';
-      default: return 'new MarkupErrorCode($value)';
+      default: return 'new MarkupErrorCode($index)';
     }
   }
 }
@@ -1407,13 +1407,13 @@ class MarkupParseFlags extends GEnumBase {
 
   static const MarkupParseFlags NULL = const MarkupParseFlags(0);
   static const MarkupParseFlags DO_NOT_USE_THIS_UNSUPPORTED_FLAG = const MarkupParseFlags(1);
-  bool get doNotUseThisUnsupportedFlag => (value & 1) == 1;
+  bool get doNotUseThisUnsupportedFlag => (index & 1) == 1;
   static const MarkupParseFlags TREAT_CDATA_AS_TEXT = const MarkupParseFlags(2);
-  bool get treatCdataAsText => (value & 2) == 2;
+  bool get treatCdataAsText => (index & 2) == 2;
   static const MarkupParseFlags PREFIX_ERROR_POSITION = const MarkupParseFlags(4);
-  bool get prefixErrorPosition => (value & 4) == 4;
+  bool get prefixErrorPosition => (index & 4) == 4;
   static const MarkupParseFlags IGNORE_QUALIFIED = const MarkupParseFlags(8);
-  bool get ignoreQualified => (value & 8) == 8;
+  bool get ignoreQualified => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'MarkupParseFlags.DO_NOT_USE_THIS_UNSUPPORTED_FLAG';
@@ -1424,19 +1424,19 @@ class MarkupParseFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'MarkupParseFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   MarkupParseFlags operator|(MarkupParseFlags other) =>
-    new MarkupParseFlags(value | other.value);
+    new MarkupParseFlags(index | other.index);
   MarkupParseFlags operator&(MarkupParseFlags other) =>
-    new MarkupParseFlags(value & other.value);
+    new MarkupParseFlags(index & other.index);
 }
 
 class MarkupParser extends GObjectBase {
@@ -1530,12 +1530,12 @@ class NormalizeMode extends GEnumBase {
   static const NormalizeMode ALL_COMPOSE = const NormalizeMode(3);
   static const NormalizeMode NFKC = const NormalizeMode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'NormalizeMode.NFD';
       case 1: return 'NormalizeMode.NFC';
       case 2: return 'NormalizeMode.NFKD';
       case 3: return 'NormalizeMode.NFKC';
-      default: return 'new NormalizeMode($value)';
+      default: return 'new NormalizeMode($index)';
     }
   }
 }
@@ -1560,11 +1560,11 @@ class OnceStatus extends GEnumBase {
   static const OnceStatus PROGRESS = const OnceStatus(1);
   static const OnceStatus READY = const OnceStatus(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'OnceStatus.NOTCALLED';
       case 1: return 'OnceStatus.PROGRESS';
       case 2: return 'OnceStatus.READY';
-      default: return 'new OnceStatus($value)';
+      default: return 'new OnceStatus($index)';
     }
   }
 }
@@ -1583,7 +1583,7 @@ class OptionArg extends GEnumBase {
   static const OptionArg DOUBLE = const OptionArg(7);
   static const OptionArg INT64 = const OptionArg(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'OptionArg.NONE';
       case 1: return 'OptionArg.STRING';
       case 2: return 'OptionArg.INT';
@@ -1593,7 +1593,7 @@ class OptionArg extends GEnumBase {
       case 6: return 'OptionArg.FILENAME_ARRAY';
       case 7: return 'OptionArg.DOUBLE';
       case 8: return 'OptionArg.INT64';
-      default: return 'new OptionArg($value)';
+      default: return 'new OptionArg($index)';
     }
   }
 }
@@ -1653,11 +1653,11 @@ class OptionErrorCode extends GEnumBase {
   static const OptionErrorCode BAD_VALUE = const OptionErrorCode(1);
   static const OptionErrorCode FAILED = const OptionErrorCode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'OptionErrorCode.UNKNOWN_OPTION';
       case 1: return 'OptionErrorCode.BAD_VALUE';
       case 2: return 'OptionErrorCode.FAILED';
-      default: return 'new OptionErrorCode($value)';
+      default: return 'new OptionErrorCode($index)';
     }
   }
 }
@@ -1674,21 +1674,21 @@ class OptionFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GLib', 'OptionFlags');
 
   static const OptionFlags NONE = const OptionFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const OptionFlags HIDDEN = const OptionFlags(1);
-  bool get hidden => (value & 1) == 1;
+  bool get hidden => (index & 1) == 1;
   static const OptionFlags IN_MAIN = const OptionFlags(2);
-  bool get inMain => (value & 2) == 2;
+  bool get inMain => (index & 2) == 2;
   static const OptionFlags REVERSE = const OptionFlags(4);
-  bool get reverse => (value & 4) == 4;
+  bool get reverse => (index & 4) == 4;
   static const OptionFlags NO_ARG = const OptionFlags(8);
-  bool get noArg => (value & 8) == 8;
+  bool get noArg => (index & 8) == 8;
   static const OptionFlags FILENAME = const OptionFlags(16);
-  bool get filename => (value & 16) == 16;
+  bool get filename => (index & 16) == 16;
   static const OptionFlags OPTIONAL_ARG = const OptionFlags(32);
-  bool get optionalArg => (value & 32) == 32;
+  bool get optionalArg => (index & 32) == 32;
   static const OptionFlags NOALIAS = const OptionFlags(64);
-  bool get noalias => (value & 64) == 64;
+  bool get noalias => (index & 64) == 64;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'OptionFlags.HIDDEN';
@@ -1702,19 +1702,19 @@ class OptionFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'OptionFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 64; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   OptionFlags operator|(OptionFlags other) =>
-    new OptionFlags(value | other.value);
+    new OptionFlags(index | other.index);
   OptionFlags operator&(OptionFlags other) =>
-    new OptionFlags(value & other.value);
+    new OptionFlags(index & other.index);
 }
 
 class OptionGroup extends GObjectBase {
@@ -1876,41 +1876,41 @@ class RegexCompileFlags extends GEnumBase {
 
   static const RegexCompileFlags NULL = const RegexCompileFlags(0);
   static const RegexCompileFlags CASELESS = const RegexCompileFlags(1);
-  bool get caseless => (value & 1) == 1;
+  bool get caseless => (index & 1) == 1;
   static const RegexCompileFlags MULTILINE = const RegexCompileFlags(2);
-  bool get multiline => (value & 2) == 2;
+  bool get multiline => (index & 2) == 2;
   static const RegexCompileFlags DOTALL = const RegexCompileFlags(4);
-  bool get dotall => (value & 4) == 4;
+  bool get dotall => (index & 4) == 4;
   static const RegexCompileFlags EXTENDED = const RegexCompileFlags(8);
-  bool get extended => (value & 8) == 8;
+  bool get extended => (index & 8) == 8;
   static const RegexCompileFlags ANCHORED = const RegexCompileFlags(16);
-  bool get anchored => (value & 16) == 16;
+  bool get anchored => (index & 16) == 16;
   static const RegexCompileFlags DOLLAR_ENDONLY = const RegexCompileFlags(32);
-  bool get dollarEndonly => (value & 32) == 32;
+  bool get dollarEndonly => (index & 32) == 32;
   static const RegexCompileFlags UNGREEDY = const RegexCompileFlags(512);
-  bool get ungreedy => (value & 512) == 512;
+  bool get ungreedy => (index & 512) == 512;
   static const RegexCompileFlags RAW = const RegexCompileFlags(2048);
-  bool get raw => (value & 2048) == 2048;
+  bool get raw => (index & 2048) == 2048;
   static const RegexCompileFlags NO_AUTO_CAPTURE = const RegexCompileFlags(4096);
-  bool get noAutoCapture => (value & 4096) == 4096;
+  bool get noAutoCapture => (index & 4096) == 4096;
   static const RegexCompileFlags OPTIMIZE = const RegexCompileFlags(8192);
-  bool get optimize => (value & 8192) == 8192;
+  bool get optimize => (index & 8192) == 8192;
   static const RegexCompileFlags FIRSTLINE = const RegexCompileFlags(262144);
-  bool get firstline => (value & 262144) == 262144;
+  bool get firstline => (index & 262144) == 262144;
   static const RegexCompileFlags DUPNAMES = const RegexCompileFlags(524288);
-  bool get dupnames => (value & 524288) == 524288;
+  bool get dupnames => (index & 524288) == 524288;
   static const RegexCompileFlags NEWLINE_CR = const RegexCompileFlags(1048576);
-  bool get newlineCr => (value & 1048576) == 1048576;
+  bool get newlineCr => (index & 1048576) == 1048576;
   static const RegexCompileFlags NEWLINE_LF = const RegexCompileFlags(2097152);
-  bool get newlineLf => (value & 2097152) == 2097152;
+  bool get newlineLf => (index & 2097152) == 2097152;
   static const RegexCompileFlags NEWLINE_CRLF = const RegexCompileFlags(3145728);
-  bool get newlineCrlf => (value & 3145728) == 3145728;
+  bool get newlineCrlf => (index & 3145728) == 3145728;
   static const RegexCompileFlags NEWLINE_ANYCRLF = const RegexCompileFlags(5242880);
-  bool get newlineAnycrlf => (value & 5242880) == 5242880;
+  bool get newlineAnycrlf => (index & 5242880) == 5242880;
   static const RegexCompileFlags BSR_ANYCRLF = const RegexCompileFlags(8388608);
-  bool get bsrAnycrlf => (value & 8388608) == 8388608;
+  bool get bsrAnycrlf => (index & 8388608) == 8388608;
   static const RegexCompileFlags JAVASCRIPT_COMPAT = const RegexCompileFlags(33554432);
-  bool get javascriptCompat => (value & 33554432) == 33554432;
+  bool get javascriptCompat => (index & 33554432) == 33554432;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'RegexCompileFlags.CASELESS';
@@ -1923,19 +1923,19 @@ class RegexCompileFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'RegexCompileFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 33554432; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   RegexCompileFlags operator|(RegexCompileFlags other) =>
-    new RegexCompileFlags(value | other.value);
+    new RegexCompileFlags(index | other.index);
   RegexCompileFlags operator&(RegexCompileFlags other) =>
-    new RegexCompileFlags(value & other.value);
+    new RegexCompileFlags(index & other.index);
 }
 
 class RegexErrorCode extends GEnumBase {
@@ -2000,7 +2000,7 @@ class RegexErrorCode extends GEnumBase {
   static const RegexErrorCode NAME_TOO_LONG = const RegexErrorCode(175);
   static const RegexErrorCode CHARACTER_VALUE_TOO_LARGE = const RegexErrorCode(176);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RegexErrorCode.COMPILE';
       case 1: return 'RegexErrorCode.OPTIMIZE';
       case 2: return 'RegexErrorCode.REPLACE';
@@ -2058,7 +2058,7 @@ class RegexErrorCode extends GEnumBase {
       case 172: return 'RegexErrorCode.TOO_MANY_FORWARD_REFERENCES';
       case 175: return 'RegexErrorCode.NAME_TOO_LONG';
       case 176: return 'RegexErrorCode.CHARACTER_VALUE_TOO_LARGE';
-      default: return 'new RegexErrorCode($value)';
+      default: return 'new RegexErrorCode($index)';
     }
   }
 }
@@ -2076,35 +2076,35 @@ class RegexMatchFlags extends GEnumBase {
 
   static const RegexMatchFlags NULL = const RegexMatchFlags(0);
   static const RegexMatchFlags ANCHORED = const RegexMatchFlags(16);
-  bool get anchored => (value & 16) == 16;
+  bool get anchored => (index & 16) == 16;
   static const RegexMatchFlags NOTBOL = const RegexMatchFlags(128);
-  bool get notbol => (value & 128) == 128;
+  bool get notbol => (index & 128) == 128;
   static const RegexMatchFlags NOTEOL = const RegexMatchFlags(256);
-  bool get noteol => (value & 256) == 256;
+  bool get noteol => (index & 256) == 256;
   static const RegexMatchFlags NOTEMPTY = const RegexMatchFlags(1024);
-  bool get notempty => (value & 1024) == 1024;
+  bool get notempty => (index & 1024) == 1024;
   static const RegexMatchFlags PARTIAL = const RegexMatchFlags(32768);
-  bool get partial => (value & 32768) == 32768;
+  bool get partial => (index & 32768) == 32768;
   static const RegexMatchFlags NEWLINE_CR = const RegexMatchFlags(1048576);
-  bool get newlineCr => (value & 1048576) == 1048576;
+  bool get newlineCr => (index & 1048576) == 1048576;
   static const RegexMatchFlags NEWLINE_LF = const RegexMatchFlags(2097152);
-  bool get newlineLf => (value & 2097152) == 2097152;
+  bool get newlineLf => (index & 2097152) == 2097152;
   static const RegexMatchFlags NEWLINE_CRLF = const RegexMatchFlags(3145728);
-  bool get newlineCrlf => (value & 3145728) == 3145728;
+  bool get newlineCrlf => (index & 3145728) == 3145728;
   static const RegexMatchFlags NEWLINE_ANY = const RegexMatchFlags(4194304);
-  bool get newlineAny => (value & 4194304) == 4194304;
+  bool get newlineAny => (index & 4194304) == 4194304;
   static const RegexMatchFlags NEWLINE_ANYCRLF = const RegexMatchFlags(5242880);
-  bool get newlineAnycrlf => (value & 5242880) == 5242880;
+  bool get newlineAnycrlf => (index & 5242880) == 5242880;
   static const RegexMatchFlags BSR_ANYCRLF = const RegexMatchFlags(8388608);
-  bool get bsrAnycrlf => (value & 8388608) == 8388608;
+  bool get bsrAnycrlf => (index & 8388608) == 8388608;
   static const RegexMatchFlags BSR_ANY = const RegexMatchFlags(16777216);
-  bool get bsrAny => (value & 16777216) == 16777216;
+  bool get bsrAny => (index & 16777216) == 16777216;
   static const RegexMatchFlags PARTIAL_SOFT = const RegexMatchFlags(32768);
-  bool get partialSoft => (value & 32768) == 32768;
+  bool get partialSoft => (index & 32768) == 32768;
   static const RegexMatchFlags PARTIAL_HARD = const RegexMatchFlags(134217728);
-  bool get partialHard => (value & 134217728) == 134217728;
+  bool get partialHard => (index & 134217728) == 134217728;
   static const RegexMatchFlags NOTEMPTY_ATSTART = const RegexMatchFlags(268435456);
-  bool get notemptyAtstart => (value & 268435456) == 268435456;
+  bool get notemptyAtstart => (index & 268435456) == 268435456;
   static _valueToString(int value) {
     switch(value) {
       case 16: return 'RegexMatchFlags.ANCHORED';
@@ -2113,19 +2113,19 @@ class RegexMatchFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'RegexMatchFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 268435456; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   RegexMatchFlags operator|(RegexMatchFlags other) =>
-    new RegexMatchFlags(value | other.value);
+    new RegexMatchFlags(index | other.index);
   RegexMatchFlags operator&(RegexMatchFlags other) =>
-    new RegexMatchFlags(value & other.value);
+    new RegexMatchFlags(index & other.index);
 }
 
 class SList extends GObjectBase {
@@ -2260,11 +2260,11 @@ class SeekType extends GEnumBase {
   static const SeekType SET = const SeekType(1);
   static const SeekType END = const SeekType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SeekType.CUR';
       case 1: return 'SeekType.SET';
       case 2: return 'SeekType.END';
-      default: return 'new SeekType($value)';
+      default: return 'new SeekType($index)';
     }
   }
 }
@@ -2302,11 +2302,11 @@ class ShellErrorCode extends GEnumBase {
   static const ShellErrorCode EMPTY_STRING = const ShellErrorCode(1);
   static const ShellErrorCode FAILED = const ShellErrorCode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ShellErrorCode.BAD_QUOTING';
       case 1: return 'ShellErrorCode.EMPTY_STRING';
       case 2: return 'ShellErrorCode.FAILED';
-      default: return 'new ShellErrorCode($value)';
+      default: return 'new ShellErrorCode($index)';
     }
   }
 }
@@ -2328,14 +2328,14 @@ class SliceConfig extends GEnumBase {
   static const SliceConfig CHUNK_SIZES = const SliceConfig(5);
   static const SliceConfig CONTENTION_COUNTER = const SliceConfig(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 1: return 'SliceConfig.ALWAYS_MALLOC';
       case 2: return 'SliceConfig.BYPASS_MAGAZINES';
       case 3: return 'SliceConfig.WORKING_SET_MSECS';
       case 4: return 'SliceConfig.COLOR_INCREMENT';
       case 5: return 'SliceConfig.CHUNK_SIZES';
       case 6: return 'SliceConfig.CONTENTION_COUNTER';
-      default: return 'new SliceConfig($value)';
+      default: return 'new SliceConfig($index)';
     }
   }
 }
@@ -2438,7 +2438,7 @@ class SpawnErrorCode extends GEnumBase {
   static const SpawnErrorCode LIBBAD = const SpawnErrorCode(18);
   static const SpawnErrorCode FAILED = const SpawnErrorCode(19);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SpawnErrorCode.FORK';
       case 1: return 'SpawnErrorCode.READ';
       case 2: return 'SpawnErrorCode.CHDIR';
@@ -2459,7 +2459,7 @@ class SpawnErrorCode extends GEnumBase {
       case 17: return 'SpawnErrorCode.ISDIR';
       case 18: return 'SpawnErrorCode.LIBBAD';
       case 19: return 'SpawnErrorCode.FAILED';
-      default: return 'new SpawnErrorCode($value)';
+      default: return 'new SpawnErrorCode($index)';
     }
   }
 }
@@ -2475,25 +2475,25 @@ class SpawnFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GLib', 'SpawnFlags');
 
   static const SpawnFlags DEFAULT = const SpawnFlags(0);
-  bool get default_ => (value & 0) == 0;
+  bool get default_ => (index & 0) == 0;
   static const SpawnFlags LEAVE_DESCRIPTORS_OPEN = const SpawnFlags(1);
-  bool get leaveDescriptorsOpen => (value & 1) == 1;
+  bool get leaveDescriptorsOpen => (index & 1) == 1;
   static const SpawnFlags DO_NOT_REAP_CHILD = const SpawnFlags(2);
-  bool get doNotReapChild => (value & 2) == 2;
+  bool get doNotReapChild => (index & 2) == 2;
   static const SpawnFlags SEARCH_PATH = const SpawnFlags(4);
-  bool get searchPath => (value & 4) == 4;
+  bool get searchPath => (index & 4) == 4;
   static const SpawnFlags STDOUT_TO_DEV_NULL = const SpawnFlags(8);
-  bool get stdoutToDevNull => (value & 8) == 8;
+  bool get stdoutToDevNull => (index & 8) == 8;
   static const SpawnFlags STDERR_TO_DEV_NULL = const SpawnFlags(16);
-  bool get stderrToDevNull => (value & 16) == 16;
+  bool get stderrToDevNull => (index & 16) == 16;
   static const SpawnFlags CHILD_INHERITS_STDIN = const SpawnFlags(32);
-  bool get childInheritsStdin => (value & 32) == 32;
+  bool get childInheritsStdin => (index & 32) == 32;
   static const SpawnFlags FILE_AND_ARGV_ZERO = const SpawnFlags(64);
-  bool get fileAndArgvZero => (value & 64) == 64;
+  bool get fileAndArgvZero => (index & 64) == 64;
   static const SpawnFlags SEARCH_PATH_FROM_ENVP = const SpawnFlags(128);
-  bool get searchPathFromEnvp => (value & 128) == 128;
+  bool get searchPathFromEnvp => (index & 128) == 128;
   static const SpawnFlags CLOEXEC_PIPES = const SpawnFlags(256);
-  bool get cloexecPipes => (value & 256) == 256;
+  bool get cloexecPipes => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'SpawnFlags.LEAVE_DESCRIPTORS_OPEN';
@@ -2508,19 +2508,19 @@ class SpawnFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'SpawnFlags.DEFAULT';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   SpawnFlags operator|(SpawnFlags other) =>
-    new SpawnFlags(value | other.value);
+    new SpawnFlags(index | other.index);
   SpawnFlags operator&(SpawnFlags other) =>
-    new SpawnFlags(value & other.value);
+    new SpawnFlags(index & other.index);
 }
 
 class StatBuf extends GObjectBase {
@@ -2611,10 +2611,10 @@ class TestFileType extends GEnumBase {
   static const TestFileType DIST = const TestFileType(0);
   static const TestFileType BUILT = const TestFileType(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TestFileType.DIST';
       case 1: return 'TestFileType.BUILT';
-      default: return 'new TestFileType($value)';
+      default: return 'new TestFileType($index)';
     }
   }
 }
@@ -2666,7 +2666,7 @@ class TestLogType extends GEnumBase {
   static const TestLogType START_SUITE = const TestLogType(10);
   static const TestLogType STOP_SUITE = const TestLogType(11);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TestLogType.NONE';
       case 1: return 'TestLogType.ERROR';
       case 2: return 'TestLogType.START_BINARY';
@@ -2679,7 +2679,7 @@ class TestLogType extends GEnumBase {
       case 9: return 'TestLogType.MESSAGE';
       case 10: return 'TestLogType.START_SUITE';
       case 11: return 'TestLogType.STOP_SUITE';
-      default: return 'new TestLogType($value)';
+      default: return 'new TestLogType($index)';
     }
   }
 }
@@ -2690,11 +2690,11 @@ class TestSubprocessFlags extends GEnumBase {
 
   static const TestSubprocessFlags NULL = const TestSubprocessFlags(0);
   static const TestSubprocessFlags STDIN = const TestSubprocessFlags(1);
-  bool get stdin => (value & 1) == 1;
+  bool get stdin => (index & 1) == 1;
   static const TestSubprocessFlags STDOUT = const TestSubprocessFlags(2);
-  bool get stdout => (value & 2) == 2;
+  bool get stdout => (index & 2) == 2;
   static const TestSubprocessFlags STDERR = const TestSubprocessFlags(4);
-  bool get stderr => (value & 4) == 4;
+  bool get stderr => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TestSubprocessFlags.STDIN';
@@ -2704,19 +2704,19 @@ class TestSubprocessFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TestSubprocessFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TestSubprocessFlags operator|(TestSubprocessFlags other) =>
-    new TestSubprocessFlags(value | other.value);
+    new TestSubprocessFlags(index | other.index);
   TestSubprocessFlags operator&(TestSubprocessFlags other) =>
-    new TestSubprocessFlags(value & other.value);
+    new TestSubprocessFlags(index & other.index);
 }
 
 class TestSuite extends GObjectBase {
@@ -2733,11 +2733,11 @@ class TestTrapFlags extends GEnumBase {
 
   static const TestTrapFlags NULL = const TestTrapFlags(0);
   static const TestTrapFlags SILENCE_STDOUT = const TestTrapFlags(128);
-  bool get silenceStdout => (value & 128) == 128;
+  bool get silenceStdout => (index & 128) == 128;
   static const TestTrapFlags SILENCE_STDERR = const TestTrapFlags(256);
-  bool get silenceStderr => (value & 256) == 256;
+  bool get silenceStderr => (index & 256) == 256;
   static const TestTrapFlags INHERIT_STDIN = const TestTrapFlags(512);
-  bool get inheritStdin => (value & 512) == 512;
+  bool get inheritStdin => (index & 512) == 512;
   static _valueToString(int value) {
     switch(value) {
       case 128: return 'TestTrapFlags.SILENCE_STDOUT';
@@ -2745,19 +2745,19 @@ class TestTrapFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TestTrapFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 512; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TestTrapFlags operator|(TestTrapFlags other) =>
-    new TestTrapFlags(value | other.value);
+    new TestTrapFlags(index | other.index);
   TestTrapFlags operator&(TestTrapFlags other) =>
-    new TestTrapFlags(value & other.value);
+    new TestTrapFlags(index & other.index);
 }
 
 class Thread extends GObjectBase {
@@ -2778,9 +2778,9 @@ class ThreadErrorCode extends GEnumBase {
 
   static const ThreadErrorCode THREAD_ERROR_AGAIN = const ThreadErrorCode(0);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ThreadErrorCode.THREAD_ERROR_AGAIN';
-      default: return 'new ThreadErrorCode($value)';
+      default: return 'new ThreadErrorCode($index)';
     }
   }
 }
@@ -2824,11 +2824,11 @@ class TimeType extends GEnumBase {
   static const TimeType DAYLIGHT = const TimeType(1);
   static const TimeType UNIVERSAL = const TimeType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TimeType.STANDARD';
       case 1: return 'TimeType.DAYLIGHT';
       case 2: return 'TimeType.UNIVERSAL';
-      default: return 'new TimeType($value)';
+      default: return 'new TimeType($index)';
     }
   }
 }
@@ -2862,8 +2862,8 @@ class TimeZone extends GObjectBase {
   void unref() => _staticInfo.callMethodOnReceiver('unref', this, []);
 }
 
-class Timer extends GObjectBase {
-  Timer.fromNative();
+class GlibTimer extends GObjectBase {
+  GlibTimer.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GLib', 'Timer');
 
   void continue_() => _staticInfo.callMethodOnReceiver('continue', this, []);
@@ -2902,7 +2902,7 @@ class TokenType extends GEnumBase {
   static const TokenType COMMENT_SINGLE = const TokenType(268);
   static const TokenType COMMENT_MULTI = const TokenType(269);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TokenType.EOF';
       case 40: return 'TokenType.LEFT_PAREN';
       case 41: return 'TokenType.RIGHT_PAREN';
@@ -2926,7 +2926,7 @@ class TokenType extends GEnumBase {
       case 267: return 'TokenType.IDENTIFIER_NULL';
       case 268: return 'TokenType.COMMENT_SINGLE';
       case 269: return 'TokenType.COMMENT_MULTI';
-      default: return 'new TokenType($value)';
+      default: return 'new TokenType($index)';
     }
   }
 }
@@ -2978,17 +2978,17 @@ class TraverseFlags extends GEnumBase {
 
   static const TraverseFlags NULL = const TraverseFlags(0);
   static const TraverseFlags LEAVES = const TraverseFlags(1);
-  bool get leaves => (value & 1) == 1;
+  bool get leaves => (index & 1) == 1;
   static const TraverseFlags NON_LEAVES = const TraverseFlags(2);
-  bool get nonLeaves => (value & 2) == 2;
+  bool get nonLeaves => (index & 2) == 2;
   static const TraverseFlags ALL = const TraverseFlags(3);
-  bool get all => (value & 3) == 3;
+  bool get all => (index & 3) == 3;
   static const TraverseFlags MASK = const TraverseFlags(3);
-  bool get mask => (value & 3) == 3;
+  bool get mask => (index & 3) == 3;
   static const TraverseFlags LEAFS = const TraverseFlags(1);
-  bool get leafs => (value & 1) == 1;
+  bool get leafs => (index & 1) == 1;
   static const TraverseFlags NON_LEAFS = const TraverseFlags(2);
-  bool get nonLeafs => (value & 2) == 2;
+  bool get nonLeafs => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TraverseFlags.LEAVES';
@@ -2997,19 +2997,19 @@ class TraverseFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TraverseFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TraverseFlags operator|(TraverseFlags other) =>
-    new TraverseFlags(value | other.value);
+    new TraverseFlags(index | other.index);
   TraverseFlags operator&(TraverseFlags other) =>
-    new TraverseFlags(value & other.value);
+    new TraverseFlags(index & other.index);
 }
 
 typedef bool TraverseFunc(dynamic key /* this will fail */, dynamic value /* this will fail */);
@@ -3022,12 +3022,12 @@ class TraverseType extends GEnumBase {
   static const TraverseType POST_ORDER = const TraverseType(2);
   static const TraverseType LEVEL_ORDER = const TraverseType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TraverseType.IN_ORDER';
       case 1: return 'TraverseType.PRE_ORDER';
       case 2: return 'TraverseType.POST_ORDER';
       case 3: return 'TraverseType.LEVEL_ORDER';
-      default: return 'new TraverseType($value)';
+      default: return 'new TraverseType($index)';
     }
   }
 }
@@ -3092,7 +3092,7 @@ class UnicodeBreakType extends GEnumBase {
   static const UnicodeBreakType HEBREW_LETTER = const UnicodeBreakType(38);
   static const UnicodeBreakType REGIONAL_INDICATOR = const UnicodeBreakType(39);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'UnicodeBreakType.MANDATORY';
       case 1: return 'UnicodeBreakType.CARRIAGE_RETURN';
       case 2: return 'UnicodeBreakType.LINE_FEED';
@@ -3133,7 +3133,7 @@ class UnicodeBreakType extends GEnumBase {
       case 37: return 'UnicodeBreakType.CONDITIONAL_JAPANESE_STARTER';
       case 38: return 'UnicodeBreakType.HEBREW_LETTER';
       case 39: return 'UnicodeBreakType.REGIONAL_INDICATOR';
-      default: return 'new UnicodeBreakType($value)';
+      default: return 'new UnicodeBreakType($index)';
     }
   }
 }
@@ -3270,7 +3270,7 @@ class UnicodeScript extends GEnumBase {
   static const UnicodeScript TIRHUTA = const UnicodeScript(124);
   static const UnicodeScript WARANG_CITI = const UnicodeScript(125);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'UnicodeScript.INVALID_CODE';
       case 0: return 'UnicodeScript.COMMON';
       case 1: return 'UnicodeScript.INHERITED';
@@ -3398,7 +3398,7 @@ class UnicodeScript extends GEnumBase {
       case 123: return 'UnicodeScript.SIDDHAM';
       case 124: return 'UnicodeScript.TIRHUTA';
       case 125: return 'UnicodeScript.WARANG_CITI';
-      default: return 'new UnicodeScript($value)';
+      default: return 'new UnicodeScript($index)';
     }
   }
 }
@@ -3438,7 +3438,7 @@ class UnicodeType extends GEnumBase {
   static const UnicodeType PARAGRAPH_SEPARATOR = const UnicodeType(28);
   static const UnicodeType SPACE_SEPARATOR = const UnicodeType(29);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'UnicodeType.CONTROL';
       case 1: return 'UnicodeType.FORMAT';
       case 2: return 'UnicodeType.UNASSIGNED';
@@ -3469,7 +3469,7 @@ class UnicodeType extends GEnumBase {
       case 27: return 'UnicodeType.LINE_SEPARATOR';
       case 28: return 'UnicodeType.PARAGRAPH_SEPARATOR';
       case 29: return 'UnicodeType.SPACE_SEPARATOR';
-      default: return 'new UnicodeType($value)';
+      default: return 'new UnicodeType($index)';
     }
   }
 }
@@ -3489,7 +3489,7 @@ class UserDirectory extends GEnumBase {
   static const UserDirectory DIRECTORY_VIDEOS = const UserDirectory(7);
   static const UserDirectory N_DIRECTORIES = const UserDirectory(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'UserDirectory.DIRECTORY_DESKTOP';
       case 1: return 'UserDirectory.DIRECTORY_DOCUMENTS';
       case 2: return 'UserDirectory.DIRECTORY_DOWNLOAD';
@@ -3499,7 +3499,7 @@ class UserDirectory extends GEnumBase {
       case 6: return 'UserDirectory.DIRECTORY_TEMPLATES';
       case 7: return 'UserDirectory.DIRECTORY_VIDEOS';
       case 8: return 'UserDirectory.N_DIRECTORIES';
-      default: return 'new UserDirectory($value)';
+      default: return 'new UserDirectory($index)';
     }
   }
 }
@@ -3625,7 +3625,7 @@ class VariantClass extends GEnumBase {
   static const VariantClass TUPLE = const VariantClass(40);
   static const VariantClass DICT_ENTRY = const VariantClass(123);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 98: return 'VariantClass.BOOLEAN';
       case 121: return 'VariantClass.BYTE';
       case 110: return 'VariantClass.INT16';
@@ -3644,7 +3644,7 @@ class VariantClass extends GEnumBase {
       case 97: return 'VariantClass.ARRAY';
       case 40: return 'VariantClass.TUPLE';
       case 123: return 'VariantClass.DICT_ENTRY';
-      default: return 'new VariantClass($value)';
+      default: return 'new VariantClass($index)';
     }
   }
 }
@@ -3688,7 +3688,7 @@ class VariantParseErrorCode extends GEnumBase {
   static const VariantParseErrorCode UNTERMINATED_STRING_CONSTANT = const VariantParseErrorCode(16);
   static const VariantParseErrorCode VALUE_EXPECTED = const VariantParseErrorCode(17);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'VariantParseErrorCode.FAILED';
       case 1: return 'VariantParseErrorCode.BASIC_TYPE_EXPECTED';
       case 2: return 'VariantParseErrorCode.CANNOT_INFER_TYPE';
@@ -3707,7 +3707,7 @@ class VariantParseErrorCode extends GEnumBase {
       case 15: return 'VariantParseErrorCode.UNKNOWN_KEYWORD';
       case 16: return 'VariantParseErrorCode.UNTERMINATED_STRING_CONSTANT';
       case 17: return 'VariantParseErrorCode.VALUE_EXPECTED';
-      default: return 'new VariantParseErrorCode($value)';
+      default: return 'new VariantParseErrorCode($index)';
     }
   }
 }
@@ -4685,6 +4685,7 @@ bool _initLibraryStarted = false;
 void initLibrary() {
   if (_initLibraryStarted) return;
   _initLibraryStarted = true;
+  girepository.initLibrary();
   registerInterceptorTypeForNamedType("GLib", "Array",Array);
   registerInterceptorTypeForNamedType("GLib", "AsciiType",AsciiType);
   registerInterceptorTypeForNamedType("GLib", "AsyncQueue",AsyncQueue);
@@ -4795,7 +4796,7 @@ void initLibrary() {
   registerInterceptorTypeForNamedType("GLib", "TimeType",TimeType);
   registerInterceptorTypeForNamedType("GLib", "TimeVal",TimeVal);
   registerInterceptorTypeForNamedType("GLib", "TimeZone",TimeZone);
-  registerInterceptorTypeForNamedType("GLib", "Timer",Timer);
+  registerInterceptorTypeForNamedType("GLib", "Timer",GlibTimer);
   registerInterceptorTypeForNamedType("GLib", "TokenType",TokenType);
   registerInterceptorTypeForNamedType("GLib", "TokenValue",TokenValue);
   registerInterceptorTypeForNamedType("GLib", "TrashStack",TrashStack);

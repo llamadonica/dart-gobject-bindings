@@ -52,7 +52,7 @@ class AxisUse extends GEnumBase {
   static const AxisUse WHEEL = const AxisUse(6);
   static const AxisUse LAST = const AxisUse(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'AxisUse.IGNORE';
       case 1: return 'AxisUse.X';
       case 2: return 'AxisUse.Y';
@@ -61,7 +61,7 @@ class AxisUse extends GEnumBase {
       case 5: return 'AxisUse.YTILT';
       case 6: return 'AxisUse.WHEEL';
       case 7: return 'AxisUse.LAST';
-      default: return 'new AxisUse($value)';
+      default: return 'new AxisUse($index)';
     }
   }
 }
@@ -73,10 +73,10 @@ class ByteOrder extends GEnumBase {
   static const ByteOrder LSB_FIRST = const ByteOrder(0);
   static const ByteOrder MSB_FIRST = const ByteOrder(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ByteOrder.LSB_FIRST';
       case 1: return 'ByteOrder.MSB_FIRST';
-      default: return 'new ByteOrder($value)';
+      default: return 'new ByteOrder($index)';
     }
   }
 }
@@ -115,7 +115,7 @@ class CrossingMode extends GEnumBase {
   static const CrossingMode TOUCH_END = const CrossingMode(7);
   static const CrossingMode DEVICE_SWITCH = const CrossingMode(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CrossingMode.NORMAL';
       case 1: return 'CrossingMode.GRAB';
       case 2: return 'CrossingMode.UNGRAB';
@@ -125,7 +125,7 @@ class CrossingMode extends GEnumBase {
       case 6: return 'CrossingMode.TOUCH_BEGIN';
       case 7: return 'CrossingMode.TOUCH_END';
       case 8: return 'CrossingMode.DEVICE_SWITCH';
-      default: return 'new CrossingMode($value)';
+      default: return 'new CrossingMode($index)';
     }
   }
 }
@@ -236,7 +236,7 @@ class CursorType extends GEnumBase {
   static const CursorType BLANK_CURSOR = const CursorType(-2);
   static const CursorType CURSOR_IS_PIXMAP = const CursorType(-1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CursorType.X_CURSOR';
       case 2: return 'CursorType.ARROW';
       case 4: return 'CursorType.BASED_ARROW_DOWN';
@@ -317,7 +317,7 @@ class CursorType extends GEnumBase {
       case 153: return 'CursorType.LAST_CURSOR';
       case -2: return 'CursorType.BLANK_CURSOR';
       case -1: return 'CursorType.CURSOR_IS_PIXMAP';
-      default: return 'new CursorType($value)';
+      default: return 'new CursorType($index)';
     }
   }
 }
@@ -522,11 +522,11 @@ class DeviceType extends GEnumBase {
   static const DeviceType SLAVE = const DeviceType(1);
   static const DeviceType FLOATING = const DeviceType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DeviceType.MASTER';
       case 1: return 'DeviceType.SLAVE';
       case 2: return 'DeviceType.FLOATING';
-      default: return 'new DeviceType($value)';
+      default: return 'new DeviceType($index)';
     }
   }
 }
@@ -689,17 +689,17 @@ class DragAction extends GEnumBase {
 
   static const DragAction NULL = const DragAction(0);
   static const DragAction DEFAULT = const DragAction(1);
-  bool get default_ => (value & 1) == 1;
+  bool get default_ => (index & 1) == 1;
   static const DragAction COPY = const DragAction(2);
-  bool get copy => (value & 2) == 2;
+  bool get copy => (index & 2) == 2;
   static const DragAction MOVE = const DragAction(4);
-  bool get move => (value & 4) == 4;
+  bool get move => (index & 4) == 4;
   static const DragAction LINK = const DragAction(8);
-  bool get link => (value & 8) == 8;
+  bool get link => (index & 8) == 8;
   static const DragAction PRIVATE = const DragAction(16);
-  bool get private => (value & 16) == 16;
+  bool get private => (index & 16) == 16;
   static const DragAction ASK = const DragAction(32);
-  bool get ask => (value & 32) == 32;
+  bool get ask => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DragAction.DEFAULT';
@@ -712,19 +712,19 @@ class DragAction extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DragAction.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DragAction operator|(DragAction other) =>
-    new DragAction(value | other.value);
+    new DragAction(index | other.index);
   DragAction operator&(DragAction other) =>
-    new DragAction(value & other.value);
+    new DragAction(index & other.index);
 }
 
 class DragContext extends GObjectObject {
@@ -755,7 +755,7 @@ class DragProtocol extends GEnumBase {
   static const DragProtocol LOCAL = const DragProtocol(6);
   static const DragProtocol WAYLAND = const DragProtocol(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DragProtocol.NONE';
       case 1: return 'DragProtocol.MOTIF';
       case 2: return 'DragProtocol.XDND';
@@ -764,7 +764,7 @@ class DragProtocol extends GEnumBase {
       case 5: return 'DragProtocol.OLE2';
       case 6: return 'DragProtocol.LOCAL';
       case 7: return 'DragProtocol.WAYLAND';
-      default: return 'new DragProtocol($value)';
+      default: return 'new DragProtocol($index)';
     }
   }
 }
@@ -1050,55 +1050,55 @@ class EventMask extends GEnumBase {
 
   static const EventMask NULL = const EventMask(0);
   static const EventMask EXPOSURE_MASK = const EventMask(2);
-  bool get exposureMask => (value & 2) == 2;
+  bool get exposureMask => (index & 2) == 2;
   static const EventMask POINTER_MOTION_MASK = const EventMask(4);
-  bool get pointerMotionMask => (value & 4) == 4;
+  bool get pointerMotionMask => (index & 4) == 4;
   static const EventMask POINTER_MOTION_HINT_MASK = const EventMask(8);
-  bool get pointerMotionHintMask => (value & 8) == 8;
+  bool get pointerMotionHintMask => (index & 8) == 8;
   static const EventMask BUTTON_MOTION_MASK = const EventMask(16);
-  bool get buttonMotionMask => (value & 16) == 16;
+  bool get buttonMotionMask => (index & 16) == 16;
   static const EventMask BUTTON1_MOTION_MASK = const EventMask(32);
-  bool get button1MotionMask => (value & 32) == 32;
+  bool get button1MotionMask => (index & 32) == 32;
   static const EventMask BUTTON2_MOTION_MASK = const EventMask(64);
-  bool get button2MotionMask => (value & 64) == 64;
+  bool get button2MotionMask => (index & 64) == 64;
   static const EventMask BUTTON3_MOTION_MASK = const EventMask(128);
-  bool get button3MotionMask => (value & 128) == 128;
+  bool get button3MotionMask => (index & 128) == 128;
   static const EventMask BUTTON_PRESS_MASK = const EventMask(256);
-  bool get buttonPressMask => (value & 256) == 256;
+  bool get buttonPressMask => (index & 256) == 256;
   static const EventMask BUTTON_RELEASE_MASK = const EventMask(512);
-  bool get buttonReleaseMask => (value & 512) == 512;
+  bool get buttonReleaseMask => (index & 512) == 512;
   static const EventMask KEY_PRESS_MASK = const EventMask(1024);
-  bool get keyPressMask => (value & 1024) == 1024;
+  bool get keyPressMask => (index & 1024) == 1024;
   static const EventMask KEY_RELEASE_MASK = const EventMask(2048);
-  bool get keyReleaseMask => (value & 2048) == 2048;
+  bool get keyReleaseMask => (index & 2048) == 2048;
   static const EventMask ENTER_NOTIFY_MASK = const EventMask(4096);
-  bool get enterNotifyMask => (value & 4096) == 4096;
+  bool get enterNotifyMask => (index & 4096) == 4096;
   static const EventMask LEAVE_NOTIFY_MASK = const EventMask(8192);
-  bool get leaveNotifyMask => (value & 8192) == 8192;
+  bool get leaveNotifyMask => (index & 8192) == 8192;
   static const EventMask FOCUS_CHANGE_MASK = const EventMask(16384);
-  bool get focusChangeMask => (value & 16384) == 16384;
+  bool get focusChangeMask => (index & 16384) == 16384;
   static const EventMask STRUCTURE_MASK = const EventMask(32768);
-  bool get structureMask => (value & 32768) == 32768;
+  bool get structureMask => (index & 32768) == 32768;
   static const EventMask PROPERTY_CHANGE_MASK = const EventMask(65536);
-  bool get propertyChangeMask => (value & 65536) == 65536;
+  bool get propertyChangeMask => (index & 65536) == 65536;
   static const EventMask VISIBILITY_NOTIFY_MASK = const EventMask(131072);
-  bool get visibilityNotifyMask => (value & 131072) == 131072;
+  bool get visibilityNotifyMask => (index & 131072) == 131072;
   static const EventMask PROXIMITY_IN_MASK = const EventMask(262144);
-  bool get proximityInMask => (value & 262144) == 262144;
+  bool get proximityInMask => (index & 262144) == 262144;
   static const EventMask PROXIMITY_OUT_MASK = const EventMask(524288);
-  bool get proximityOutMask => (value & 524288) == 524288;
+  bool get proximityOutMask => (index & 524288) == 524288;
   static const EventMask SUBSTRUCTURE_MASK = const EventMask(1048576);
-  bool get substructureMask => (value & 1048576) == 1048576;
+  bool get substructureMask => (index & 1048576) == 1048576;
   static const EventMask SCROLL_MASK = const EventMask(2097152);
-  bool get scrollMask => (value & 2097152) == 2097152;
+  bool get scrollMask => (index & 2097152) == 2097152;
   static const EventMask TOUCH_MASK = const EventMask(4194304);
-  bool get touchMask => (value & 4194304) == 4194304;
+  bool get touchMask => (index & 4194304) == 4194304;
   static const EventMask SMOOTH_SCROLL_MASK = const EventMask(8388608);
-  bool get smoothScrollMask => (value & 8388608) == 8388608;
+  bool get smoothScrollMask => (index & 8388608) == 8388608;
   static const EventMask TOUCHPAD_GESTURE_MASK = const EventMask(16777216);
-  bool get touchpadGestureMask => (value & 16777216) == 16777216;
+  bool get touchpadGestureMask => (index & 16777216) == 16777216;
   static const EventMask ALL_EVENTS_MASK = const EventMask(16777214);
-  bool get allEventsMask => (value & 16777214) == 16777214;
+  bool get allEventsMask => (index & 16777214) == 16777214;
   static _valueToString(int value) {
     switch(value) {
       case 2: return 'EventMask.EXPOSURE_MASK';
@@ -1112,19 +1112,19 @@ class EventMask extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'EventMask.NULL';
     }
     List codes = [];
     for (var i=1; i <= 16777216; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   EventMask operator|(EventMask other) =>
-    new EventMask(value | other.value);
+    new EventMask(index | other.index);
   EventMask operator&(EventMask other) =>
-    new EventMask(value & other.value);
+    new EventMask(index & other.index);
 }
 
 class EventMotion extends GObjectBase {
@@ -1438,7 +1438,7 @@ class EventType extends GEnumBase {
   static const EventType TOUCHPAD_PINCH = const EventType(42);
   static const EventType EVENT_LAST = const EventType(43);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'EventType.NOTHING';
       case 0: return 'EventType.DELETE';
       case 1: return 'EventType.DESTROY';
@@ -1483,7 +1483,7 @@ class EventType extends GEnumBase {
       case 41: return 'EventType.TOUCHPAD_SWIPE';
       case 42: return 'EventType.TOUCHPAD_PINCH';
       case 43: return 'EventType.EVENT_LAST';
-      default: return 'new EventType($value)';
+      default: return 'new EventType($index)';
     }
   }
 }
@@ -1527,11 +1527,11 @@ class FilterReturn extends GEnumBase {
   static const FilterReturn TRANSLATE = const FilterReturn(1);
   static const FilterReturn REMOVE = const FilterReturn(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FilterReturn.CONTINUE';
       case 1: return 'FilterReturn.TRANSLATE';
       case 2: return 'FilterReturn.REMOVE';
-      default: return 'new FilterReturn($value)';
+      default: return 'new FilterReturn($index)';
     }
   }
 }
@@ -1773,21 +1773,21 @@ class FrameClockPhase extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'FrameClockPhase');
 
   static const FrameClockPhase NONE = const FrameClockPhase(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const FrameClockPhase FLUSH_EVENTS = const FrameClockPhase(1);
-  bool get flushEvents => (value & 1) == 1;
+  bool get flushEvents => (index & 1) == 1;
   static const FrameClockPhase BEFORE_PAINT = const FrameClockPhase(2);
-  bool get beforePaint => (value & 2) == 2;
+  bool get beforePaint => (index & 2) == 2;
   static const FrameClockPhase UPDATE = const FrameClockPhase(4);
-  bool get update => (value & 4) == 4;
+  bool get update => (index & 4) == 4;
   static const FrameClockPhase LAYOUT = const FrameClockPhase(8);
-  bool get layout => (value & 8) == 8;
+  bool get layout => (index & 8) == 8;
   static const FrameClockPhase PAINT = const FrameClockPhase(16);
-  bool get paint => (value & 16) == 16;
+  bool get paint => (index & 16) == 16;
   static const FrameClockPhase RESUME_EVENTS = const FrameClockPhase(32);
-  bool get resumeEvents => (value & 32) == 32;
+  bool get resumeEvents => (index & 32) == 32;
   static const FrameClockPhase AFTER_PAINT = const FrameClockPhase(64);
-  bool get afterPaint => (value & 64) == 64;
+  bool get afterPaint => (index & 64) == 64;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FrameClockPhase.FLUSH_EVENTS';
@@ -1801,19 +1801,19 @@ class FrameClockPhase extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FrameClockPhase.NONE';
     }
     List codes = [];
     for (var i=1; i <= 64; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FrameClockPhase operator|(FrameClockPhase other) =>
-    new FrameClockPhase(value | other.value);
+    new FrameClockPhase(index | other.index);
   FrameClockPhase operator&(FrameClockPhase other) =>
-    new FrameClockPhase(value & other.value);
+    new FrameClockPhase(index & other.index);
 }
 
 class FrameClockPrivate extends GObjectBase {
@@ -1843,10 +1843,10 @@ class FullscreenMode extends GEnumBase {
   static const FullscreenMode CURRENT_MONITOR = const FullscreenMode(0);
   static const FullscreenMode ALL_MONITORS = const FullscreenMode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FullscreenMode.CURRENT_MONITOR';
       case 1: return 'FullscreenMode.ALL_MONITORS';
-      default: return 'new FullscreenMode($value)';
+      default: return 'new FullscreenMode($index)';
     }
   }
 }
@@ -1885,11 +1885,11 @@ class GLErrorCode extends GEnumBase {
   static const GLErrorCode UNSUPPORTED_FORMAT = const GLErrorCode(1);
   static const GLErrorCode UNSUPPORTED_PROFILE = const GLErrorCode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'GLErrorCode.NOT_AVAILABLE';
       case 1: return 'GLErrorCode.UNSUPPORTED_FORMAT';
       case 2: return 'GLErrorCode.UNSUPPORTED_PROFILE';
-      default: return 'new GLErrorCode($value)';
+      default: return 'new GLErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -1904,6 +1904,7 @@ class GLError extends GErrorBase {
 class Geometry extends GObjectBase {
   Geometry.fromNative();
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gdk', 'Geometry');
+  factory Geometry() => _staticInfo.allocateNew();
 
   int get minWidth => getFieldOfObject('min_width', 0);
   void set minWidth(int value) => setFieldOfObject('min_width', 0, value);
@@ -1937,11 +1938,11 @@ class GrabOwnership extends GEnumBase {
   static const GrabOwnership WINDOW = const GrabOwnership(1);
   static const GrabOwnership APPLICATION = const GrabOwnership(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'GrabOwnership.NONE';
       case 1: return 'GrabOwnership.WINDOW';
       case 2: return 'GrabOwnership.APPLICATION';
-      default: return 'new GrabOwnership($value)';
+      default: return 'new GrabOwnership($index)';
     }
   }
 }
@@ -1957,14 +1958,14 @@ class GrabStatus extends GEnumBase {
   static const GrabStatus FROZEN = const GrabStatus(4);
   static const GrabStatus FAILED = const GrabStatus(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'GrabStatus.SUCCESS';
       case 1: return 'GrabStatus.ALREADY_GRABBED';
       case 2: return 'GrabStatus.INVALID_TIME';
       case 3: return 'GrabStatus.NOT_VIEWABLE';
       case 4: return 'GrabStatus.FROZEN';
       case 5: return 'GrabStatus.FAILED';
-      default: return 'new GrabStatus($value)';
+      default: return 'new GrabStatus($index)';
     }
   }
 }
@@ -1984,7 +1985,7 @@ class Gravity extends GEnumBase {
   static const Gravity SOUTH_EAST = const Gravity(9);
   static const Gravity STATIC = const Gravity(10);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 1: return 'Gravity.NORTH_WEST';
       case 2: return 'Gravity.NORTH';
       case 3: return 'Gravity.NORTH_EAST';
@@ -1995,7 +1996,7 @@ class Gravity extends GEnumBase {
       case 8: return 'Gravity.SOUTH';
       case 9: return 'Gravity.SOUTH_EAST';
       case 10: return 'Gravity.STATIC';
-      default: return 'new Gravity($value)';
+      default: return 'new Gravity($index)';
     }
   }
 }
@@ -2008,11 +2009,11 @@ class InputMode extends GEnumBase {
   static const InputMode SCREEN = const InputMode(1);
   static const InputMode WINDOW = const InputMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'InputMode.DISABLED';
       case 1: return 'InputMode.SCREEN';
       case 2: return 'InputMode.WINDOW';
-      default: return 'new InputMode($value)';
+      default: return 'new InputMode($index)';
     }
   }
 }
@@ -2029,7 +2030,7 @@ class InputSource extends GEnumBase {
   static const InputSource TOUCHSCREEN = const InputSource(5);
   static const InputSource TOUCHPAD = const InputSource(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'InputSource.MOUSE';
       case 1: return 'InputSource.PEN';
       case 2: return 'InputSource.ERASER';
@@ -2037,7 +2038,7 @@ class InputSource extends GEnumBase {
       case 4: return 'InputSource.KEYBOARD';
       case 5: return 'InputSource.TOUCHSCREEN';
       case 6: return 'InputSource.TOUCHPAD';
-      default: return 'new InputSource($value)';
+      default: return 'new InputSource($index)';
     }
   }
 }
@@ -2180,7 +2181,7 @@ class ModifierIntent extends GEnumBase {
   static const ModifierIntent SHIFT_GROUP = const ModifierIntent(5);
   static const ModifierIntent DEFAULT_MOD_MASK = const ModifierIntent(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ModifierIntent.PRIMARY_ACCELERATOR';
       case 1: return 'ModifierIntent.CONTEXT_MENU';
       case 2: return 'ModifierIntent.EXTEND_SELECTION';
@@ -2188,7 +2189,7 @@ class ModifierIntent extends GEnumBase {
       case 4: return 'ModifierIntent.NO_TEXT_INPUT';
       case 5: return 'ModifierIntent.SHIFT_GROUP';
       case 6: return 'ModifierIntent.DEFAULT_MOD_MASK';
-      default: return 'new ModifierIntent($value)';
+      default: return 'new ModifierIntent($index)';
     }
   }
 }
@@ -2199,69 +2200,69 @@ class ModifierType extends GEnumBase {
 
   static const ModifierType NULL = const ModifierType(0);
   static const ModifierType SHIFT_MASK = const ModifierType(1);
-  bool get shiftMask => (value & 1) == 1;
+  bool get shiftMask => (index & 1) == 1;
   static const ModifierType LOCK_MASK = const ModifierType(2);
-  bool get lockMask => (value & 2) == 2;
+  bool get lockMask => (index & 2) == 2;
   static const ModifierType CONTROL_MASK = const ModifierType(4);
-  bool get controlMask => (value & 4) == 4;
+  bool get controlMask => (index & 4) == 4;
   static const ModifierType MOD1_MASK = const ModifierType(8);
-  bool get mod1Mask => (value & 8) == 8;
+  bool get mod1Mask => (index & 8) == 8;
   static const ModifierType MOD2_MASK = const ModifierType(16);
-  bool get mod2Mask => (value & 16) == 16;
+  bool get mod2Mask => (index & 16) == 16;
   static const ModifierType MOD3_MASK = const ModifierType(32);
-  bool get mod3Mask => (value & 32) == 32;
+  bool get mod3Mask => (index & 32) == 32;
   static const ModifierType MOD4_MASK = const ModifierType(64);
-  bool get mod4Mask => (value & 64) == 64;
+  bool get mod4Mask => (index & 64) == 64;
   static const ModifierType MOD5_MASK = const ModifierType(128);
-  bool get mod5Mask => (value & 128) == 128;
+  bool get mod5Mask => (index & 128) == 128;
   static const ModifierType BUTTON1_MASK = const ModifierType(256);
-  bool get button1Mask => (value & 256) == 256;
+  bool get button1Mask => (index & 256) == 256;
   static const ModifierType BUTTON2_MASK = const ModifierType(512);
-  bool get button2Mask => (value & 512) == 512;
+  bool get button2Mask => (index & 512) == 512;
   static const ModifierType BUTTON3_MASK = const ModifierType(1024);
-  bool get button3Mask => (value & 1024) == 1024;
+  bool get button3Mask => (index & 1024) == 1024;
   static const ModifierType BUTTON4_MASK = const ModifierType(2048);
-  bool get button4Mask => (value & 2048) == 2048;
+  bool get button4Mask => (index & 2048) == 2048;
   static const ModifierType BUTTON5_MASK = const ModifierType(4096);
-  bool get button5Mask => (value & 4096) == 4096;
+  bool get button5Mask => (index & 4096) == 4096;
   static const ModifierType MODIFIER_RESERVED_13_MASK = const ModifierType(8192);
-  bool get modifierReserved_13Mask => (value & 8192) == 8192;
+  bool get modifierReserved_13Mask => (index & 8192) == 8192;
   static const ModifierType MODIFIER_RESERVED_14_MASK = const ModifierType(16384);
-  bool get modifierReserved_14Mask => (value & 16384) == 16384;
+  bool get modifierReserved_14Mask => (index & 16384) == 16384;
   static const ModifierType MODIFIER_RESERVED_15_MASK = const ModifierType(32768);
-  bool get modifierReserved_15Mask => (value & 32768) == 32768;
+  bool get modifierReserved_15Mask => (index & 32768) == 32768;
   static const ModifierType MODIFIER_RESERVED_16_MASK = const ModifierType(65536);
-  bool get modifierReserved_16Mask => (value & 65536) == 65536;
+  bool get modifierReserved_16Mask => (index & 65536) == 65536;
   static const ModifierType MODIFIER_RESERVED_17_MASK = const ModifierType(131072);
-  bool get modifierReserved_17Mask => (value & 131072) == 131072;
+  bool get modifierReserved_17Mask => (index & 131072) == 131072;
   static const ModifierType MODIFIER_RESERVED_18_MASK = const ModifierType(262144);
-  bool get modifierReserved_18Mask => (value & 262144) == 262144;
+  bool get modifierReserved_18Mask => (index & 262144) == 262144;
   static const ModifierType MODIFIER_RESERVED_19_MASK = const ModifierType(524288);
-  bool get modifierReserved_19Mask => (value & 524288) == 524288;
+  bool get modifierReserved_19Mask => (index & 524288) == 524288;
   static const ModifierType MODIFIER_RESERVED_20_MASK = const ModifierType(1048576);
-  bool get modifierReserved_20Mask => (value & 1048576) == 1048576;
+  bool get modifierReserved_20Mask => (index & 1048576) == 1048576;
   static const ModifierType MODIFIER_RESERVED_21_MASK = const ModifierType(2097152);
-  bool get modifierReserved_21Mask => (value & 2097152) == 2097152;
+  bool get modifierReserved_21Mask => (index & 2097152) == 2097152;
   static const ModifierType MODIFIER_RESERVED_22_MASK = const ModifierType(4194304);
-  bool get modifierReserved_22Mask => (value & 4194304) == 4194304;
+  bool get modifierReserved_22Mask => (index & 4194304) == 4194304;
   static const ModifierType MODIFIER_RESERVED_23_MASK = const ModifierType(8388608);
-  bool get modifierReserved_23Mask => (value & 8388608) == 8388608;
+  bool get modifierReserved_23Mask => (index & 8388608) == 8388608;
   static const ModifierType MODIFIER_RESERVED_24_MASK = const ModifierType(16777216);
-  bool get modifierReserved_24Mask => (value & 16777216) == 16777216;
+  bool get modifierReserved_24Mask => (index & 16777216) == 16777216;
   static const ModifierType MODIFIER_RESERVED_25_MASK = const ModifierType(33554432);
-  bool get modifierReserved_25Mask => (value & 33554432) == 33554432;
+  bool get modifierReserved_25Mask => (index & 33554432) == 33554432;
   static const ModifierType SUPER_MASK = const ModifierType(67108864);
-  bool get superMask => (value & 67108864) == 67108864;
+  bool get superMask => (index & 67108864) == 67108864;
   static const ModifierType HYPER_MASK = const ModifierType(134217728);
-  bool get hyperMask => (value & 134217728) == 134217728;
+  bool get hyperMask => (index & 134217728) == 134217728;
   static const ModifierType META_MASK = const ModifierType(268435456);
-  bool get metaMask => (value & 268435456) == 268435456;
+  bool get metaMask => (index & 268435456) == 268435456;
   static const ModifierType MODIFIER_RESERVED_29_MASK = const ModifierType(536870912);
-  bool get modifierReserved_29Mask => (value & 536870912) == 536870912;
+  bool get modifierReserved_29Mask => (index & 536870912) == 536870912;
   static const ModifierType RELEASE_MASK = const ModifierType(1073741824);
-  bool get releaseMask => (value & 1073741824) == 1073741824;
+  bool get releaseMask => (index & 1073741824) == 1073741824;
   static const ModifierType MODIFIER_MASK = const ModifierType(1543512063);
-  bool get modifierMask => (value & 1543512063) == 1543512063;
+  bool get modifierMask => (index & 1543512063) == 1543512063;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ModifierType.SHIFT_MASK';
@@ -2276,19 +2277,19 @@ class ModifierType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ModifierType.NULL';
     }
     List codes = [];
     for (var i=1; i <= 1073741824; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ModifierType operator|(ModifierType other) =>
-    new ModifierType(value | other.value);
+    new ModifierType(index | other.index);
   ModifierType operator&(ModifierType other) =>
-    new ModifierType(value & other.value);
+    new ModifierType(index & other.index);
 }
 
 class NotifyType extends GEnumBase {
@@ -2302,14 +2303,14 @@ class NotifyType extends GEnumBase {
   static const NotifyType NONLINEAR_VIRTUAL = const NotifyType(4);
   static const NotifyType UNKNOWN = const NotifyType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'NotifyType.ANCESTOR';
       case 1: return 'NotifyType.VIRTUAL';
       case 2: return 'NotifyType.INFERIOR';
       case 3: return 'NotifyType.NONLINEAR';
       case 4: return 'NotifyType.NONLINEAR_VIRTUAL';
       case 5: return 'NotifyType.UNKNOWN';
-      default: return 'new NotifyType($value)';
+      default: return 'new NotifyType($index)';
     }
   }
 }
@@ -2322,11 +2323,11 @@ class OwnerChange extends GEnumBase {
   static const OwnerChange DESTROY = const OwnerChange(1);
   static const OwnerChange CLOSE = const OwnerChange(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'OwnerChange.NEW_OWNER';
       case 1: return 'OwnerChange.DESTROY';
       case 2: return 'OwnerChange.CLOSE';
-      default: return 'new OwnerChange($value)';
+      default: return 'new OwnerChange($index)';
     }
   }
 }
@@ -2349,11 +2350,11 @@ class PropMode extends GEnumBase {
   static const PropMode PREPEND = const PropMode(1);
   static const PropMode APPEND = const PropMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PropMode.REPLACE';
       case 1: return 'PropMode.PREPEND';
       case 2: return 'PropMode.APPEND';
-      default: return 'new PropMode($value)';
+      default: return 'new PropMode($index)';
     }
   }
 }
@@ -2365,10 +2366,10 @@ class PropertyState extends GEnumBase {
   static const PropertyState NEW_VALUE = const PropertyState(0);
   static const PropertyState DELETE = const PropertyState(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PropertyState.NEW_VALUE';
       case 1: return 'PropertyState.DELETE';
-      default: return 'new PropertyState($value)';
+      default: return 'new PropertyState($index)';
     }
   }
 }
@@ -2555,13 +2556,13 @@ class ScrollDirection extends GEnumBase {
   static const ScrollDirection RIGHT = const ScrollDirection(3);
   static const ScrollDirection SMOOTH = const ScrollDirection(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ScrollDirection.UP';
       case 1: return 'ScrollDirection.DOWN';
       case 2: return 'ScrollDirection.LEFT';
       case 3: return 'ScrollDirection.RIGHT';
       case 4: return 'ScrollDirection.SMOOTH';
-      default: return 'new ScrollDirection($value)';
+      default: return 'new ScrollDirection($index)';
     }
   }
 }
@@ -2574,11 +2575,11 @@ class SettingAction extends GEnumBase {
   static const SettingAction CHANGED = const SettingAction(1);
   static const SettingAction DELETED = const SettingAction(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SettingAction.NEW';
       case 1: return 'SettingAction.CHANGED';
       case 2: return 'SettingAction.DELETED';
-      default: return 'new SettingAction($value)';
+      default: return 'new SettingAction($index)';
     }
   }
 }
@@ -2593,13 +2594,13 @@ class Status extends GEnumBase {
   static const Status ERROR_FILE = const Status(-3);
   static const Status ERROR_MEM = const Status(-4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Status.OK';
       case -1: return 'Status.ERROR';
       case -2: return 'Status.ERROR_PARAM';
       case -3: return 'Status.ERROR_FILE';
       case -4: return 'Status.ERROR_MEM';
-      default: return 'new Status($value)';
+      default: return 'new Status($index)';
     }
   }
 }
@@ -2623,12 +2624,12 @@ class TouchpadGesturePhase extends GEnumBase {
   static const TouchpadGesturePhase END = const TouchpadGesturePhase(2);
   static const TouchpadGesturePhase CANCEL = const TouchpadGesturePhase(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TouchpadGesturePhase.BEGIN';
       case 1: return 'TouchpadGesturePhase.UPDATE';
       case 2: return 'TouchpadGesturePhase.END';
       case 3: return 'TouchpadGesturePhase.CANCEL';
-      default: return 'new TouchpadGesturePhase($value)';
+      default: return 'new TouchpadGesturePhase($index)';
     }
   }
 }
@@ -2641,11 +2642,11 @@ class VisibilityState extends GEnumBase {
   static const VisibilityState PARTIAL = const VisibilityState(1);
   static const VisibilityState FULLY_OBSCURED = const VisibilityState(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'VisibilityState.UNOBSCURED';
       case 1: return 'VisibilityState.PARTIAL';
       case 2: return 'VisibilityState.FULLY_OBSCURED';
-      default: return 'new VisibilityState($value)';
+      default: return 'new VisibilityState($index)';
     }
   }
 }
@@ -2683,14 +2684,14 @@ class VisualType extends GEnumBase {
   static const VisualType TRUE_COLOR = const VisualType(4);
   static const VisualType DIRECT_COLOR = const VisualType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'VisualType.STATIC_GRAY';
       case 1: return 'VisualType.GRAYSCALE';
       case 2: return 'VisualType.STATIC_COLOR';
       case 3: return 'VisualType.PSEUDO_COLOR';
       case 4: return 'VisualType.TRUE_COLOR';
       case 5: return 'VisualType.DIRECT_COLOR';
-      default: return 'new VisualType($value)';
+      default: return 'new VisualType($index)';
     }
   }
 }
@@ -2701,19 +2702,19 @@ class WMDecoration extends GEnumBase {
 
   static const WMDecoration NULL = const WMDecoration(0);
   static const WMDecoration ALL = const WMDecoration(1);
-  bool get all => (value & 1) == 1;
+  bool get all => (index & 1) == 1;
   static const WMDecoration BORDER = const WMDecoration(2);
-  bool get border => (value & 2) == 2;
+  bool get border => (index & 2) == 2;
   static const WMDecoration RESIZEH = const WMDecoration(4);
-  bool get resizeh => (value & 4) == 4;
+  bool get resizeh => (index & 4) == 4;
   static const WMDecoration TITLE = const WMDecoration(8);
-  bool get title => (value & 8) == 8;
+  bool get title => (index & 8) == 8;
   static const WMDecoration MENU = const WMDecoration(16);
-  bool get menu => (value & 16) == 16;
+  bool get menu => (index & 16) == 16;
   static const WMDecoration MINIMIZE = const WMDecoration(32);
-  bool get minimize => (value & 32) == 32;
+  bool get minimize => (index & 32) == 32;
   static const WMDecoration MAXIMIZE = const WMDecoration(64);
-  bool get maximize => (value & 64) == 64;
+  bool get maximize => (index & 64) == 64;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'WMDecoration.ALL';
@@ -2727,19 +2728,19 @@ class WMDecoration extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'WMDecoration.NULL';
     }
     List codes = [];
     for (var i=1; i <= 64; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   WMDecoration operator|(WMDecoration other) =>
-    new WMDecoration(value | other.value);
+    new WMDecoration(index | other.index);
   WMDecoration operator&(WMDecoration other) =>
-    new WMDecoration(value & other.value);
+    new WMDecoration(index & other.index);
 }
 
 class WMFunction extends GEnumBase {
@@ -2748,17 +2749,17 @@ class WMFunction extends GEnumBase {
 
   static const WMFunction NULL = const WMFunction(0);
   static const WMFunction ALL = const WMFunction(1);
-  bool get all => (value & 1) == 1;
+  bool get all => (index & 1) == 1;
   static const WMFunction RESIZE = const WMFunction(2);
-  bool get resize => (value & 2) == 2;
+  bool get resize => (index & 2) == 2;
   static const WMFunction MOVE = const WMFunction(4);
-  bool get move => (value & 4) == 4;
+  bool get move => (index & 4) == 4;
   static const WMFunction MINIMIZE = const WMFunction(8);
-  bool get minimize => (value & 8) == 8;
+  bool get minimize => (index & 8) == 8;
   static const WMFunction MAXIMIZE = const WMFunction(16);
-  bool get maximize => (value & 16) == 16;
+  bool get maximize => (index & 16) == 16;
   static const WMFunction CLOSE = const WMFunction(32);
-  bool get close => (value & 32) == 32;
+  bool get close => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'WMFunction.ALL';
@@ -2771,19 +2772,19 @@ class WMFunction extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'WMFunction.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   WMFunction operator|(WMFunction other) =>
-    new WMFunction(value | other.value);
+    new WMFunction(index | other.index);
   WMFunction operator&(WMFunction other) =>
-    new WMFunction(value & other.value);
+    new WMFunction(index & other.index);
 }
 
 class Window extends GObjectObject {
@@ -2993,21 +2994,21 @@ class WindowAttributesType extends GEnumBase {
 
   static const WindowAttributesType NULL = const WindowAttributesType(0);
   static const WindowAttributesType TITLE = const WindowAttributesType(2);
-  bool get title => (value & 2) == 2;
+  bool get title => (index & 2) == 2;
   static const WindowAttributesType X = const WindowAttributesType(4);
-  bool get x => (value & 4) == 4;
+  bool get x => (index & 4) == 4;
   static const WindowAttributesType Y = const WindowAttributesType(8);
-  bool get y => (value & 8) == 8;
+  bool get y => (index & 8) == 8;
   static const WindowAttributesType CURSOR = const WindowAttributesType(16);
-  bool get cursor => (value & 16) == 16;
+  bool get cursor => (index & 16) == 16;
   static const WindowAttributesType VISUAL = const WindowAttributesType(32);
-  bool get visual => (value & 32) == 32;
+  bool get visual => (index & 32) == 32;
   static const WindowAttributesType WMCLASS = const WindowAttributesType(64);
-  bool get wmclass => (value & 64) == 64;
+  bool get wmclass => (index & 64) == 64;
   static const WindowAttributesType NOREDIR = const WindowAttributesType(128);
-  bool get noredir => (value & 128) == 128;
+  bool get noredir => (index & 128) == 128;
   static const WindowAttributesType TYPE_HINT = const WindowAttributesType(256);
-  bool get typeHint => (value & 256) == 256;
+  bool get typeHint => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 2: return 'WindowAttributesType.TITLE';
@@ -3021,19 +3022,19 @@ class WindowAttributesType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'WindowAttributesType.NULL';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   WindowAttributesType operator|(WindowAttributesType other) =>
-    new WindowAttributesType(value | other.value);
+    new WindowAttributesType(index | other.index);
   WindowAttributesType operator&(WindowAttributesType other) =>
-    new WindowAttributesType(value & other.value);
+    new WindowAttributesType(index & other.index);
 }
 
 typedef bool WindowChildFunc(Window window);
@@ -3050,7 +3051,7 @@ class WindowEdge extends GEnumBase {
   static const WindowEdge SOUTH = const WindowEdge(6);
   static const WindowEdge SOUTH_EAST = const WindowEdge(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WindowEdge.NORTH_WEST';
       case 1: return 'WindowEdge.NORTH';
       case 2: return 'WindowEdge.NORTH_EAST';
@@ -3059,7 +3060,7 @@ class WindowEdge extends GEnumBase {
       case 5: return 'WindowEdge.SOUTH_WEST';
       case 6: return 'WindowEdge.SOUTH';
       case 7: return 'WindowEdge.SOUTH_EAST';
-      default: return 'new WindowEdge($value)';
+      default: return 'new WindowEdge($index)';
     }
   }
 }
@@ -3070,23 +3071,23 @@ class WindowHints extends GEnumBase {
 
   static const WindowHints NULL = const WindowHints(0);
   static const WindowHints POS = const WindowHints(1);
-  bool get pos => (value & 1) == 1;
+  bool get pos => (index & 1) == 1;
   static const WindowHints MIN_SIZE = const WindowHints(2);
-  bool get minSize => (value & 2) == 2;
+  bool get minSize => (index & 2) == 2;
   static const WindowHints MAX_SIZE = const WindowHints(4);
-  bool get maxSize => (value & 4) == 4;
+  bool get maxSize => (index & 4) == 4;
   static const WindowHints BASE_SIZE = const WindowHints(8);
-  bool get baseSize => (value & 8) == 8;
+  bool get baseSize => (index & 8) == 8;
   static const WindowHints ASPECT = const WindowHints(16);
-  bool get aspect => (value & 16) == 16;
+  bool get aspect => (index & 16) == 16;
   static const WindowHints RESIZE_INC = const WindowHints(32);
-  bool get resizeInc => (value & 32) == 32;
+  bool get resizeInc => (index & 32) == 32;
   static const WindowHints WIN_GRAVITY = const WindowHints(64);
-  bool get winGravity => (value & 64) == 64;
+  bool get winGravity => (index & 64) == 64;
   static const WindowHints USER_POS = const WindowHints(128);
-  bool get userPos => (value & 128) == 128;
+  bool get userPos => (index & 128) == 128;
   static const WindowHints USER_SIZE = const WindowHints(256);
-  bool get userSize => (value & 256) == 256;
+  bool get userSize => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'WindowHints.POS';
@@ -3101,19 +3102,19 @@ class WindowHints extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'WindowHints.NULL';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   WindowHints operator|(WindowHints other) =>
-    new WindowHints(value | other.value);
+    new WindowHints(index | other.index);
   WindowHints operator&(WindowHints other) =>
-    new WindowHints(value & other.value);
+    new WindowHints(index & other.index);
 }
 
 typedef void WindowInvalidateHandlerFunc(Window window, Region region);
@@ -3129,23 +3130,23 @@ class WindowState extends GEnumBase {
 
   static const WindowState NULL = const WindowState(0);
   static const WindowState WITHDRAWN = const WindowState(1);
-  bool get withdrawn => (value & 1) == 1;
+  bool get withdrawn => (index & 1) == 1;
   static const WindowState ICONIFIED = const WindowState(2);
-  bool get iconified => (value & 2) == 2;
+  bool get iconified => (index & 2) == 2;
   static const WindowState MAXIMIZED = const WindowState(4);
-  bool get maximized => (value & 4) == 4;
+  bool get maximized => (index & 4) == 4;
   static const WindowState STICKY = const WindowState(8);
-  bool get sticky => (value & 8) == 8;
+  bool get sticky => (index & 8) == 8;
   static const WindowState FULLSCREEN = const WindowState(16);
-  bool get fullscreen => (value & 16) == 16;
+  bool get fullscreen => (index & 16) == 16;
   static const WindowState ABOVE = const WindowState(32);
-  bool get above => (value & 32) == 32;
+  bool get above => (index & 32) == 32;
   static const WindowState BELOW = const WindowState(64);
-  bool get below => (value & 64) == 64;
+  bool get below => (index & 64) == 64;
   static const WindowState FOCUSED = const WindowState(128);
-  bool get focused => (value & 128) == 128;
+  bool get focused => (index & 128) == 128;
   static const WindowState TILED = const WindowState(256);
-  bool get tiled => (value & 256) == 256;
+  bool get tiled => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'WindowState.WITHDRAWN';
@@ -3160,19 +3161,19 @@ class WindowState extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'WindowState.NULL';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   WindowState operator|(WindowState other) =>
-    new WindowState(value | other.value);
+    new WindowState(index | other.index);
   WindowState operator&(WindowState other) =>
-    new WindowState(value & other.value);
+    new WindowState(index & other.index);
 }
 
 class WindowType extends GEnumBase {
@@ -3187,7 +3188,7 @@ class WindowType extends GEnumBase {
   static const WindowType OFFSCREEN = const WindowType(5);
   static const WindowType SUBSURFACE = const WindowType(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WindowType.ROOT';
       case 1: return 'WindowType.TOPLEVEL';
       case 2: return 'WindowType.CHILD';
@@ -3195,7 +3196,7 @@ class WindowType extends GEnumBase {
       case 4: return 'WindowType.FOREIGN';
       case 5: return 'WindowType.OFFSCREEN';
       case 6: return 'WindowType.SUBSURFACE';
-      default: return 'new WindowType($value)';
+      default: return 'new WindowType($index)';
     }
   }
 }
@@ -3219,7 +3220,7 @@ class WindowTypeHint extends GEnumBase {
   static const WindowTypeHint COMBO = const WindowTypeHint(12);
   static const WindowTypeHint DND = const WindowTypeHint(13);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WindowTypeHint.NORMAL';
       case 1: return 'WindowTypeHint.DIALOG';
       case 2: return 'WindowTypeHint.MENU';
@@ -3234,7 +3235,7 @@ class WindowTypeHint extends GEnumBase {
       case 11: return 'WindowTypeHint.NOTIFICATION';
       case 12: return 'WindowTypeHint.COMBO';
       case 13: return 'WindowTypeHint.DND';
-      default: return 'new WindowTypeHint($value)';
+      default: return 'new WindowTypeHint($index)';
     }
   }
 }
@@ -3246,10 +3247,10 @@ class WindowWindowClass extends GEnumBase {
   static const WindowWindowClass INPUT_OUTPUT = const WindowWindowClass(0);
   static const WindowWindowClass INPUT_ONLY = const WindowWindowClass(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WindowWindowClass.INPUT_OUTPUT';
       case 1: return 'WindowWindowClass.INPUT_ONLY';
-      default: return 'new WindowWindowClass($value)';
+      default: return 'new WindowWindowClass($index)';
     }
   }
 }

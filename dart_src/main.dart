@@ -721,7 +721,7 @@ $tagResult
     bool takesNamespace = false;
 
     if (flags.readable) {
-      var typeName = loadTypeName(property.type, null);
+      var typeName = loadTypeName(property.propertyType, null);
       if (methodHolder.findMethod('get_' + giPropertyName) == null) {
         buffer.write("  $typeName get $propertyName => "
             "_staticInfo.getGPropertyOnReceiver('${property.name}', this);\n");
@@ -731,7 +731,7 @@ $tagResult
       }
     }
     if (flags.writable) {
-      var typeName = loadTypeName(property.type, 'value');
+      var typeName = loadTypeName(property.propertyType, 'value');
       if (methodHolder.findMethod('set_' + giPropertyName) == null) {
         buffer.write("  void set $propertyName($typeName) => "
             "_staticInfo.setGPropertyOnReceiver('${property.name}', this, value);\n");
@@ -1033,7 +1033,7 @@ $tagResult
     Set<ArgInfo> skippedArgs = loadSkippedArgs(method, args);
     if (isCallback &&
         args.length > 0 &&
-        args[args.length - 1].type.tag.value == 0) {
+        args[args.length - 1].argType.tag.index == 0) {
       skippedArgs.add(args[args.length - 1]);
     }
     return args
@@ -1045,7 +1045,7 @@ $tagResult
       while (unavailableArgs.contains(finalName)) {
         finalName += '_';
       }
-      var right = loadTypeName(arg.type, finalName);
+      var right = loadTypeName(arg.argType, finalName);
       return new Pair<String, String>(finalName, right);
     });
   }
@@ -1071,7 +1071,7 @@ $tagResult
               .map((arg) {
             var finalName = sanitizeIdentifier(arg.name.replaceAllMapped(
                 _underscoreToCamel, (match) => match.group(1).toUpperCase()));
-            var right = loadTypeName(arg.type, null);
+            var right = loadTypeName(arg.argType, null);
             return new Pair<String, String>(finalName, right);
           });
       }
@@ -1124,7 +1124,7 @@ $tagResult
     var skippedArgs = new Set<ArgInfo>();
     loadSkippedType(null, method.returnType, skippedArgs, args);
     for (var arg in args) {
-      loadSkippedType(arg, arg.type, skippedArgs, args);
+      loadSkippedType(arg, arg.argType, skippedArgs, args);
     }
     return skippedArgs;
   }

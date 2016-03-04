@@ -141,6 +141,14 @@ void gdart_bridge_context_object_info_set_g_property_on_receiver(
   Dart_NativeArguments arguments);
 void gdart_bridge_context_object_info_get_g_property_on_receiver(
   Dart_NativeArguments arguments);
+
+void gdart_bridge_context_call_dart_function_info(Dart_NativeArguments arguments);
+
+void gdart_bridge_context_struct_union_info_allocate_new (
+  Dart_NativeArguments arguments);
+void gdart_bridge_context_struct_union_get_field_of_object (
+  Dart_NativeArguments arguments);
+
 void gdart_function_reference_unref(GdartFunctionReference* self);
 GdartFunctionReference *gdart_function_reference_ref(
     GdartFunctionReference* self);

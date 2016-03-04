@@ -319,7 +319,7 @@ static gboolean _gdart_g_property_fill_enum (
 
 
   storage_type = g_enum_info_get_storage_type (enum_info);
-  name_handle = Dart_NewStringFromCString ("value");
+  name_handle = Dart_NewStringFromCString ("index");
   if (G_UNLIKELY(Dart_IsError (name_handle))) {
     *dart_error_out = name_handle;
     g_set_error (error, GDART_ERROR, 1, "Error from Dart operation.");
@@ -1516,7 +1516,7 @@ gboolean gdart_g_property_get_property (GdartBridgeContext *self,
     wrapped_object = (GdartBridgeContextWrappedObject *) raw_pointer->raw_pointer;
     object = wrapped_object->object;
   }
-  klass = G_OBJECT_CLASS (object);
+  klass = G_OBJECT_GET_CLASS (object);
   param_spec = g_object_class_find_property (klass, property_name);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (param_spec));
   g_object_get_property (object, property_name, &value);

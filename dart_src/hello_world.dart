@@ -1,8 +1,12 @@
 import 'gtk.dart' hide main;
 import 'gtk.dart' as gtk;
+import 'cairo.dart';
 
 main(List<String> args) {
   gtk.initLibrary();
+  var x = new ImageSurface(Format.ARGB32, 400, 400);
+  var y = new Context(x);
+
   init(args);
   var window = new Window(WindowType.TOPLEVEL);
   window.onDeleteEvent.listen((WidgetDeleteEventEvent event) {
@@ -19,5 +23,6 @@ main(List<String> args) {
   button.xalign = 0.0;
   window.add(button);
   window.showAll();
+
   gtk.main();
 }

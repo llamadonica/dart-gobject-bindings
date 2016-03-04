@@ -22,6 +22,7 @@ typedef struct _EnumInfoKlass EnumInfoKlass;
 typedef struct _RegisteredTypeInfoKlass RegisteredTypeInfoKlass;
 typedef struct _ObjectInfoKlass ObjectInfoKlass;
 typedef struct _StructUnionInfoKlass StructUnionInfoKlass;
+typedef struct _FieldInfoKlass FieldInfoKlass;
 
 typedef void (*GIFunctionInvokerDestroyFunc)(
   GIFunctionInvoker* invoker, gpointer user_data);
@@ -385,6 +386,12 @@ struct _EnumInfoKlass {
                         GType *result_out,
                         Dart_Handle *dart_error,
                         GError **error);
+  gboolean (*retrieve_wrapping_class) (gpointer object,
+				       GdartBridgeContext* self,
+				       const gchar* namespace_,
+				       Dart_Handle* result_out,
+				       Dart_Handle* dart_error,
+				       GError **error);
   gboolean (*get_storage_type) (gpointer object,
                                 GdartBridgeContext *self,
                                 GITypeTag *result_out,
@@ -416,6 +423,13 @@ struct _RegisteredTypeInfoKlass {
                         GType *result_out,
                         Dart_Handle *dart_error,
                         GError **error);
+  gboolean (*retrieve_wrapping_class) (gpointer object,
+				       GdartBridgeContext* self,
+				       const gchar* namespace_,
+				       Dart_Handle* result_out,
+				       Dart_Handle* dart_error,
+				       GError **error);
+  
   gboolean (*get_hash_code) (gpointer object,
                         GdartBridgeContext *self,
                         guint *result_out,
@@ -429,8 +443,8 @@ struct _RegisteredTypeInfoKlass {
                         Dart_Handle *dart_error,
                         GError **error);
   const ObjectInfoKlass* (*cast_to_object_info) (gpointer object);
+  const StructUnionInfoKlass* (*cast_to_struct_union_info) (gpointer object);
 };
-
 
 struct _ObjectInfoKlass {
   gpointer (*copy) (gpointer object);
@@ -455,6 +469,12 @@ struct _ObjectInfoKlass {
                         GType *result_out,
                         Dart_Handle *dart_error,
                         GError **error);
+  gboolean (*retrieve_wrapping_class) (gpointer object,
+				       GdartBridgeContext* self,
+				       const gchar* namespace_,
+				       Dart_Handle* result_out,
+				       Dart_Handle* dart_error,
+				       GError **error);
   gboolean (*get_ref_function_pointer) (gpointer object,
                         GdartBridgeContext *self,
                         GIObjectInfoRefFunction *result_out,
@@ -493,10 +513,74 @@ struct _StructUnionInfoKlass {
                         GType *result_out,
                         Dart_Handle *dart_error,
                         GError **error);
+  gboolean (*retrieve_wrapping_class) (gpointer object,
+				       GdartBridgeContext* self,
+				       const gchar* namespace_,
+				       Dart_Handle* result_out,
+				       Dart_Handle* dart_error,
+				       GError **error);
+  gboolean (*retrieve_copy_function) (gpointer object,
+				      GdartBridgeContext* self,
+				      GdartFunctionReference** result_out,
+				      Dart_Handle* dart_error,
+				      GError **error);
+  gboolean (*retrieve_free_function) (gpointer object,
+				      GdartBridgeContext* self,
+				      GdartFunctionReference** result_out,
+				      Dart_Handle* dart_error,
+				      GError **error);
   gboolean (*get_size) (gpointer object,
                         GdartBridgeContext *self,
                         gsize *result_out,
                         Dart_Handle *dart_error,
+                        GError **error);
+  gboolean (*get_n_fields) (gpointer object,
+                          GdartBridgeContext *self,
+                          gint *result_out,
+                          Dart_Handle *dart_error_out,
+                          GError **error);
+  gboolean (*get_field) (gpointer object,
+                       GdartBridgeContext *self,
+                       gint n,
+                       gpointer *result_out,
+                       const FieldInfoKlass **result_klass_out,
+                       Dart_Handle *dart_error_out,
+                       GError **error);
+};
+
+struct _FieldInfoKlass {
+  gpointer (*copy) (gpointer object);
+  void (*free) (gpointer object);
+  gboolean (*get_name) (gpointer object,
+                        GdartBridgeContext *self,
+                        gchar **result_out,
+                        Dart_Handle *dart_error,
+                        GError **error);
+  gboolean (*_InterfaceInfoKlass_get_type__occluded__) (gpointer object,
+                        GdartBridgeContext *self,
+                        GIInfoType *result_out,
+                        Dart_Handle *dart_error,
+                        GError **error);
+  gboolean (*get_namespace) (gpointer object,
+                        GdartBridgeContext *self,
+                        gchar **result_out,
+                        Dart_Handle *dart_error,
+                        GError **error);
+  gboolean (*get_offset) (gpointer object,
+                        GdartBridgeContext *self,
+                        gint *result_out,
+                        Dart_Handle *dart_error,
+                        GError **error);
+  gboolean (*get_size) (gpointer object,
+                        GdartBridgeContext *self,
+                        gint *result_out,
+                        Dart_Handle *dart_error,
+                        GError **error);
+  gboolean (*get_type) (gpointer object,
+                        GdartBridgeContext *self,
+                        gpointer *result_out,
+                        const TypeInfoKlass **result_klass_out,
+                        Dart_Handle *dart_error_out,
                         GError **error);
 };
 
@@ -551,5 +635,8 @@ const StructUnionInfoKlass gi_registered_type_info_struct_union_info;
 const StructUnionInfoKlass gi_base_info_struct_union_info;
 const StructUnionInfoKlass null_struct_union_info;
 const StructUnionInfoKlass dart_struct_union_info;
+
+const FieldInfoKlass gi_field_info_field_info;
+const FieldInfoKlass dart_field_info;
 
 #endif

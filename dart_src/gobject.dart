@@ -36,13 +36,13 @@ class BindingFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GObject', 'BindingFlags');
 
   static const BindingFlags DEFAULT = const BindingFlags(0);
-  bool get default_ => (value & 0) == 0;
+  bool get default_ => (index & 0) == 0;
   static const BindingFlags BIDIRECTIONAL = const BindingFlags(1);
-  bool get bidirectional => (value & 1) == 1;
+  bool get bidirectional => (index & 1) == 1;
   static const BindingFlags SYNC_CREATE = const BindingFlags(2);
-  bool get syncCreate => (value & 2) == 2;
+  bool get syncCreate => (index & 2) == 2;
   static const BindingFlags INVERT_BOOLEAN = const BindingFlags(4);
-  bool get invertBoolean => (value & 4) == 4;
+  bool get invertBoolean => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'BindingFlags.BIDIRECTIONAL';
@@ -52,19 +52,19 @@ class BindingFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'BindingFlags.DEFAULT';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   BindingFlags operator|(BindingFlags other) =>
-    new BindingFlags(value | other.value);
+    new BindingFlags(index | other.index);
   BindingFlags operator&(BindingFlags other) =>
-    new BindingFlags(value & other.value);
+    new BindingFlags(index & other.index);
 }
 
 typedef bool BindingTransformFunc(Binding binding, Value fromValue, Value toValue);
@@ -150,9 +150,9 @@ class ConnectFlags extends GEnumBase {
 
   static const ConnectFlags NULL = const ConnectFlags(0);
   static const ConnectFlags AFTER = const ConnectFlags(1);
-  bool get after => (value & 1) == 1;
+  bool get after => (index & 1) == 1;
   static const ConnectFlags SWAPPED = const ConnectFlags(2);
-  bool get swapped => (value & 2) == 2;
+  bool get swapped => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ConnectFlags.AFTER';
@@ -161,19 +161,19 @@ class ConnectFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ConnectFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ConnectFlags operator|(ConnectFlags other) =>
-    new ConnectFlags(value | other.value);
+    new ConnectFlags(index | other.index);
   ConnectFlags operator&(ConnectFlags other) =>
-    new ConnectFlags(value & other.value);
+    new ConnectFlags(index & other.index);
 }
 
 class EnumClass extends GObjectBase {
@@ -339,29 +339,29 @@ class ParamFlags extends GEnumBase {
 
   static const ParamFlags NULL = const ParamFlags(0);
   static const ParamFlags READABLE = const ParamFlags(1);
-  bool get readable => (value & 1) == 1;
+  bool get readable => (index & 1) == 1;
   static const ParamFlags WRITABLE = const ParamFlags(2);
-  bool get writable => (value & 2) == 2;
+  bool get writable => (index & 2) == 2;
   static const ParamFlags READWRITE = const ParamFlags(3);
-  bool get readwrite => (value & 3) == 3;
+  bool get readwrite => (index & 3) == 3;
   static const ParamFlags CONSTRUCT = const ParamFlags(4);
-  bool get construct => (value & 4) == 4;
+  bool get construct => (index & 4) == 4;
   static const ParamFlags CONSTRUCT_ONLY = const ParamFlags(8);
-  bool get constructOnly => (value & 8) == 8;
+  bool get constructOnly => (index & 8) == 8;
   static const ParamFlags LAX_VALIDATION = const ParamFlags(16);
-  bool get laxValidation => (value & 16) == 16;
+  bool get laxValidation => (index & 16) == 16;
   static const ParamFlags STATIC_NAME = const ParamFlags(32);
-  bool get staticName => (value & 32) == 32;
+  bool get staticName => (index & 32) == 32;
   static const ParamFlags PRIVATE = const ParamFlags(32);
-  bool get private => (value & 32) == 32;
+  bool get private => (index & 32) == 32;
   static const ParamFlags STATIC_NICK = const ParamFlags(64);
-  bool get staticNick => (value & 64) == 64;
+  bool get staticNick => (index & 64) == 64;
   static const ParamFlags STATIC_BLURB = const ParamFlags(128);
-  bool get staticBlurb => (value & 128) == 128;
+  bool get staticBlurb => (index & 128) == 128;
   static const ParamFlags EXPLICIT_NOTIFY = const ParamFlags(1073741824);
-  bool get explicitNotify => (value & 1073741824) == 1073741824;
+  bool get explicitNotify => (index & 1073741824) == 1073741824;
   static const ParamFlags DEPRECATED = const ParamFlags(2147483648);
-  bool get deprecated => (value & 2147483648) == 2147483648;
+  bool get deprecated => (index & 2147483648) == 2147483648;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ParamFlags.READABLE';
@@ -376,19 +376,19 @@ class ParamFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ParamFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2147483648; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ParamFlags operator|(ParamFlags other) =>
-    new ParamFlags(value | other.value);
+    new ParamFlags(index | other.index);
   ParamFlags operator&(ParamFlags other) =>
-    new ParamFlags(value & other.value);
+    new ParamFlags(index & other.index);
 }
 
 class ParamSpec extends GObjectBase {
@@ -666,23 +666,23 @@ class SignalFlags extends GEnumBase {
 
   static const SignalFlags NULL = const SignalFlags(0);
   static const SignalFlags RUN_FIRST = const SignalFlags(1);
-  bool get runFirst => (value & 1) == 1;
+  bool get runFirst => (index & 1) == 1;
   static const SignalFlags RUN_LAST = const SignalFlags(2);
-  bool get runLast => (value & 2) == 2;
+  bool get runLast => (index & 2) == 2;
   static const SignalFlags RUN_CLEANUP = const SignalFlags(4);
-  bool get runCleanup => (value & 4) == 4;
+  bool get runCleanup => (index & 4) == 4;
   static const SignalFlags NO_RECURSE = const SignalFlags(8);
-  bool get noRecurse => (value & 8) == 8;
+  bool get noRecurse => (index & 8) == 8;
   static const SignalFlags DETAILED = const SignalFlags(16);
-  bool get detailed => (value & 16) == 16;
+  bool get detailed => (index & 16) == 16;
   static const SignalFlags ACTION = const SignalFlags(32);
-  bool get action => (value & 32) == 32;
+  bool get action => (index & 32) == 32;
   static const SignalFlags NO_HOOKS = const SignalFlags(64);
-  bool get noHooks => (value & 64) == 64;
+  bool get noHooks => (index & 64) == 64;
   static const SignalFlags MUST_COLLECT = const SignalFlags(128);
-  bool get mustCollect => (value & 128) == 128;
+  bool get mustCollect => (index & 128) == 128;
   static const SignalFlags DEPRECATED = const SignalFlags(256);
-  bool get deprecated => (value & 256) == 256;
+  bool get deprecated => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'SignalFlags.RUN_FIRST';
@@ -697,19 +697,19 @@ class SignalFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'SignalFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   SignalFlags operator|(SignalFlags other) =>
-    new SignalFlags(value | other.value);
+    new SignalFlags(index | other.index);
   SignalFlags operator&(SignalFlags other) =>
-    new SignalFlags(value & other.value);
+    new SignalFlags(index & other.index);
 }
 
 class SignalInvocationHint extends GObjectBase {
@@ -730,17 +730,17 @@ class SignalMatchType extends GEnumBase {
 
   static const SignalMatchType NULL = const SignalMatchType(0);
   static const SignalMatchType ID = const SignalMatchType(1);
-  bool get id => (value & 1) == 1;
+  bool get id => (index & 1) == 1;
   static const SignalMatchType DETAIL = const SignalMatchType(2);
-  bool get detail => (value & 2) == 2;
+  bool get detail => (index & 2) == 2;
   static const SignalMatchType CLOSURE = const SignalMatchType(4);
-  bool get closure => (value & 4) == 4;
+  bool get closure => (index & 4) == 4;
   static const SignalMatchType FUNC = const SignalMatchType(8);
-  bool get func => (value & 8) == 8;
+  bool get func => (index & 8) == 8;
   static const SignalMatchType DATA = const SignalMatchType(16);
-  bool get data => (value & 16) == 16;
+  bool get data => (index & 16) == 16;
   static const SignalMatchType UNBLOCKED = const SignalMatchType(32);
-  bool get unblocked => (value & 32) == 32;
+  bool get unblocked => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'SignalMatchType.ID';
@@ -753,19 +753,19 @@ class SignalMatchType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'SignalMatchType.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   SignalMatchType operator|(SignalMatchType other) =>
-    new SignalMatchType(value | other.value);
+    new SignalMatchType(index | other.index);
   SignalMatchType operator&(SignalMatchType other) =>
-    new SignalMatchType(value & other.value);
+    new SignalMatchType(index & other.index);
 }
 
 class SignalQuery extends GObjectBase {
@@ -825,15 +825,15 @@ class TypeDebugFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('GObject', 'TypeDebugFlags');
 
   static const TypeDebugFlags NONE = const TypeDebugFlags(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const TypeDebugFlags OBJECTS = const TypeDebugFlags(1);
-  bool get objects => (value & 1) == 1;
+  bool get objects => (index & 1) == 1;
   static const TypeDebugFlags SIGNALS = const TypeDebugFlags(2);
-  bool get signals => (value & 2) == 2;
+  bool get signals => (index & 2) == 2;
   static const TypeDebugFlags INSTANCE_COUNT = const TypeDebugFlags(4);
-  bool get instanceCount => (value & 4) == 4;
+  bool get instanceCount => (index & 4) == 4;
   static const TypeDebugFlags MASK = const TypeDebugFlags(7);
-  bool get mask => (value & 7) == 7;
+  bool get mask => (index & 7) == 7;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TypeDebugFlags.OBJECTS';
@@ -843,19 +843,19 @@ class TypeDebugFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TypeDebugFlags.NONE';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TypeDebugFlags operator|(TypeDebugFlags other) =>
-    new TypeDebugFlags(value | other.value);
+    new TypeDebugFlags(index | other.index);
   TypeDebugFlags operator&(TypeDebugFlags other) =>
-    new TypeDebugFlags(value & other.value);
+    new TypeDebugFlags(index & other.index);
 }
 
 class TypeFlags extends GEnumBase {
@@ -864,9 +864,9 @@ class TypeFlags extends GEnumBase {
 
   static const TypeFlags NULL = const TypeFlags(0);
   static const TypeFlags ABSTRACT = const TypeFlags(16);
-  bool get abstract_ => (value & 16) == 16;
+  bool get abstract_ => (index & 16) == 16;
   static const TypeFlags VALUE_ABSTRACT = const TypeFlags(32);
-  bool get valueAbstract => (value & 32) == 32;
+  bool get valueAbstract => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 16: return 'TypeFlags.ABSTRACT';
@@ -875,19 +875,19 @@ class TypeFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TypeFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TypeFlags operator|(TypeFlags other) =>
-    new TypeFlags(value | other.value);
+    new TypeFlags(index | other.index);
   TypeFlags operator&(TypeFlags other) =>
-    new TypeFlags(value & other.value);
+    new TypeFlags(index & other.index);
 }
 
 class TypeFundamentalFlags extends GEnumBase {
@@ -896,13 +896,13 @@ class TypeFundamentalFlags extends GEnumBase {
 
   static const TypeFundamentalFlags NULL = const TypeFundamentalFlags(0);
   static const TypeFundamentalFlags CLASSED = const TypeFundamentalFlags(1);
-  bool get classed => (value & 1) == 1;
+  bool get classed => (index & 1) == 1;
   static const TypeFundamentalFlags INSTANTIATABLE = const TypeFundamentalFlags(2);
-  bool get instantiatable => (value & 2) == 2;
+  bool get instantiatable => (index & 2) == 2;
   static const TypeFundamentalFlags DERIVABLE = const TypeFundamentalFlags(4);
-  bool get derivable => (value & 4) == 4;
+  bool get derivable => (index & 4) == 4;
   static const TypeFundamentalFlags DEEP_DERIVABLE = const TypeFundamentalFlags(8);
-  bool get deepDerivable => (value & 8) == 8;
+  bool get deepDerivable => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TypeFundamentalFlags.CLASSED';
@@ -913,19 +913,19 @@ class TypeFundamentalFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TypeFundamentalFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TypeFundamentalFlags operator|(TypeFundamentalFlags other) =>
-    new TypeFundamentalFlags(value | other.value);
+    new TypeFundamentalFlags(index | other.index);
   TypeFundamentalFlags operator&(TypeFundamentalFlags other) =>
-    new TypeFundamentalFlags(value & other.value);
+    new TypeFundamentalFlags(index & other.index);
 }
 
 class TypeFundamentalInfo extends GObjectBase {
@@ -1495,7 +1495,7 @@ void initLibrary() {
   registerInterceptorTypeForNamedType("GObject", "InterfaceInfo",InterfaceInfo);
   registerInterceptorTypeForNamedType("GObject", "Object",GObjectObject);
   registerInterceptorTypeForNamedType("GObject", "ObjectConstructParam",ObjectConstructParam);
-  registerInterceptorTypeForNamedType("GObject", "ParamFlags",ParamFlags);
+  //registerInterceptorTypeForNamedType("GObject", "ParamFlags",ParamFlags);
   registerInterceptorTypeForNamedType("GObject", "ParamSpec",ParamSpec);
   registerInterceptorTypeForNamedType("GObject", "ParamSpecBoolean",ParamSpecBoolean);
   registerInterceptorTypeForNamedType("GObject", "ParamSpecBoxed",ParamSpecBoxed);

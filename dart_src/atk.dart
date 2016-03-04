@@ -91,10 +91,10 @@ class CoordType extends GEnumBase {
   static const CoordType SCREEN = const CoordType(0);
   static const CoordType WINDOW = const CoordType(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CoordType.SCREEN';
       case 1: return 'CoordType.WINDOW';
-      default: return 'new CoordType($value)';
+      default: return 'new CoordType($index)';
     }
   }
 }
@@ -329,7 +329,7 @@ class HyperlinkStateFlags extends GEnumBase {
 
   static const HyperlinkStateFlags NULL = const HyperlinkStateFlags(0);
   static const HyperlinkStateFlags INLINE = const HyperlinkStateFlags(1);
-  bool get inline => (value & 1) == 1;
+  bool get inline => (index & 1) == 1;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'HyperlinkStateFlags.INLINE';
@@ -337,19 +337,19 @@ class HyperlinkStateFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'HyperlinkStateFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 1; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   HyperlinkStateFlags operator|(HyperlinkStateFlags other) =>
-    new HyperlinkStateFlags(value | other.value);
+    new HyperlinkStateFlags(index | other.index);
   HyperlinkStateFlags operator&(HyperlinkStateFlags other) =>
-    new HyperlinkStateFlags(value & other.value);
+    new HyperlinkStateFlags(index & other.index);
 }
 
 abstract class Hypertext extends GObjectBase {
@@ -447,11 +447,11 @@ class KeyEventType extends GEnumBase {
   static const KeyEventType RELEASE = const KeyEventType(1);
   static const KeyEventType LAST_DEFINED = const KeyEventType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'KeyEventType.PRESS';
       case 1: return 'KeyEventType.RELEASE';
       case 2: return 'KeyEventType.LAST_DEFINED';
-      default: return 'new KeyEventType($value)';
+      default: return 'new KeyEventType($index)';
     }
   }
 }
@@ -470,7 +470,7 @@ class Layer extends GEnumBase {
   static const Layer OVERLAY = const Layer(6);
   static const Layer WINDOW = const Layer(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Layer.INVALID';
       case 1: return 'Layer.BACKGROUND';
       case 2: return 'Layer.CANVAS';
@@ -479,7 +479,7 @@ class Layer extends GEnumBase {
       case 5: return 'Layer.POPUP';
       case 6: return 'Layer.OVERLAY';
       case 7: return 'Layer.WINDOW';
-      default: return 'new Layer($value)';
+      default: return 'new Layer($index)';
     }
   }
 }
@@ -904,7 +904,7 @@ class RelationType extends GEnumBase {
   static const RelationType NODE_PARENT_OF = const RelationType(16);
   static const RelationType LAST_DEFINED = const RelationType(17);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RelationType.NULL';
       case 1: return 'RelationType.CONTROLLED_BY';
       case 2: return 'RelationType.CONTROLLER_FOR';
@@ -923,7 +923,7 @@ class RelationType extends GEnumBase {
       case 15: return 'RelationType.DESCRIPTION_FOR';
       case 16: return 'RelationType.NODE_PARENT_OF';
       case 17: return 'RelationType.LAST_DEFINED';
-      default: return 'new RelationType($value)';
+      default: return 'new RelationType($index)';
     }
   }
   static RelationType forName(String name) => _staticInfo.callStatic('for_name', [name]);
@@ -1059,7 +1059,7 @@ class Role extends GEnumBase {
   static const Role SUPERSCRIPT = const Role(121);
   static const Role LAST_DEFINED = const Role(122);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Role.INVALID';
       case 1: return 'Role.ACCELERATOR_LABEL';
       case 2: return 'Role.ALERT';
@@ -1183,7 +1183,7 @@ class Role extends GEnumBase {
       case 120: return 'Role.SUBSCRIPT';
       case 121: return 'Role.SUPERSCRIPT';
       case 122: return 'Role.LAST_DEFINED';
-      default: return 'new Role($value)';
+      default: return 'new Role($index)';
     }
   }
   static Role forName(String name) => _staticInfo.callStatic('for_name', [name]);
@@ -1312,7 +1312,7 @@ class StateType extends GEnumBase {
   static const StateType READ_ONLY = const StateType(42);
   static const StateType LAST_DEFINED = const StateType(43);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'StateType.INVALID';
       case 1: return 'StateType.ACTIVE';
       case 2: return 'StateType.ARMED';
@@ -1357,7 +1357,7 @@ class StateType extends GEnumBase {
       case 41: return 'StateType.HAS_TOOLTIP';
       case 42: return 'StateType.READ_ONLY';
       case 43: return 'StateType.LAST_DEFINED';
-      default: return 'new StateType($value)';
+      default: return 'new StateType($index)';
     }
   }
   static StateType forName(String name) => _staticInfo.callStatic('for_name', [name]);
@@ -1956,7 +1956,7 @@ class TextAttribute extends GEnumBase {
   static const TextAttribute STYLE = const TextAttribute(27);
   static const TextAttribute LAST_DEFINED = const TextAttribute(28);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextAttribute.INVALID';
       case 1: return 'TextAttribute.LEFT_MARGIN';
       case 2: return 'TextAttribute.RIGHT_MARGIN';
@@ -1986,7 +1986,7 @@ class TextAttribute extends GEnumBase {
       case 26: return 'TextAttribute.VARIANT';
       case 27: return 'TextAttribute.STYLE';
       case 28: return 'TextAttribute.LAST_DEFINED';
-      default: return 'new TextAttribute($value)';
+      default: return 'new TextAttribute($index)';
     }
   }
   static TextAttribute forName(String name) => _staticInfo.callStatic('for_name', [name]);
@@ -2007,7 +2007,7 @@ class TextBoundary extends GEnumBase {
   static const TextBoundary LINE_START = const TextBoundary(5);
   static const TextBoundary LINE_END = const TextBoundary(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextBoundary.CHAR';
       case 1: return 'TextBoundary.WORD_START';
       case 2: return 'TextBoundary.WORD_END';
@@ -2015,7 +2015,7 @@ class TextBoundary extends GEnumBase {
       case 4: return 'TextBoundary.SENTENCE_END';
       case 5: return 'TextBoundary.LINE_START';
       case 6: return 'TextBoundary.LINE_END';
-      default: return 'new TextBoundary($value)';
+      default: return 'new TextBoundary($index)';
     }
   }
 }
@@ -2029,12 +2029,12 @@ class TextClipType extends GEnumBase {
   static const TextClipType MAX = const TextClipType(2);
   static const TextClipType BOTH = const TextClipType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextClipType.NONE';
       case 1: return 'TextClipType.MIN';
       case 2: return 'TextClipType.MAX';
       case 3: return 'TextClipType.BOTH';
-      default: return 'new TextClipType($value)';
+      default: return 'new TextClipType($index)';
     }
   }
 }
@@ -2049,13 +2049,13 @@ class TextGranularity extends GEnumBase {
   static const TextGranularity LINE = const TextGranularity(3);
   static const TextGranularity PARAGRAPH = const TextGranularity(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextGranularity.CHAR';
       case 1: return 'TextGranularity.WORD';
       case 2: return 'TextGranularity.SENTENCE';
       case 3: return 'TextGranularity.LINE';
       case 4: return 'TextGranularity.PARAGRAPH';
-      default: return 'new TextGranularity($value)';
+      default: return 'new TextGranularity($index)';
     }
   }
 }
@@ -2172,7 +2172,7 @@ class ValueType extends GEnumBase {
   static const ValueType BEST = const ValueType(14);
   static const ValueType LAST_DEFINED = const ValueType(15);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ValueType.VERY_WEAK';
       case 1: return 'ValueType.WEAK';
       case 2: return 'ValueType.ACCEPTABLE';
@@ -2189,7 +2189,7 @@ class ValueType extends GEnumBase {
       case 13: return 'ValueType.VERY_GOOD';
       case 14: return 'ValueType.BEST';
       case 15: return 'ValueType.LAST_DEFINED';
-      default: return 'new ValueType($value)';
+      default: return 'new ValueType($index)';
     }
   }
   static String getLocalizedName(ValueType valueType) => _staticInfo.callStatic('get_localized_name', [valueType]);

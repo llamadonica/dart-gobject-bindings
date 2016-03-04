@@ -24,11 +24,11 @@ class ModuleFlags extends GEnumBase {
 
   static const ModuleFlags NULL = const ModuleFlags(0);
   static const ModuleFlags LAZY = const ModuleFlags(1);
-  bool get lazy => (value & 1) == 1;
+  bool get lazy => (index & 1) == 1;
   static const ModuleFlags LOCAL = const ModuleFlags(2);
-  bool get local => (value & 2) == 2;
+  bool get local => (index & 2) == 2;
   static const ModuleFlags MASK = const ModuleFlags(3);
-  bool get mask => (value & 3) == 3;
+  bool get mask => (index & 3) == 3;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ModuleFlags.LAZY';
@@ -37,19 +37,19 @@ class ModuleFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ModuleFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ModuleFlags operator|(ModuleFlags other) =>
-    new ModuleFlags(value | other.value);
+    new ModuleFlags(index | other.index);
   ModuleFlags operator&(ModuleFlags other) =>
-    new ModuleFlags(value & other.value);
+    new ModuleFlags(index & other.index);
 }
 
 typedef void ModuleUnload(Module module);

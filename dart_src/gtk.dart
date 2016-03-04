@@ -121,11 +121,11 @@ class AccelFlags extends GEnumBase {
 
   static const AccelFlags NULL = const AccelFlags(0);
   static const AccelFlags VISIBLE = const AccelFlags(1);
-  bool get visible => (value & 1) == 1;
+  bool get visible => (index & 1) == 1;
   static const AccelFlags LOCKED = const AccelFlags(2);
-  bool get locked => (value & 2) == 2;
+  bool get locked => (index & 2) == 2;
   static const AccelFlags MASK = const AccelFlags(7);
-  bool get mask => (value & 7) == 7;
+  bool get mask => (index & 7) == 7;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'AccelFlags.VISIBLE';
@@ -134,19 +134,19 @@ class AccelFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'AccelFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   AccelFlags operator|(AccelFlags other) =>
-    new AccelFlags(value | other.value);
+    new AccelFlags(index | other.index);
   AccelFlags operator&(AccelFlags other) =>
-    new AccelFlags(value & other.value);
+    new AccelFlags(index & other.index);
 }
 
 class AccelGroup extends GObjectObject {
@@ -807,13 +807,13 @@ class Align extends GEnumBase {
   static const Align CENTER = const Align(3);
   static const Align BASELINE = const Align(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Align.FILL';
       case 1: return 'Align.START';
       case 2: return 'Align.END';
       case 3: return 'Align.CENTER';
       case 4: return 'Align.BASELINE';
-      default: return 'new Align($value)';
+      default: return 'new Align($index)';
     }
   }
 }
@@ -1155,13 +1155,13 @@ class ApplicationInhibitFlags extends GEnumBase {
 
   static const ApplicationInhibitFlags NULL = const ApplicationInhibitFlags(0);
   static const ApplicationInhibitFlags LOGOUT = const ApplicationInhibitFlags(1);
-  bool get logout => (value & 1) == 1;
+  bool get logout => (index & 1) == 1;
   static const ApplicationInhibitFlags SWITCH = const ApplicationInhibitFlags(2);
-  bool get switch_ => (value & 2) == 2;
+  bool get switch_ => (index & 2) == 2;
   static const ApplicationInhibitFlags SUSPEND = const ApplicationInhibitFlags(4);
-  bool get suspend => (value & 4) == 4;
+  bool get suspend => (index & 4) == 4;
   static const ApplicationInhibitFlags IDLE = const ApplicationInhibitFlags(8);
-  bool get idle => (value & 8) == 8;
+  bool get idle => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ApplicationInhibitFlags.LOGOUT';
@@ -1172,19 +1172,19 @@ class ApplicationInhibitFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ApplicationInhibitFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ApplicationInhibitFlags operator|(ApplicationInhibitFlags other) =>
-    new ApplicationInhibitFlags(value | other.value);
+    new ApplicationInhibitFlags(index | other.index);
   ApplicationInhibitFlags operator&(ApplicationInhibitFlags other) =>
-    new ApplicationInhibitFlags(value & other.value);
+    new ApplicationInhibitFlags(index & other.index);
 }
 
 class ApplicationWindow extends Window with ImplementorIface, gio.ActionGroup, ActionMap, Buildable {
@@ -1226,11 +1226,11 @@ class ArrowPlacement extends GEnumBase {
   static const ArrowPlacement START = const ArrowPlacement(1);
   static const ArrowPlacement END = const ArrowPlacement(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ArrowPlacement.BOTH';
       case 1: return 'ArrowPlacement.START';
       case 2: return 'ArrowPlacement.END';
-      default: return 'new ArrowPlacement($value)';
+      default: return 'new ArrowPlacement($index)';
     }
   }
 }
@@ -1245,13 +1245,13 @@ class ArrowType extends GEnumBase {
   static const ArrowType RIGHT = const ArrowType(3);
   static const ArrowType NONE = const ArrowType(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ArrowType.UP';
       case 1: return 'ArrowType.DOWN';
       case 2: return 'ArrowType.LEFT';
       case 3: return 'ArrowType.RIGHT';
       case 4: return 'ArrowType.NONE';
-      default: return 'new ArrowType($value)';
+      default: return 'new ArrowType($index)';
     }
   }
 }
@@ -1480,14 +1480,14 @@ class AssistantPageType extends GEnumBase {
   static const AssistantPageType PROGRESS = const AssistantPageType(4);
   static const AssistantPageType CUSTOM = const AssistantPageType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'AssistantPageType.CONTENT';
       case 1: return 'AssistantPageType.INTRO';
       case 2: return 'AssistantPageType.CONFIRM';
       case 3: return 'AssistantPageType.SUMMARY';
       case 4: return 'AssistantPageType.PROGRESS';
       case 5: return 'AssistantPageType.CUSTOM';
-      default: return 'new AssistantPageType($value)';
+      default: return 'new AssistantPageType($index)';
     }
   }
 }
@@ -1498,11 +1498,11 @@ class AttachOptions extends GEnumBase {
 
   static const AttachOptions NULL = const AttachOptions(0);
   static const AttachOptions EXPAND = const AttachOptions(1);
-  bool get expand => (value & 1) == 1;
+  bool get expand => (index & 1) == 1;
   static const AttachOptions SHRINK = const AttachOptions(2);
-  bool get shrink => (value & 2) == 2;
+  bool get shrink => (index & 2) == 2;
   static const AttachOptions FILL = const AttachOptions(4);
-  bool get fill => (value & 4) == 4;
+  bool get fill => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'AttachOptions.EXPAND';
@@ -1512,19 +1512,19 @@ class AttachOptions extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'AttachOptions.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   AttachOptions operator|(AttachOptions other) =>
-    new AttachOptions(value | other.value);
+    new AttachOptions(index | other.index);
   AttachOptions operator&(AttachOptions other) =>
-    new AttachOptions(value & other.value);
+    new AttachOptions(index & other.index);
 }
 
 class BaselinePosition extends GEnumBase {
@@ -1535,11 +1535,11 @@ class BaselinePosition extends GEnumBase {
   static const BaselinePosition CENTER = const BaselinePosition(1);
   static const BaselinePosition BOTTOM = const BaselinePosition(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'BaselinePosition.TOP';
       case 1: return 'BaselinePosition.CENTER';
       case 2: return 'BaselinePosition.BOTTOM';
-      default: return 'new BaselinePosition($value)';
+      default: return 'new BaselinePosition($index)';
     }
   }
 }
@@ -1664,7 +1664,7 @@ class BorderStyle extends GEnumBase {
   static const BorderStyle GROOVE = const BorderStyle(8);
   static const BorderStyle RIDGE = const BorderStyle(9);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'BorderStyle.NONE';
       case 1: return 'BorderStyle.SOLID';
       case 2: return 'BorderStyle.INSET';
@@ -1675,7 +1675,7 @@ class BorderStyle extends GEnumBase {
       case 7: return 'BorderStyle.DOUBLE';
       case 8: return 'BorderStyle.GROOVE';
       case 9: return 'BorderStyle.RIDGE';
-      default: return 'new BorderStyle($value)';
+      default: return 'new BorderStyle($index)';
     }
   }
 }
@@ -1768,7 +1768,7 @@ class BuilderErrorCode extends GEnumBase {
   static const BuilderErrorCode INVALID_SIGNAL = const BuilderErrorCode(12);
   static const BuilderErrorCode INVALID_ID = const BuilderErrorCode(13);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'BuilderErrorCode.INVALID_TYPE_FUNCTION';
       case 1: return 'BuilderErrorCode.UNHANDLED_TAG';
       case 2: return 'BuilderErrorCode.MISSING_ATTRIBUTE';
@@ -1783,7 +1783,7 @@ class BuilderErrorCode extends GEnumBase {
       case 11: return 'BuilderErrorCode.INVALID_PROPERTY';
       case 12: return 'BuilderErrorCode.INVALID_SIGNAL';
       case 13: return 'BuilderErrorCode.INVALID_ID';
-      default: return 'new BuilderErrorCode($value)';
+      default: return 'new BuilderErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -2063,14 +2063,14 @@ class ButtonBoxStyle extends GEnumBase {
   static const ButtonBoxStyle CENTER = const ButtonBoxStyle(5);
   static const ButtonBoxStyle EXPAND = const ButtonBoxStyle(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 1: return 'ButtonBoxStyle.SPREAD';
       case 2: return 'ButtonBoxStyle.EDGE';
       case 3: return 'ButtonBoxStyle.START';
       case 4: return 'ButtonBoxStyle.END';
       case 5: return 'ButtonBoxStyle.CENTER';
       case 6: return 'ButtonBoxStyle.EXPAND';
-      default: return 'new ButtonBoxStyle($value)';
+      default: return 'new ButtonBoxStyle($index)';
     }
   }
 }
@@ -2083,11 +2083,11 @@ class ButtonRole extends GEnumBase {
   static const ButtonRole CHECK = const ButtonRole(1);
   static const ButtonRole RADIO = const ButtonRole(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ButtonRole.NORMAL';
       case 1: return 'ButtonRole.CHECK';
       case 2: return 'ButtonRole.RADIO';
-      default: return 'new ButtonRole($value)';
+      default: return 'new ButtonRole($index)';
     }
   }
 }
@@ -2103,14 +2103,14 @@ class ButtonsType extends GEnumBase {
   static const ButtonsType YES_NO = const ButtonsType(4);
   static const ButtonsType OK_CANCEL = const ButtonsType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ButtonsType.NONE';
       case 1: return 'ButtonsType.OK';
       case 2: return 'ButtonsType.CLOSE';
       case 3: return 'ButtonsType.CANCEL';
       case 4: return 'ButtonsType.YES_NO';
       case 5: return 'ButtonsType.OK_CANCEL';
-      default: return 'new ButtonsType($value)';
+      default: return 'new ButtonsType($index)';
     }
   }
 }
@@ -2386,15 +2386,15 @@ class CalendarDisplayOptions extends GEnumBase {
 
   static const CalendarDisplayOptions NULL = const CalendarDisplayOptions(0);
   static const CalendarDisplayOptions SHOW_HEADING = const CalendarDisplayOptions(1);
-  bool get showHeading => (value & 1) == 1;
+  bool get showHeading => (index & 1) == 1;
   static const CalendarDisplayOptions SHOW_DAY_NAMES = const CalendarDisplayOptions(2);
-  bool get showDayNames => (value & 2) == 2;
+  bool get showDayNames => (index & 2) == 2;
   static const CalendarDisplayOptions NO_MONTH_CHANGE = const CalendarDisplayOptions(4);
-  bool get noMonthChange => (value & 4) == 4;
+  bool get noMonthChange => (index & 4) == 4;
   static const CalendarDisplayOptions SHOW_WEEK_NUMBERS = const CalendarDisplayOptions(8);
-  bool get showWeekNumbers => (value & 8) == 8;
+  bool get showWeekNumbers => (index & 8) == 8;
   static const CalendarDisplayOptions SHOW_DETAILS = const CalendarDisplayOptions(32);
-  bool get showDetails => (value & 32) == 32;
+  bool get showDetails => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'CalendarDisplayOptions.SHOW_HEADING';
@@ -2406,19 +2406,19 @@ class CalendarDisplayOptions extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'CalendarDisplayOptions.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   CalendarDisplayOptions operator|(CalendarDisplayOptions other) =>
-    new CalendarDisplayOptions(value | other.value);
+    new CalendarDisplayOptions(index | other.index);
   CalendarDisplayOptions operator&(CalendarDisplayOptions other) =>
-    new CalendarDisplayOptions(value & other.value);
+    new CalendarDisplayOptions(index & other.index);
 }
 
 typedef void Callback(Widget widget);
@@ -3028,10 +3028,10 @@ class CellRendererAccelMode extends GEnumBase {
   static const CellRendererAccelMode GTK = const CellRendererAccelMode(0);
   static const CellRendererAccelMode OTHER = const CellRendererAccelMode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CellRendererAccelMode.GTK';
       case 1: return 'CellRendererAccelMode.OTHER';
-      default: return 'new CellRendererAccelMode($value)';
+      default: return 'new CellRendererAccelMode($index)';
     }
   }
 }
@@ -3106,11 +3106,11 @@ class CellRendererMode extends GEnumBase {
   static const CellRendererMode ACTIVATABLE = const CellRendererMode(1);
   static const CellRendererMode EDITABLE = const CellRendererMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CellRendererMode.INERT';
       case 1: return 'CellRendererMode.ACTIVATABLE';
       case 2: return 'CellRendererMode.EDITABLE';
-      default: return 'new CellRendererMode($value)';
+      default: return 'new CellRendererMode($index)';
     }
   }
 }
@@ -3215,19 +3215,19 @@ class CellRendererState extends GEnumBase {
 
   static const CellRendererState NULL = const CellRendererState(0);
   static const CellRendererState SELECTED = const CellRendererState(1);
-  bool get selected => (value & 1) == 1;
+  bool get selected => (index & 1) == 1;
   static const CellRendererState PRELIT = const CellRendererState(2);
-  bool get prelit => (value & 2) == 2;
+  bool get prelit => (index & 2) == 2;
   static const CellRendererState INSENSITIVE = const CellRendererState(4);
-  bool get insensitive => (value & 4) == 4;
+  bool get insensitive => (index & 4) == 4;
   static const CellRendererState SORTED = const CellRendererState(8);
-  bool get sorted => (value & 8) == 8;
+  bool get sorted => (index & 8) == 8;
   static const CellRendererState FOCUSED = const CellRendererState(16);
-  bool get focused => (value & 16) == 16;
+  bool get focused => (index & 16) == 16;
   static const CellRendererState EXPANDABLE = const CellRendererState(32);
-  bool get expandable => (value & 32) == 32;
+  bool get expandable => (index & 32) == 32;
   static const CellRendererState EXPANDED = const CellRendererState(64);
-  bool get expanded => (value & 64) == 64;
+  bool get expanded => (index & 64) == 64;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'CellRendererState.SELECTED';
@@ -3241,19 +3241,19 @@ class CellRendererState extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'CellRendererState.NULL';
     }
     List codes = [];
     for (var i=1; i <= 64; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   CellRendererState operator|(CellRendererState other) =>
-    new CellRendererState(value | other.value);
+    new CellRendererState(index | other.index);
   CellRendererState operator&(CellRendererState other) =>
-    new CellRendererState(value & other.value);
+    new CellRendererState(index & other.index);
 }
 
 class CellRendererText extends CellRenderer {
@@ -4294,12 +4294,12 @@ class CornerType extends GEnumBase {
   static const CornerType TOP_RIGHT = const CornerType(2);
   static const CornerType BOTTOM_RIGHT = const CornerType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CornerType.TOP_LEFT';
       case 1: return 'CornerType.BOTTOM_LEFT';
       case 2: return 'CornerType.TOP_RIGHT';
       case 3: return 'CornerType.BOTTOM_RIGHT';
-      default: return 'new CornerType($value)';
+      default: return 'new CornerType($index)';
     }
   }
 }
@@ -4369,14 +4369,14 @@ class CssProviderErrorCode extends GEnumBase {
   static const CssProviderErrorCode DEPRECATED = const CssProviderErrorCode(4);
   static const CssProviderErrorCode UNKNOWN_VALUE = const CssProviderErrorCode(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CssProviderErrorCode.FAILED';
       case 1: return 'CssProviderErrorCode.SYNTAX';
       case 2: return 'CssProviderErrorCode.IMPORT';
       case 3: return 'CssProviderErrorCode.NAME';
       case 4: return 'CssProviderErrorCode.DEPRECATED';
       case 5: return 'CssProviderErrorCode.UNKNOWN_VALUE';
-      default: return 'new CssProviderErrorCode($value)';
+      default: return 'new CssProviderErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -4417,7 +4417,7 @@ class CssSectionType extends GEnumBase {
   static const CssSectionType VALUE = const CssSectionType(7);
   static const CssSectionType KEYFRAMES = const CssSectionType(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'CssSectionType.DOCUMENT';
       case 1: return 'CssSectionType.IMPORT';
       case 2: return 'CssSectionType.COLOR_DEFINITION';
@@ -4427,7 +4427,7 @@ class CssSectionType extends GEnumBase {
       case 6: return 'CssSectionType.DECLARATION';
       case 7: return 'CssSectionType.VALUE';
       case 8: return 'CssSectionType.KEYFRAMES';
-      default: return 'new CssSectionType($value)';
+      default: return 'new CssSectionType($index)';
     }
   }
 }
@@ -4438,45 +4438,45 @@ class DebugFlag extends GEnumBase {
 
   static const DebugFlag NULL = const DebugFlag(0);
   static const DebugFlag MISC = const DebugFlag(1);
-  bool get misc => (value & 1) == 1;
+  bool get misc => (index & 1) == 1;
   static const DebugFlag PLUGSOCKET = const DebugFlag(2);
-  bool get plugsocket => (value & 2) == 2;
+  bool get plugsocket => (index & 2) == 2;
   static const DebugFlag TEXT = const DebugFlag(4);
-  bool get text => (value & 4) == 4;
+  bool get text => (index & 4) == 4;
   static const DebugFlag TREE = const DebugFlag(8);
-  bool get tree => (value & 8) == 8;
+  bool get tree => (index & 8) == 8;
   static const DebugFlag UPDATES = const DebugFlag(16);
-  bool get updates => (value & 16) == 16;
+  bool get updates => (index & 16) == 16;
   static const DebugFlag KEYBINDINGS = const DebugFlag(32);
-  bool get keybindings => (value & 32) == 32;
+  bool get keybindings => (index & 32) == 32;
   static const DebugFlag MULTIHEAD = const DebugFlag(64);
-  bool get multihead => (value & 64) == 64;
+  bool get multihead => (index & 64) == 64;
   static const DebugFlag MODULES = const DebugFlag(128);
-  bool get modules => (value & 128) == 128;
+  bool get modules => (index & 128) == 128;
   static const DebugFlag GEOMETRY = const DebugFlag(256);
-  bool get geometry => (value & 256) == 256;
+  bool get geometry => (index & 256) == 256;
   static const DebugFlag ICONTHEME = const DebugFlag(512);
-  bool get icontheme => (value & 512) == 512;
+  bool get icontheme => (index & 512) == 512;
   static const DebugFlag PRINTING = const DebugFlag(1024);
-  bool get printing => (value & 1024) == 1024;
+  bool get printing => (index & 1024) == 1024;
   static const DebugFlag BUILDER = const DebugFlag(2048);
-  bool get builder => (value & 2048) == 2048;
+  bool get builder => (index & 2048) == 2048;
   static const DebugFlag SIZE_REQUEST = const DebugFlag(4096);
-  bool get sizeRequest => (value & 4096) == 4096;
+  bool get sizeRequest => (index & 4096) == 4096;
   static const DebugFlag NO_CSS_CACHE = const DebugFlag(8192);
-  bool get noCssCache => (value & 8192) == 8192;
+  bool get noCssCache => (index & 8192) == 8192;
   static const DebugFlag BASELINES = const DebugFlag(16384);
-  bool get baselines => (value & 16384) == 16384;
+  bool get baselines => (index & 16384) == 16384;
   static const DebugFlag PIXEL_CACHE = const DebugFlag(32768);
-  bool get pixelCache => (value & 32768) == 32768;
+  bool get pixelCache => (index & 32768) == 32768;
   static const DebugFlag NO_PIXEL_CACHE = const DebugFlag(65536);
-  bool get noPixelCache => (value & 65536) == 65536;
+  bool get noPixelCache => (index & 65536) == 65536;
   static const DebugFlag INTERACTIVE = const DebugFlag(131072);
-  bool get interactive => (value & 131072) == 131072;
+  bool get interactive => (index & 131072) == 131072;
   static const DebugFlag TOUCHSCREEN = const DebugFlag(262144);
-  bool get touchscreen => (value & 262144) == 262144;
+  bool get touchscreen => (index & 262144) == 262144;
   static const DebugFlag ACTIONS = const DebugFlag(524288);
-  bool get actions => (value & 524288) == 524288;
+  bool get actions => (index & 524288) == 524288;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DebugFlag.MISC';
@@ -4491,19 +4491,19 @@ class DebugFlag extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DebugFlag.NULL';
     }
     List codes = [];
     for (var i=1; i <= 524288; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DebugFlag operator|(DebugFlag other) =>
-    new DebugFlag(value | other.value);
+    new DebugFlag(index | other.index);
   DebugFlag operator&(DebugFlag other) =>
-    new DebugFlag(value & other.value);
+    new DebugFlag(index & other.index);
 }
 
 class DeleteType extends GEnumBase {
@@ -4519,7 +4519,7 @@ class DeleteType extends GEnumBase {
   static const DeleteType PARAGRAPHS = const DeleteType(6);
   static const DeleteType WHITESPACE = const DeleteType(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DeleteType.CHARS';
       case 1: return 'DeleteType.WORD_ENDS';
       case 2: return 'DeleteType.WORDS';
@@ -4528,7 +4528,7 @@ class DeleteType extends GEnumBase {
       case 5: return 'DeleteType.PARAGRAPH_ENDS';
       case 6: return 'DeleteType.PARAGRAPHS';
       case 7: return 'DeleteType.WHITESPACE';
-      default: return 'new DeleteType($value)';
+      default: return 'new DeleteType($index)';
     }
   }
 }
@@ -4539,13 +4539,13 @@ class DestDefaults extends GEnumBase {
 
   static const DestDefaults NULL = const DestDefaults(0);
   static const DestDefaults MOTION = const DestDefaults(1);
-  bool get motion => (value & 1) == 1;
+  bool get motion => (index & 1) == 1;
   static const DestDefaults HIGHLIGHT = const DestDefaults(2);
-  bool get highlight => (value & 2) == 2;
+  bool get highlight => (index & 2) == 2;
   static const DestDefaults DROP = const DestDefaults(4);
-  bool get drop => (value & 4) == 4;
+  bool get drop => (index & 4) == 4;
   static const DestDefaults ALL = const DestDefaults(7);
-  bool get all => (value & 7) == 7;
+  bool get all => (index & 7) == 7;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DestDefaults.MOTION';
@@ -4555,19 +4555,19 @@ class DestDefaults extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DestDefaults.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DestDefaults operator|(DestDefaults other) =>
-    new DestDefaults(value | other.value);
+    new DestDefaults(index | other.index);
   DestDefaults operator&(DestDefaults other) =>
-    new DestDefaults(value & other.value);
+    new DestDefaults(index & other.index);
 }
 
 class Dialog extends Window with ImplementorIface, Buildable {
@@ -4660,11 +4660,11 @@ class DialogFlags extends GEnumBase {
 
   static const DialogFlags NULL = const DialogFlags(0);
   static const DialogFlags MODAL = const DialogFlags(1);
-  bool get modal => (value & 1) == 1;
+  bool get modal => (index & 1) == 1;
   static const DialogFlags DESTROY_WITH_PARENT = const DialogFlags(2);
-  bool get destroyWithParent => (value & 2) == 2;
+  bool get destroyWithParent => (index & 2) == 2;
   static const DialogFlags USE_HEADER_BAR = const DialogFlags(4);
-  bool get useHeaderBar => (value & 4) == 4;
+  bool get useHeaderBar => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'DialogFlags.MODAL';
@@ -4674,19 +4674,19 @@ class DialogFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'DialogFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   DialogFlags operator|(DialogFlags other) =>
-    new DialogFlags(value | other.value);
+    new DialogFlags(index | other.index);
   DialogFlags operator&(DialogFlags other) =>
-    new DialogFlags(value & other.value);
+    new DialogFlags(index & other.index);
 }
 
 class DirectionType extends GEnumBase {
@@ -4700,14 +4700,14 @@ class DirectionType extends GEnumBase {
   static const DirectionType LEFT = const DirectionType(4);
   static const DirectionType RIGHT = const DirectionType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DirectionType.TAB_FORWARD';
       case 1: return 'DirectionType.TAB_BACKWARD';
       case 2: return 'DirectionType.UP';
       case 3: return 'DirectionType.DOWN';
       case 4: return 'DirectionType.LEFT';
       case 5: return 'DirectionType.RIGHT';
-      default: return 'new DirectionType($value)';
+      default: return 'new DirectionType($index)';
     }
   }
 }
@@ -4723,14 +4723,14 @@ class DragResult extends GEnumBase {
   static const DragResult GRAB_BROKEN = const DragResult(4);
   static const DragResult ERROR = const DragResult(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'DragResult.SUCCESS';
       case 1: return 'DragResult.NO_TARGET';
       case 2: return 'DragResult.USER_CANCELLED';
       case 3: return 'DragResult.TIMEOUT_EXPIRED';
       case 4: return 'DragResult.GRAB_BROKEN';
       case 5: return 'DragResult.ERROR';
-      default: return 'new DragResult($value)';
+      default: return 'new DragResult($index)';
     }
   }
 }
@@ -5819,10 +5819,10 @@ class EntryIconPosition extends GEnumBase {
   static const EntryIconPosition PRIMARY = const EntryIconPosition(0);
   static const EntryIconPosition SECONDARY = const EntryIconPosition(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'EntryIconPosition.PRIMARY';
       case 1: return 'EntryIconPosition.SECONDARY';
-      default: return 'new EntryIconPosition($value)';
+      default: return 'new EntryIconPosition($index)';
     }
   }
 }
@@ -5862,11 +5862,11 @@ class EventSequenceState extends GEnumBase {
   static const EventSequenceState CLAIMED = const EventSequenceState(1);
   static const EventSequenceState DENIED = const EventSequenceState(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'EventSequenceState.NONE';
       case 1: return 'EventSequenceState.CLAIMED';
       case 2: return 'EventSequenceState.DENIED';
-      default: return 'new EventSequenceState($value)';
+      default: return 'new EventSequenceState($index)';
     }
   }
 }
@@ -5949,12 +5949,12 @@ class ExpanderStyle extends GEnumBase {
   static const ExpanderStyle SEMI_EXPANDED = const ExpanderStyle(2);
   static const ExpanderStyle EXPANDED = const ExpanderStyle(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ExpanderStyle.COLLAPSED';
       case 1: return 'ExpanderStyle.SEMI_COLLAPSED';
       case 2: return 'ExpanderStyle.SEMI_EXPANDED';
       case 3: return 'ExpanderStyle.EXPANDED';
-      default: return 'new ExpanderStyle($value)';
+      default: return 'new ExpanderStyle($index)';
     }
   }
 }
@@ -6170,12 +6170,12 @@ class FileChooserAction extends GEnumBase {
   static const FileChooserAction SELECT_FOLDER = const FileChooserAction(2);
   static const FileChooserAction CREATE_FOLDER = const FileChooserAction(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileChooserAction.OPEN';
       case 1: return 'FileChooserAction.SAVE';
       case 2: return 'FileChooserAction.SELECT_FOLDER';
       case 3: return 'FileChooserAction.CREATE_FOLDER';
-      default: return 'new FileChooserAction($value)';
+      default: return 'new FileChooserAction($index)';
     }
   }
 }
@@ -6238,11 +6238,11 @@ class FileChooserConfirmation extends GEnumBase {
   static const FileChooserConfirmation ACCEPT_FILENAME = const FileChooserConfirmation(1);
   static const FileChooserConfirmation SELECT_AGAIN = const FileChooserConfirmation(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileChooserConfirmation.CONFIRM';
       case 1: return 'FileChooserConfirmation.ACCEPT_FILENAME';
       case 2: return 'FileChooserConfirmation.SELECT_AGAIN';
-      default: return 'new FileChooserConfirmation($value)';
+      default: return 'new FileChooserConfirmation($index)';
     }
   }
 }
@@ -6262,12 +6262,12 @@ class FileChooserErrorCode extends GEnumBase {
   static const FileChooserErrorCode ALREADY_EXISTS = const FileChooserErrorCode(2);
   static const FileChooserErrorCode INCOMPLETE_HOSTNAME = const FileChooserErrorCode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'FileChooserErrorCode.NONEXISTENT';
       case 1: return 'FileChooserErrorCode.BAD_FILENAME';
       case 2: return 'FileChooserErrorCode.ALREADY_EXISTS';
       case 3: return 'FileChooserErrorCode.INCOMPLETE_HOSTNAME';
-      default: return 'new FileChooserErrorCode($value)';
+      default: return 'new FileChooserErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -6684,13 +6684,13 @@ class FileFilterFlags extends GEnumBase {
 
   static const FileFilterFlags NULL = const FileFilterFlags(0);
   static const FileFilterFlags FILENAME = const FileFilterFlags(1);
-  bool get filename => (value & 1) == 1;
+  bool get filename => (index & 1) == 1;
   static const FileFilterFlags URI = const FileFilterFlags(2);
-  bool get uri => (value & 2) == 2;
+  bool get uri => (index & 2) == 2;
   static const FileFilterFlags DISPLAY_NAME = const FileFilterFlags(4);
-  bool get displayName => (value & 4) == 4;
+  bool get displayName => (index & 4) == 4;
   static const FileFilterFlags MIME_TYPE = const FileFilterFlags(8);
-  bool get mimeType => (value & 8) == 8;
+  bool get mimeType => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'FileFilterFlags.FILENAME';
@@ -6701,19 +6701,19 @@ class FileFilterFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'FileFilterFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   FileFilterFlags operator|(FileFilterFlags other) =>
-    new FileFilterFlags(value | other.value);
+    new FileFilterFlags(index | other.index);
   FileFilterFlags operator&(FileFilterFlags other) =>
-    new FileFilterFlags(value & other.value);
+    new FileFilterFlags(index & other.index);
 }
 
 typedef bool FileFilterFunc(FileFilterInfo filterInfo);
@@ -8679,11 +8679,11 @@ class IMPreeditStyle extends GEnumBase {
   static const IMPreeditStyle CALLBACK = const IMPreeditStyle(1);
   static const IMPreeditStyle NONE = const IMPreeditStyle(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IMPreeditStyle.NOTHING';
       case 1: return 'IMPreeditStyle.CALLBACK';
       case 2: return 'IMPreeditStyle.NONE';
-      default: return 'new IMPreeditStyle($value)';
+      default: return 'new IMPreeditStyle($index)';
     }
   }
 }
@@ -8696,11 +8696,11 @@ class IMStatusStyle extends GEnumBase {
   static const IMStatusStyle CALLBACK = const IMStatusStyle(1);
   static const IMStatusStyle NONE = const IMStatusStyle(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IMStatusStyle.NOTHING';
       case 1: return 'IMStatusStyle.CALLBACK';
       case 2: return 'IMStatusStyle.NONE';
-      default: return 'new IMStatusStyle($value)';
+      default: return 'new IMStatusStyle($index)';
     }
   }
 }
@@ -8750,23 +8750,23 @@ class IconLookupFlags extends GEnumBase {
 
   static const IconLookupFlags NULL = const IconLookupFlags(0);
   static const IconLookupFlags NO_SVG = const IconLookupFlags(1);
-  bool get noSvg => (value & 1) == 1;
+  bool get noSvg => (index & 1) == 1;
   static const IconLookupFlags FORCE_SVG = const IconLookupFlags(2);
-  bool get forceSvg => (value & 2) == 2;
+  bool get forceSvg => (index & 2) == 2;
   static const IconLookupFlags USE_BUILTIN = const IconLookupFlags(4);
-  bool get useBuiltin => (value & 4) == 4;
+  bool get useBuiltin => (index & 4) == 4;
   static const IconLookupFlags GENERIC_FALLBACK = const IconLookupFlags(8);
-  bool get genericFallback => (value & 8) == 8;
+  bool get genericFallback => (index & 8) == 8;
   static const IconLookupFlags FORCE_SIZE = const IconLookupFlags(16);
-  bool get forceSize => (value & 16) == 16;
+  bool get forceSize => (index & 16) == 16;
   static const IconLookupFlags FORCE_REGULAR = const IconLookupFlags(32);
-  bool get forceRegular => (value & 32) == 32;
+  bool get forceRegular => (index & 32) == 32;
   static const IconLookupFlags FORCE_SYMBOLIC = const IconLookupFlags(64);
-  bool get forceSymbolic => (value & 64) == 64;
+  bool get forceSymbolic => (index & 64) == 64;
   static const IconLookupFlags DIR_LTR = const IconLookupFlags(128);
-  bool get dirLtr => (value & 128) == 128;
+  bool get dirLtr => (index & 128) == 128;
   static const IconLookupFlags DIR_RTL = const IconLookupFlags(256);
-  bool get dirRtl => (value & 256) == 256;
+  bool get dirRtl => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'IconLookupFlags.NO_SVG';
@@ -8781,19 +8781,19 @@ class IconLookupFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'IconLookupFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   IconLookupFlags operator|(IconLookupFlags other) =>
-    new IconLookupFlags(value | other.value);
+    new IconLookupFlags(index | other.index);
   IconLookupFlags operator&(IconLookupFlags other) =>
-    new IconLookupFlags(value & other.value);
+    new IconLookupFlags(index & other.index);
 }
 
 class IconSet extends GObjectBase {
@@ -8824,7 +8824,7 @@ class IconSize extends GEnumBase {
   static const IconSize DND = const IconSize(5);
   static const IconSize DIALOG = const IconSize(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IconSize.INVALID';
       case 1: return 'IconSize.MENU';
       case 2: return 'IconSize.SMALL_TOOLBAR';
@@ -8832,7 +8832,7 @@ class IconSize extends GEnumBase {
       case 4: return 'IconSize.BUTTON';
       case 5: return 'IconSize.DND';
       case 6: return 'IconSize.DIALOG';
-      default: return 'new IconSize($value)';
+      default: return 'new IconSize($index)';
     }
   }
   static int fromName(String name) => _staticInfo.callStatic('from_name', [name]);
@@ -8940,10 +8940,10 @@ class IconThemeErrorCode extends GEnumBase {
   static const IconThemeErrorCode NOT_FOUND = const IconThemeErrorCode(0);
   static const IconThemeErrorCode FAILED = const IconThemeErrorCode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IconThemeErrorCode.NOT_FOUND';
       case 1: return 'IconThemeErrorCode.FAILED';
-      default: return 'new IconThemeErrorCode($value)';
+      default: return 'new IconThemeErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -9336,14 +9336,14 @@ class IconViewDropPosition extends GEnumBase {
   static const IconViewDropPosition DROP_ABOVE = const IconViewDropPosition(4);
   static const IconViewDropPosition DROP_BELOW = const IconViewDropPosition(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'IconViewDropPosition.NO_DROP';
       case 1: return 'IconViewDropPosition.DROP_INTO';
       case 2: return 'IconViewDropPosition.DROP_LEFT';
       case 3: return 'IconViewDropPosition.DROP_RIGHT';
       case 4: return 'IconViewDropPosition.DROP_ABOVE';
       case 5: return 'IconViewDropPosition.DROP_BELOW';
-      default: return 'new IconViewDropPosition($value)';
+      default: return 'new IconViewDropPosition($index)';
     }
   }
 }
@@ -9460,7 +9460,7 @@ class ImageType extends GEnumBase {
   static const ImageType GICON = const ImageType(6);
   static const ImageType SURFACE = const ImageType(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ImageType.EMPTY';
       case 1: return 'ImageType.PIXBUF';
       case 2: return 'ImageType.STOCK';
@@ -9469,7 +9469,7 @@ class ImageType extends GEnumBase {
       case 5: return 'ImageType.ICON_NAME';
       case 6: return 'ImageType.GICON';
       case 7: return 'ImageType.SURFACE';
-      default: return 'new ImageType($value)';
+      default: return 'new ImageType($index)';
     }
   }
 }
@@ -9561,25 +9561,25 @@ class InputHints extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gtk', 'InputHints');
 
   static const InputHints NONE = const InputHints(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const InputHints SPELLCHECK = const InputHints(1);
-  bool get spellcheck => (value & 1) == 1;
+  bool get spellcheck => (index & 1) == 1;
   static const InputHints NO_SPELLCHECK = const InputHints(2);
-  bool get noSpellcheck => (value & 2) == 2;
+  bool get noSpellcheck => (index & 2) == 2;
   static const InputHints WORD_COMPLETION = const InputHints(4);
-  bool get wordCompletion => (value & 4) == 4;
+  bool get wordCompletion => (index & 4) == 4;
   static const InputHints LOWERCASE = const InputHints(8);
-  bool get lowercase => (value & 8) == 8;
+  bool get lowercase => (index & 8) == 8;
   static const InputHints UPPERCASE_CHARS = const InputHints(16);
-  bool get uppercaseChars => (value & 16) == 16;
+  bool get uppercaseChars => (index & 16) == 16;
   static const InputHints UPPERCASE_WORDS = const InputHints(32);
-  bool get uppercaseWords => (value & 32) == 32;
+  bool get uppercaseWords => (index & 32) == 32;
   static const InputHints UPPERCASE_SENTENCES = const InputHints(64);
-  bool get uppercaseSentences => (value & 64) == 64;
+  bool get uppercaseSentences => (index & 64) == 64;
   static const InputHints INHIBIT_OSK = const InputHints(128);
-  bool get inhibitOsk => (value & 128) == 128;
+  bool get inhibitOsk => (index & 128) == 128;
   static const InputHints VERTICAL_WRITING = const InputHints(256);
-  bool get verticalWriting => (value & 256) == 256;
+  bool get verticalWriting => (index & 256) == 256;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'InputHints.SPELLCHECK';
@@ -9594,19 +9594,19 @@ class InputHints extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'InputHints.NONE';
     }
     List codes = [];
     for (var i=1; i <= 256; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   InputHints operator|(InputHints other) =>
-    new InputHints(value | other.value);
+    new InputHints(index | other.index);
   InputHints operator&(InputHints other) =>
-    new InputHints(value & other.value);
+    new InputHints(index & other.index);
 }
 
 class InputPurpose extends GEnumBase {
@@ -9624,7 +9624,7 @@ class InputPurpose extends GEnumBase {
   static const InputPurpose PASSWORD = const InputPurpose(8);
   static const InputPurpose PIN = const InputPurpose(9);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'InputPurpose.FREE_FORM';
       case 1: return 'InputPurpose.ALPHA';
       case 2: return 'InputPurpose.DIGITS';
@@ -9635,7 +9635,7 @@ class InputPurpose extends GEnumBase {
       case 7: return 'InputPurpose.NAME';
       case 8: return 'InputPurpose.PASSWORD';
       case 9: return 'InputPurpose.PIN';
-      default: return 'new InputPurpose($value)';
+      default: return 'new InputPurpose($index)';
     }
   }
 }
@@ -9656,23 +9656,23 @@ class JunctionSides extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gtk', 'JunctionSides');
 
   static const JunctionSides NONE = const JunctionSides(0);
-  bool get none => (value & 0) == 0;
+  bool get none => (index & 0) == 0;
   static const JunctionSides CORNER_TOPLEFT = const JunctionSides(1);
-  bool get cornerTopleft => (value & 1) == 1;
+  bool get cornerTopleft => (index & 1) == 1;
   static const JunctionSides CORNER_TOPRIGHT = const JunctionSides(2);
-  bool get cornerTopright => (value & 2) == 2;
+  bool get cornerTopright => (index & 2) == 2;
   static const JunctionSides CORNER_BOTTOMLEFT = const JunctionSides(4);
-  bool get cornerBottomleft => (value & 4) == 4;
+  bool get cornerBottomleft => (index & 4) == 4;
   static const JunctionSides CORNER_BOTTOMRIGHT = const JunctionSides(8);
-  bool get cornerBottomright => (value & 8) == 8;
+  bool get cornerBottomright => (index & 8) == 8;
   static const JunctionSides TOP = const JunctionSides(3);
-  bool get top => (value & 3) == 3;
+  bool get top => (index & 3) == 3;
   static const JunctionSides BOTTOM = const JunctionSides(12);
-  bool get bottom => (value & 12) == 12;
+  bool get bottom => (index & 12) == 12;
   static const JunctionSides LEFT = const JunctionSides(5);
-  bool get left => (value & 5) == 5;
+  bool get left => (index & 5) == 5;
   static const JunctionSides RIGHT = const JunctionSides(10);
-  bool get right => (value & 10) == 10;
+  bool get right => (index & 10) == 10;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'JunctionSides.CORNER_TOPLEFT';
@@ -9683,19 +9683,19 @@ class JunctionSides extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'JunctionSides.NONE';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   JunctionSides operator|(JunctionSides other) =>
-    new JunctionSides(value | other.value);
+    new JunctionSides(index | other.index);
   JunctionSides operator&(JunctionSides other) =>
-    new JunctionSides(value & other.value);
+    new JunctionSides(index & other.index);
 }
 
 class Justification extends GEnumBase {
@@ -9707,12 +9707,12 @@ class Justification extends GEnumBase {
   static const Justification CENTER = const Justification(2);
   static const Justification FILL = const Justification(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Justification.LEFT';
       case 1: return 'Justification.RIGHT';
       case 2: return 'Justification.CENTER';
       case 3: return 'Justification.FILL';
-      default: return 'new Justification($value)';
+      default: return 'new Justification($index)';
     }
   }
 }
@@ -10084,10 +10084,10 @@ class LevelBarMode extends GEnumBase {
   static const LevelBarMode CONTINUOUS = const LevelBarMode(0);
   static const LevelBarMode DISCRETE = const LevelBarMode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'LevelBarMode.CONTINUOUS';
       case 1: return 'LevelBarMode.DISCRETE';
-      default: return 'new LevelBarMode($value)';
+      default: return 'new LevelBarMode($index)';
     }
   }
 }
@@ -10110,7 +10110,7 @@ class License extends GEnumBase {
   static const License LGPL_2_1_ONLY = const License(11);
   static const License LGPL_3_0_ONLY = const License(12);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'License.UNKNOWN';
       case 1: return 'License.CUSTOM';
       case 2: return 'License.GPL_2_0';
@@ -10124,7 +10124,7 @@ class License extends GEnumBase {
       case 10: return 'License.GPL_3_0_ONLY';
       case 11: return 'License.LGPL_2_1_ONLY';
       case 12: return 'License.LGPL_3_0_ONLY';
-      default: return 'new License($value)';
+      default: return 'new License($index)';
     }
   }
 }
@@ -10742,12 +10742,12 @@ class MenuDirectionType extends GEnumBase {
   static const MenuDirectionType NEXT = const MenuDirectionType(2);
   static const MenuDirectionType PREV = const MenuDirectionType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'MenuDirectionType.PARENT';
       case 1: return 'MenuDirectionType.CHILD';
       case 2: return 'MenuDirectionType.NEXT';
       case 3: return 'MenuDirectionType.PREV';
-      default: return 'new MenuDirectionType($value)';
+      default: return 'new MenuDirectionType($index)';
     }
   }
 }
@@ -11356,13 +11356,13 @@ class MessageType extends GEnumBase {
   static const MessageType ERROR = const MessageType(3);
   static const MessageType OTHER = const MessageType(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'MessageType.INFO';
       case 1: return 'MessageType.WARNING';
       case 2: return 'MessageType.QUESTION';
       case 3: return 'MessageType.ERROR';
       case 4: return 'MessageType.OTHER';
-      default: return 'new MessageType($value)';
+      default: return 'new MessageType($index)';
     }
   }
 }
@@ -11453,7 +11453,7 @@ class MovementStep extends GEnumBase {
   static const MovementStep BUFFER_ENDS = const MovementStep(8);
   static const MovementStep HORIZONTAL_PAGES = const MovementStep(9);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'MovementStep.LOGICAL_POSITIONS';
       case 1: return 'MovementStep.VISUAL_POSITIONS';
       case 2: return 'MovementStep.WORDS';
@@ -11464,7 +11464,7 @@ class MovementStep extends GEnumBase {
       case 7: return 'MovementStep.PAGES';
       case 8: return 'MovementStep.BUFFER_ENDS';
       case 9: return 'MovementStep.HORIZONTAL_PAGES';
-      default: return 'new MovementStep($value)';
+      default: return 'new MovementStep($index)';
     }
   }
 }
@@ -11921,10 +11921,10 @@ class NotebookTab extends GEnumBase {
   static const NotebookTab FIRST = const NotebookTab(0);
   static const NotebookTab LAST = const NotebookTab(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'NotebookTab.FIRST';
       case 1: return 'NotebookTab.LAST';
-      default: return 'new NotebookTab($value)';
+      default: return 'new NotebookTab($index)';
     }
   }
 }
@@ -11942,7 +11942,7 @@ class NumberUpLayout extends GEnumBase {
   static const NumberUpLayout BTLR = const NumberUpLayout(6);
   static const NumberUpLayout BTRL = const NumberUpLayout(7);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'NumberUpLayout.LRTB';
       case 1: return 'NumberUpLayout.LRBT';
       case 2: return 'NumberUpLayout.RLTB';
@@ -11951,7 +11951,7 @@ class NumberUpLayout extends GEnumBase {
       case 5: return 'NumberUpLayout.TBRL';
       case 6: return 'NumberUpLayout.BTLR';
       case 7: return 'NumberUpLayout.BTRL';
-      default: return 'new NumberUpLayout($value)';
+      default: return 'new NumberUpLayout($index)';
     }
   }
 }
@@ -12007,10 +12007,10 @@ class Orientation extends GEnumBase {
   static const Orientation HORIZONTAL = const Orientation(0);
   static const Orientation VERTICAL = const Orientation(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Orientation.HORIZONTAL';
       case 1: return 'Orientation.VERTICAL';
-      default: return 'new Orientation($value)';
+      default: return 'new Orientation($index)';
     }
   }
 }
@@ -12036,12 +12036,12 @@ class PackDirection extends GEnumBase {
   static const PackDirection TTB = const PackDirection(2);
   static const PackDirection BTT = const PackDirection(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PackDirection.LTR';
       case 1: return 'PackDirection.RTL';
       case 2: return 'PackDirection.TTB';
       case 3: return 'PackDirection.BTT';
-      default: return 'new PackDirection($value)';
+      default: return 'new PackDirection($index)';
     }
   }
 }
@@ -12053,10 +12053,10 @@ class PackType extends GEnumBase {
   static const PackType START = const PackType(0);
   static const PackType END = const PackType(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PackType.START';
       case 1: return 'PackType.END';
-      default: return 'new PackType($value)';
+      default: return 'new PackType($index)';
     }
   }
 }
@@ -12070,12 +12070,12 @@ class PageOrientation extends GEnumBase {
   static const PageOrientation REVERSE_PORTRAIT = const PageOrientation(2);
   static const PageOrientation REVERSE_LANDSCAPE = const PageOrientation(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PageOrientation.PORTRAIT';
       case 1: return 'PageOrientation.LANDSCAPE';
       case 2: return 'PageOrientation.REVERSE_PORTRAIT';
       case 3: return 'PageOrientation.REVERSE_LANDSCAPE';
-      default: return 'new PageOrientation($value)';
+      default: return 'new PageOrientation($index)';
     }
   }
 }
@@ -12098,11 +12098,11 @@ class PageSet extends GEnumBase {
   static const PageSet EVEN = const PageSet(1);
   static const PageSet ODD = const PageSet(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PageSet.ALL';
       case 1: return 'PageSet.EVEN';
       case 2: return 'PageSet.ODD';
-      default: return 'new PageSet($value)';
+      default: return 'new PageSet($index)';
     }
   }
 }
@@ -12148,12 +12148,12 @@ class PanDirection extends GEnumBase {
   static const PanDirection UP = const PanDirection(2);
   static const PanDirection DOWN = const PanDirection(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PanDirection.LEFT';
       case 1: return 'PanDirection.RIGHT';
       case 2: return 'PanDirection.UP';
       case 3: return 'PanDirection.DOWN';
-      default: return 'new PanDirection($value)';
+      default: return 'new PanDirection($index)';
     }
   }
 }
@@ -12495,14 +12495,14 @@ class PathPriorityType extends GEnumBase {
   static const PathPriorityType RC = const PathPriorityType(12);
   static const PathPriorityType HIGHEST = const PathPriorityType(15);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PathPriorityType.LOWEST';
       case 4: return 'PathPriorityType.GTK';
       case 8: return 'PathPriorityType.APPLICATION';
       case 10: return 'PathPriorityType.THEME';
       case 12: return 'PathPriorityType.RC';
       case 15: return 'PathPriorityType.HIGHEST';
-      default: return 'new PathPriorityType($value)';
+      default: return 'new PathPriorityType($index)';
     }
   }
 }
@@ -12515,11 +12515,11 @@ class PathType extends GEnumBase {
   static const PathType WIDGET_CLASS = const PathType(1);
   static const PathType CLASS = const PathType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PathType.WIDGET';
       case 1: return 'PathType.WIDGET_CLASS';
       case 2: return 'PathType.CLASS';
-      default: return 'new PathType($value)';
+      default: return 'new PathType($index)';
     }
   }
 }
@@ -12530,11 +12530,11 @@ class PlacesOpenFlags extends GEnumBase {
 
   static const PlacesOpenFlags NULL = const PlacesOpenFlags(0);
   static const PlacesOpenFlags NORMAL = const PlacesOpenFlags(1);
-  bool get normal => (value & 1) == 1;
+  bool get normal => (index & 1) == 1;
   static const PlacesOpenFlags NEW_TAB = const PlacesOpenFlags(2);
-  bool get newTab => (value & 2) == 2;
+  bool get newTab => (index & 2) == 2;
   static const PlacesOpenFlags NEW_WINDOW = const PlacesOpenFlags(4);
-  bool get newWindow => (value & 4) == 4;
+  bool get newWindow => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'PlacesOpenFlags.NORMAL';
@@ -12544,19 +12544,19 @@ class PlacesOpenFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'PlacesOpenFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   PlacesOpenFlags operator|(PlacesOpenFlags other) =>
-    new PlacesOpenFlags(value | other.value);
+    new PlacesOpenFlags(index | other.index);
   PlacesOpenFlags operator&(PlacesOpenFlags other) =>
-    new PlacesOpenFlags(value & other.value);
+    new PlacesOpenFlags(index & other.index);
 }
 
 class PlacesSidebar extends ScrolledWindow with ImplementorIface, Buildable {
@@ -12913,12 +12913,12 @@ class PolicyType extends GEnumBase {
   static const PolicyType NEVER = const PolicyType(2);
   static const PolicyType EXTERNAL = const PolicyType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PolicyType.ALWAYS';
       case 1: return 'PolicyType.AUTOMATIC';
       case 2: return 'PolicyType.NEVER';
       case 3: return 'PolicyType.EXTERNAL';
-      default: return 'new PolicyType($value)';
+      default: return 'new PolicyType($index)';
     }
   }
 }
@@ -13006,12 +13006,12 @@ class PositionType extends GEnumBase {
   static const PositionType TOP = const PositionType(2);
   static const PositionType BOTTOM = const PositionType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PositionType.LEFT';
       case 1: return 'PositionType.RIGHT';
       case 2: return 'PositionType.TOP';
       case 3: return 'PositionType.BOTTOM';
-      default: return 'new PositionType($value)';
+      default: return 'new PositionType($index)';
     }
   }
 }
@@ -13041,11 +13041,11 @@ class PrintDuplex extends GEnumBase {
   static const PrintDuplex HORIZONTAL = const PrintDuplex(1);
   static const PrintDuplex VERTICAL = const PrintDuplex(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintDuplex.SIMPLEX';
       case 1: return 'PrintDuplex.HORIZONTAL';
       case 2: return 'PrintDuplex.VERTICAL';
-      default: return 'new PrintDuplex($value)';
+      default: return 'new PrintDuplex($index)';
     }
   }
 }
@@ -13059,12 +13059,12 @@ class PrintErrorCode extends GEnumBase {
   static const PrintErrorCode NOMEM = const PrintErrorCode(2);
   static const PrintErrorCode INVALID_FILE = const PrintErrorCode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintErrorCode.GENERAL';
       case 1: return 'PrintErrorCode.INTERNAL_ERROR';
       case 2: return 'PrintErrorCode.NOMEM';
       case 3: return 'PrintErrorCode.INVALID_FILE';
-      default: return 'new PrintErrorCode($value)';
+      default: return 'new PrintErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -13517,12 +13517,12 @@ class PrintOperationAction extends GEnumBase {
   static const PrintOperationAction PREVIEW = const PrintOperationAction(2);
   static const PrintOperationAction EXPORT = const PrintOperationAction(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintOperationAction.PRINT_DIALOG';
       case 1: return 'PrintOperationAction.PRINT';
       case 2: return 'PrintOperationAction.PREVIEW';
       case 3: return 'PrintOperationAction.EXPORT';
-      default: return 'new PrintOperationAction($value)';
+      default: return 'new PrintOperationAction($index)';
     }
   }
 }
@@ -13617,12 +13617,12 @@ class PrintOperationResult extends GEnumBase {
   static const PrintOperationResult CANCEL = const PrintOperationResult(2);
   static const PrintOperationResult IN_PROGRESS = const PrintOperationResult(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintOperationResult.ERROR';
       case 1: return 'PrintOperationResult.APPLY';
       case 2: return 'PrintOperationResult.CANCEL';
       case 3: return 'PrintOperationResult.IN_PROGRESS';
-      default: return 'new PrintOperationResult($value)';
+      default: return 'new PrintOperationResult($index)';
     }
   }
 }
@@ -13636,12 +13636,12 @@ class PrintPages extends GEnumBase {
   static const PrintPages RANGES = const PrintPages(2);
   static const PrintPages SELECTION = const PrintPages(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintPages.ALL';
       case 1: return 'PrintPages.CURRENT';
       case 2: return 'PrintPages.RANGES';
       case 3: return 'PrintPages.SELECTION';
-      default: return 'new PrintPages($value)';
+      default: return 'new PrintPages($index)';
     }
   }
 }
@@ -13655,12 +13655,12 @@ class PrintQuality extends GEnumBase {
   static const PrintQuality HIGH = const PrintQuality(2);
   static const PrintQuality DRAFT = const PrintQuality(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintQuality.LOW';
       case 1: return 'PrintQuality.NORMAL';
       case 2: return 'PrintQuality.HIGH';
       case 3: return 'PrintQuality.DRAFT';
-      default: return 'new PrintQuality($value)';
+      default: return 'new PrintQuality($index)';
     }
   }
 }
@@ -13760,7 +13760,7 @@ class PrintStatus extends GEnumBase {
   static const PrintStatus FINISHED = const PrintStatus(7);
   static const PrintStatus FINISHED_ABORTED = const PrintStatus(8);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PrintStatus.INITIAL';
       case 1: return 'PrintStatus.PREPARING';
       case 2: return 'PrintStatus.GENERATING_DATA';
@@ -13770,7 +13770,7 @@ class PrintStatus extends GEnumBase {
       case 6: return 'PrintStatus.PRINTING';
       case 7: return 'PrintStatus.FINISHED';
       case 8: return 'PrintStatus.FINISHED_ABORTED';
-      default: return 'new PrintStatus($value)';
+      default: return 'new PrintStatus($index)';
     }
   }
 }
@@ -13816,12 +13816,12 @@ class PropagationPhase extends GEnumBase {
   static const PropagationPhase BUBBLE = const PropagationPhase(2);
   static const PropagationPhase TARGET = const PropagationPhase(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'PropagationPhase.NONE';
       case 1: return 'PropagationPhase.CAPTURE';
       case 2: return 'PropagationPhase.BUBBLE';
       case 3: return 'PropagationPhase.TARGET';
-      default: return 'new PropagationPhase($value)';
+      default: return 'new PropagationPhase($index)';
     }
   }
 }
@@ -14209,13 +14209,13 @@ class RcFlags extends GEnumBase {
 
   static const RcFlags NULL = const RcFlags(0);
   static const RcFlags FG = const RcFlags(1);
-  bool get fg => (value & 1) == 1;
+  bool get fg => (index & 1) == 1;
   static const RcFlags BG = const RcFlags(2);
-  bool get bg => (value & 2) == 2;
+  bool get bg => (index & 2) == 2;
   static const RcFlags TEXT = const RcFlags(4);
-  bool get text => (value & 4) == 4;
+  bool get text => (index & 4) == 4;
   static const RcFlags BASE = const RcFlags(8);
-  bool get base => (value & 8) == 8;
+  bool get base => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'RcFlags.FG';
@@ -14226,19 +14226,19 @@ class RcFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'RcFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   RcFlags operator|(RcFlags other) =>
-    new RcFlags(value | other.value);
+    new RcFlags(index | other.index);
   RcFlags operator&(RcFlags other) =>
-    new RcFlags(value & other.value);
+    new RcFlags(index & other.index);
 }
 
 class RcProperty extends GObjectBase {
@@ -14328,7 +14328,7 @@ class RcTokenType extends GEnumBase {
   static const RcTokenType UNBIND = const RcTokenType(308);
   static const RcTokenType LAST = const RcTokenType(309);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 270: return 'RcTokenType.INVALID';
       case 271: return 'RcTokenType.INCLUDE';
       case 272: return 'RcTokenType.NORMAL';
@@ -14369,7 +14369,7 @@ class RcTokenType extends GEnumBase {
       case 307: return 'RcTokenType.COLOR';
       case 308: return 'RcTokenType.UNBIND';
       case 309: return 'RcTokenType.LAST';
-      default: return 'new RcTokenType($value)';
+      default: return 'new RcTokenType($index)';
     }
   }
 }
@@ -14507,10 +14507,10 @@ class RecentChooserErrorCode extends GEnumBase {
   static const RecentChooserErrorCode NOT_FOUND = const RecentChooserErrorCode(0);
   static const RecentChooserErrorCode INVALID_URI = const RecentChooserErrorCode(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RecentChooserErrorCode.NOT_FOUND';
       case 1: return 'RecentChooserErrorCode.INVALID_URI';
-      default: return 'new RecentChooserErrorCode($value)';
+      default: return 'new RecentChooserErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -14585,17 +14585,17 @@ class RecentFilterFlags extends GEnumBase {
 
   static const RecentFilterFlags NULL = const RecentFilterFlags(0);
   static const RecentFilterFlags URI = const RecentFilterFlags(1);
-  bool get uri => (value & 1) == 1;
+  bool get uri => (index & 1) == 1;
   static const RecentFilterFlags DISPLAY_NAME = const RecentFilterFlags(2);
-  bool get displayName => (value & 2) == 2;
+  bool get displayName => (index & 2) == 2;
   static const RecentFilterFlags MIME_TYPE = const RecentFilterFlags(4);
-  bool get mimeType => (value & 4) == 4;
+  bool get mimeType => (index & 4) == 4;
   static const RecentFilterFlags APPLICATION = const RecentFilterFlags(8);
-  bool get application => (value & 8) == 8;
+  bool get application => (index & 8) == 8;
   static const RecentFilterFlags GROUP = const RecentFilterFlags(16);
-  bool get group => (value & 16) == 16;
+  bool get group => (index & 16) == 16;
   static const RecentFilterFlags AGE = const RecentFilterFlags(32);
-  bool get age => (value & 32) == 32;
+  bool get age => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'RecentFilterFlags.URI';
@@ -14608,19 +14608,19 @@ class RecentFilterFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'RecentFilterFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   RecentFilterFlags operator|(RecentFilterFlags other) =>
-    new RecentFilterFlags(value | other.value);
+    new RecentFilterFlags(index | other.index);
   RecentFilterFlags operator&(RecentFilterFlags other) =>
-    new RecentFilterFlags(value & other.value);
+    new RecentFilterFlags(index & other.index);
 }
 
 typedef bool RecentFilterFunc(RecentFilterInfo filterInfo);
@@ -14739,7 +14739,7 @@ class RecentManagerErrorCode extends GEnumBase {
   static const RecentManagerErrorCode WRITE = const RecentManagerErrorCode(5);
   static const RecentManagerErrorCode UNKNOWN = const RecentManagerErrorCode(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RecentManagerErrorCode.NOT_FOUND';
       case 1: return 'RecentManagerErrorCode.INVALID_URI';
       case 2: return 'RecentManagerErrorCode.INVALID_ENCODING';
@@ -14747,7 +14747,7 @@ class RecentManagerErrorCode extends GEnumBase {
       case 4: return 'RecentManagerErrorCode.READ';
       case 5: return 'RecentManagerErrorCode.WRITE';
       case 6: return 'RecentManagerErrorCode.UNKNOWN';
-      default: return 'new RecentManagerErrorCode($value)';
+      default: return 'new RecentManagerErrorCode($index)';
     }
   }
   static int quark() => _staticInfo.callStatic('quark', []);
@@ -14769,12 +14769,12 @@ class RecentSortType extends GEnumBase {
   static const RecentSortType LRU = const RecentSortType(2);
   static const RecentSortType CUSTOM = const RecentSortType(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RecentSortType.NONE';
       case 1: return 'RecentSortType.MRU';
       case 2: return 'RecentSortType.LRU';
       case 3: return 'RecentSortType.CUSTOM';
-      default: return 'new RecentSortType($value)';
+      default: return 'new RecentSortType($index)';
     }
   }
 }
@@ -14785,17 +14785,17 @@ class RegionFlags extends GEnumBase {
 
   static const RegionFlags NULL = const RegionFlags(0);
   static const RegionFlags EVEN = const RegionFlags(1);
-  bool get even => (value & 1) == 1;
+  bool get even => (index & 1) == 1;
   static const RegionFlags ODD = const RegionFlags(2);
-  bool get odd => (value & 2) == 2;
+  bool get odd => (index & 2) == 2;
   static const RegionFlags FIRST = const RegionFlags(4);
-  bool get first => (value & 4) == 4;
+  bool get first => (index & 4) == 4;
   static const RegionFlags LAST = const RegionFlags(8);
-  bool get last => (value & 8) == 8;
+  bool get last => (index & 8) == 8;
   static const RegionFlags ONLY = const RegionFlags(16);
-  bool get only => (value & 16) == 16;
+  bool get only => (index & 16) == 16;
   static const RegionFlags SORTED = const RegionFlags(32);
-  bool get sorted => (value & 32) == 32;
+  bool get sorted => (index & 32) == 32;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'RegionFlags.EVEN';
@@ -14808,19 +14808,19 @@ class RegionFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'RegionFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 32; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   RegionFlags operator|(RegionFlags other) =>
-    new RegionFlags(value | other.value);
+    new RegionFlags(index | other.index);
   RegionFlags operator&(RegionFlags other) =>
-    new RegionFlags(value & other.value);
+    new RegionFlags(index & other.index);
 }
 
 class ReliefStyle extends GEnumBase {
@@ -14831,11 +14831,11 @@ class ReliefStyle extends GEnumBase {
   static const ReliefStyle HALF = const ReliefStyle(1);
   static const ReliefStyle NONE = const ReliefStyle(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ReliefStyle.NORMAL';
       case 1: return 'ReliefStyle.HALF';
       case 2: return 'ReliefStyle.NONE';
-      default: return 'new ReliefStyle($value)';
+      default: return 'new ReliefStyle($index)';
     }
   }
 }
@@ -14883,11 +14883,11 @@ class ResizeMode extends GEnumBase {
   static const ResizeMode QUEUE = const ResizeMode(1);
   static const ResizeMode IMMEDIATE = const ResizeMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ResizeMode.PARENT';
       case 1: return 'ResizeMode.QUEUE';
       case 2: return 'ResizeMode.IMMEDIATE';
-      default: return 'new ResizeMode($value)';
+      default: return 'new ResizeMode($index)';
     }
   }
 }
@@ -14908,7 +14908,7 @@ class ResponseType extends GEnumBase {
   static const ResponseType APPLY = const ResponseType(-10);
   static const ResponseType HELP = const ResponseType(-11);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'ResponseType.NONE';
       case -2: return 'ResponseType.REJECT';
       case -3: return 'ResponseType.ACCEPT';
@@ -14920,7 +14920,7 @@ class ResponseType extends GEnumBase {
       case -9: return 'ResponseType.NO';
       case -10: return 'ResponseType.APPLY';
       case -11: return 'ResponseType.HELP';
-      default: return 'new ResponseType($value)';
+      default: return 'new ResponseType($index)';
     }
   }
 }
@@ -14954,14 +14954,14 @@ class RevealerTransitionType extends GEnumBase {
   static const RevealerTransitionType SLIDE_UP = const RevealerTransitionType(4);
   static const RevealerTransitionType SLIDE_DOWN = const RevealerTransitionType(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'RevealerTransitionType.NONE';
       case 1: return 'RevealerTransitionType.CROSSFADE';
       case 2: return 'RevealerTransitionType.SLIDE_RIGHT';
       case 3: return 'RevealerTransitionType.SLIDE_LEFT';
       case 4: return 'RevealerTransitionType.SLIDE_UP';
       case 5: return 'RevealerTransitionType.SLIDE_DOWN';
-      default: return 'new RevealerTransitionType($value)';
+      default: return 'new RevealerTransitionType($index)';
     }
   }
 }
@@ -15129,14 +15129,14 @@ class ScrollStep extends GEnumBase {
   static const ScrollStep HORIZONTAL_PAGES = const ScrollStep(4);
   static const ScrollStep HORIZONTAL_ENDS = const ScrollStep(5);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ScrollStep.STEPS';
       case 1: return 'ScrollStep.PAGES';
       case 2: return 'ScrollStep.ENDS';
       case 3: return 'ScrollStep.HORIZONTAL_STEPS';
       case 4: return 'ScrollStep.HORIZONTAL_PAGES';
       case 5: return 'ScrollStep.HORIZONTAL_ENDS';
-      default: return 'new ScrollStep($value)';
+      default: return 'new ScrollStep($index)';
     }
   }
 }
@@ -15162,7 +15162,7 @@ class ScrollType extends GEnumBase {
   static const ScrollType START = const ScrollType(14);
   static const ScrollType END = const ScrollType(15);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ScrollType.NONE';
       case 1: return 'ScrollType.JUMP';
       case 2: return 'ScrollType.STEP_BACKWARD';
@@ -15179,7 +15179,7 @@ class ScrollType extends GEnumBase {
       case 13: return 'ScrollType.PAGE_RIGHT';
       case 14: return 'ScrollType.START';
       case 15: return 'ScrollType.END';
-      default: return 'new ScrollType($value)';
+      default: return 'new ScrollType($index)';
     }
   }
 }
@@ -15211,10 +15211,10 @@ class ScrollablePolicy extends GEnumBase {
   static const ScrollablePolicy MINIMUM = const ScrollablePolicy(0);
   static const ScrollablePolicy NATURAL = const ScrollablePolicy(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ScrollablePolicy.MINIMUM';
       case 1: return 'ScrollablePolicy.NATURAL';
-      default: return 'new ScrollablePolicy($value)';
+      default: return 'new ScrollablePolicy($index)';
     }
   }
 }
@@ -15605,12 +15605,12 @@ class SelectionMode extends GEnumBase {
   static const SelectionMode BROWSE = const SelectionMode(2);
   static const SelectionMode MULTIPLE = const SelectionMode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SelectionMode.NONE';
       case 1: return 'SelectionMode.SINGLE';
       case 2: return 'SelectionMode.BROWSE';
       case 3: return 'SelectionMode.MULTIPLE';
-      default: return 'new SelectionMode($value)';
+      default: return 'new SelectionMode($index)';
     }
   }
 }
@@ -15623,11 +15623,11 @@ class SensitivityType extends GEnumBase {
   static const SensitivityType ON = const SensitivityType(1);
   static const SensitivityType OFF = const SensitivityType(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SensitivityType.AUTO';
       case 1: return 'SensitivityType.ON';
       case 2: return 'SensitivityType.OFF';
-      default: return 'new SensitivityType($value)';
+      default: return 'new SensitivityType($index)';
     }
   }
 }
@@ -15935,13 +15935,13 @@ class ShadowType extends GEnumBase {
   static const ShadowType ETCHED_IN = const ShadowType(3);
   static const ShadowType ETCHED_OUT = const ShadowType(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ShadowType.NONE';
       case 1: return 'ShadowType.IN';
       case 2: return 'ShadowType.OUT';
       case 3: return 'ShadowType.ETCHED_IN';
       case 4: return 'ShadowType.ETCHED_OUT';
-      default: return 'new ShadowType($value)';
+      default: return 'new ShadowType($index)';
     }
   }
 }
@@ -15971,12 +15971,12 @@ class SizeGroupMode extends GEnumBase {
   static const SizeGroupMode VERTICAL = const SizeGroupMode(2);
   static const SizeGroupMode BOTH = const SizeGroupMode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SizeGroupMode.NONE';
       case 1: return 'SizeGroupMode.HORIZONTAL';
       case 2: return 'SizeGroupMode.VERTICAL';
       case 3: return 'SizeGroupMode.BOTH';
-      default: return 'new SizeGroupMode($value)';
+      default: return 'new SizeGroupMode($index)';
     }
   }
 }
@@ -15989,11 +15989,11 @@ class SizeRequestMode extends GEnumBase {
   static const SizeRequestMode WIDTH_FOR_HEIGHT = const SizeRequestMode(1);
   static const SizeRequestMode CONSTANT_SIZE = const SizeRequestMode(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SizeRequestMode.HEIGHT_FOR_WIDTH';
       case 1: return 'SizeRequestMode.WIDTH_FOR_HEIGHT';
       case 2: return 'SizeRequestMode.CONSTANT_SIZE';
-      default: return 'new SizeRequestMode($value)';
+      default: return 'new SizeRequestMode($index)';
     }
   }
 }
@@ -16090,10 +16090,10 @@ class SortType extends GEnumBase {
   static const SortType ASCENDING = const SortType(0);
   static const SortType DESCENDING = const SortType(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SortType.ASCENDING';
       case 1: return 'SortType.DESCENDING';
-      default: return 'new SortType($value)';
+      default: return 'new SortType($index)';
     }
   }
 }
@@ -16289,10 +16289,10 @@ class SpinButtonUpdatePolicy extends GEnumBase {
   static const SpinButtonUpdatePolicy ALWAYS = const SpinButtonUpdatePolicy(0);
   static const SpinButtonUpdatePolicy IF_VALID = const SpinButtonUpdatePolicy(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SpinButtonUpdatePolicy.ALWAYS';
       case 1: return 'SpinButtonUpdatePolicy.IF_VALID';
-      default: return 'new SpinButtonUpdatePolicy($value)';
+      default: return 'new SpinButtonUpdatePolicy($index)';
     }
   }
 }
@@ -16309,7 +16309,7 @@ class SpinType extends GEnumBase {
   static const SpinType END = const SpinType(5);
   static const SpinType USER_DEFINED = const SpinType(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'SpinType.STEP_FORWARD';
       case 1: return 'SpinType.STEP_BACKWARD';
       case 2: return 'SpinType.PAGE_FORWARD';
@@ -16317,7 +16317,7 @@ class SpinType extends GEnumBase {
       case 4: return 'SpinType.HOME';
       case 5: return 'SpinType.END';
       case 6: return 'SpinType.USER_DEFINED';
-      default: return 'new SpinType($value)';
+      default: return 'new SpinType($index)';
     }
   }
 }
@@ -16428,7 +16428,7 @@ class StackTransitionType extends GEnumBase {
   static const StackTransitionType OVER_LEFT_RIGHT = const StackTransitionType(18);
   static const StackTransitionType OVER_RIGHT_LEFT = const StackTransitionType(19);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'StackTransitionType.NONE';
       case 1: return 'StackTransitionType.CROSSFADE';
       case 2: return 'StackTransitionType.SLIDE_RIGHT';
@@ -16449,7 +16449,7 @@ class StackTransitionType extends GEnumBase {
       case 17: return 'StackTransitionType.OVER_DOWN_UP';
       case 18: return 'StackTransitionType.OVER_LEFT_RIGHT';
       case 19: return 'StackTransitionType.OVER_RIGHT_LEFT';
-      default: return 'new StackTransitionType($value)';
+      default: return 'new StackTransitionType($index)';
     }
   }
 }
@@ -16459,31 +16459,31 @@ class StateFlags extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gtk', 'StateFlags');
 
   static const StateFlags NORMAL = const StateFlags(0);
-  bool get normal => (value & 0) == 0;
+  bool get normal => (index & 0) == 0;
   static const StateFlags ACTIVE = const StateFlags(1);
-  bool get active => (value & 1) == 1;
+  bool get active => (index & 1) == 1;
   static const StateFlags PRELIGHT = const StateFlags(2);
-  bool get prelight => (value & 2) == 2;
+  bool get prelight => (index & 2) == 2;
   static const StateFlags SELECTED = const StateFlags(4);
-  bool get selected => (value & 4) == 4;
+  bool get selected => (index & 4) == 4;
   static const StateFlags INSENSITIVE = const StateFlags(8);
-  bool get insensitive => (value & 8) == 8;
+  bool get insensitive => (index & 8) == 8;
   static const StateFlags INCONSISTENT = const StateFlags(16);
-  bool get inconsistent => (value & 16) == 16;
+  bool get inconsistent => (index & 16) == 16;
   static const StateFlags FOCUSED = const StateFlags(32);
-  bool get focused => (value & 32) == 32;
+  bool get focused => (index & 32) == 32;
   static const StateFlags BACKDROP = const StateFlags(64);
-  bool get backdrop => (value & 64) == 64;
+  bool get backdrop => (index & 64) == 64;
   static const StateFlags DIR_LTR = const StateFlags(128);
-  bool get dirLtr => (value & 128) == 128;
+  bool get dirLtr => (index & 128) == 128;
   static const StateFlags DIR_RTL = const StateFlags(256);
-  bool get dirRtl => (value & 256) == 256;
+  bool get dirRtl => (index & 256) == 256;
   static const StateFlags LINK = const StateFlags(512);
-  bool get link => (value & 512) == 512;
+  bool get link => (index & 512) == 512;
   static const StateFlags VISITED = const StateFlags(1024);
-  bool get visited => (value & 1024) == 1024;
+  bool get visited => (index & 1024) == 1024;
   static const StateFlags CHECKED = const StateFlags(2048);
-  bool get checked => (value & 2048) == 2048;
+  bool get checked => (index & 2048) == 2048;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'StateFlags.ACTIVE';
@@ -16498,19 +16498,19 @@ class StateFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'StateFlags.NORMAL';
     }
     List codes = [];
     for (var i=1; i <= 2048; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   StateFlags operator|(StateFlags other) =>
-    new StateFlags(value | other.value);
+    new StateFlags(index | other.index);
   StateFlags operator&(StateFlags other) =>
-    new StateFlags(value & other.value);
+    new StateFlags(index & other.index);
 }
 
 class StateType extends GEnumBase {
@@ -16525,7 +16525,7 @@ class StateType extends GEnumBase {
   static const StateType INCONSISTENT = const StateType(5);
   static const StateType FOCUSED = const StateType(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'StateType.NORMAL';
       case 1: return 'StateType.ACTIVE';
       case 2: return 'StateType.PRELIGHT';
@@ -16533,7 +16533,7 @@ class StateType extends GEnumBase {
       case 4: return 'StateType.INSENSITIVE';
       case 5: return 'StateType.INCONSISTENT';
       case 6: return 'StateType.FOCUSED';
-      default: return 'new StateType($value)';
+      default: return 'new StateType($index)';
     }
   }
 }
@@ -17449,13 +17449,13 @@ class TargetFlags extends GEnumBase {
 
   static const TargetFlags NULL = const TargetFlags(0);
   static const TargetFlags SAME_APP = const TargetFlags(1);
-  bool get sameApp => (value & 1) == 1;
+  bool get sameApp => (index & 1) == 1;
   static const TargetFlags SAME_WIDGET = const TargetFlags(2);
-  bool get sameWidget => (value & 2) == 2;
+  bool get sameWidget => (index & 2) == 2;
   static const TargetFlags OTHER_APP = const TargetFlags(4);
-  bool get otherApp => (value & 4) == 4;
+  bool get otherApp => (index & 4) == 4;
   static const TargetFlags OTHER_WIDGET = const TargetFlags(8);
-  bool get otherWidget => (value & 8) == 8;
+  bool get otherWidget => (index & 8) == 8;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TargetFlags.SAME_APP';
@@ -17466,19 +17466,19 @@ class TargetFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TargetFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 8; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TargetFlags operator|(TargetFlags other) =>
-    new TargetFlags(value | other.value);
+    new TargetFlags(index | other.index);
   TargetFlags operator&(TargetFlags other) =>
-    new TargetFlags(value & other.value);
+    new TargetFlags(index & other.index);
 }
 
 class TargetList extends GObjectBase {
@@ -18161,11 +18161,11 @@ class TextBufferTargetInfo extends GEnumBase {
   static const TextBufferTargetInfo RICH_TEXT = const TextBufferTargetInfo(-2);
   static const TextBufferTargetInfo TEXT = const TextBufferTargetInfo(-3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case -1: return 'TextBufferTargetInfo.BUFFER_CONTENTS';
       case -2: return 'TextBufferTargetInfo.RICH_TEXT';
       case -3: return 'TextBufferTargetInfo.TEXT';
-      default: return 'new TextBufferTargetInfo($value)';
+      default: return 'new TextBufferTargetInfo($index)';
     }
   }
 }
@@ -18194,11 +18194,11 @@ class TextDirection extends GEnumBase {
   static const TextDirection LTR = const TextDirection(1);
   static const TextDirection RTL = const TextDirection(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextDirection.NONE';
       case 1: return 'TextDirection.LTR';
       case 2: return 'TextDirection.RTL';
-      default: return 'new TextDirection($value)';
+      default: return 'new TextDirection($index)';
     }
   }
 }
@@ -18210,10 +18210,10 @@ class TextExtendSelection extends GEnumBase {
   static const TextExtendSelection WORD = const TextExtendSelection(0);
   static const TextExtendSelection LINE = const TextExtendSelection(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextExtendSelection.WORD';
       case 1: return 'TextExtendSelection.LINE';
-      default: return 'new TextExtendSelection($value)';
+      default: return 'new TextExtendSelection($index)';
     }
   }
 }
@@ -18352,11 +18352,11 @@ class TextSearchFlags extends GEnumBase {
 
   static const TextSearchFlags NULL = const TextSearchFlags(0);
   static const TextSearchFlags VISIBLE_ONLY = const TextSearchFlags(1);
-  bool get visibleOnly => (value & 1) == 1;
+  bool get visibleOnly => (index & 1) == 1;
   static const TextSearchFlags TEXT_ONLY = const TextSearchFlags(2);
-  bool get textOnly => (value & 2) == 2;
+  bool get textOnly => (index & 2) == 2;
   static const TextSearchFlags CASE_INSENSITIVE = const TextSearchFlags(4);
-  bool get caseInsensitive => (value & 4) == 4;
+  bool get caseInsensitive => (index & 4) == 4;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TextSearchFlags.VISIBLE_ONLY';
@@ -18366,19 +18366,19 @@ class TextSearchFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TextSearchFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 4; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TextSearchFlags operator|(TextSearchFlags other) =>
-    new TextSearchFlags(value | other.value);
+    new TextSearchFlags(index | other.index);
   TextSearchFlags operator&(TextSearchFlags other) =>
-    new TextSearchFlags(value & other.value);
+    new TextSearchFlags(index & other.index);
 }
 
 class TextTag extends GObjectObject {
@@ -19396,10 +19396,10 @@ class TextViewLayer extends GEnumBase {
   static const TextViewLayer BELOW = const TextViewLayer(0);
   static const TextViewLayer ABOVE = const TextViewLayer(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextViewLayer.BELOW';
       case 1: return 'TextViewLayer.ABOVE';
-      default: return 'new TextViewLayer($value)';
+      default: return 'new TextViewLayer($index)';
     }
   }
 }
@@ -19416,7 +19416,7 @@ class TextWindowType extends GEnumBase {
   static const TextWindowType TOP = const TextWindowType(5);
   static const TextWindowType BOTTOM = const TextWindowType(6);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TextWindowType.PRIVATE';
       case 1: return 'TextWindowType.WIDGET';
       case 2: return 'TextWindowType.TEXT';
@@ -19424,7 +19424,7 @@ class TextWindowType extends GEnumBase {
       case 4: return 'TextWindowType.RIGHT';
       case 5: return 'TextWindowType.TOP';
       case 6: return 'TextWindowType.BOTTOM';
-      default: return 'new TextWindowType($value)';
+      default: return 'new TextWindowType($index)';
     }
   }
 }
@@ -19867,9 +19867,9 @@ class ToolPaletteDragTargets extends GEnumBase {
 
   static const ToolPaletteDragTargets NULL = const ToolPaletteDragTargets(0);
   static const ToolPaletteDragTargets ITEMS = const ToolPaletteDragTargets(1);
-  bool get items => (value & 1) == 1;
+  bool get items => (index & 1) == 1;
   static const ToolPaletteDragTargets GROUPS = const ToolPaletteDragTargets(2);
-  bool get groups => (value & 2) == 2;
+  bool get groups => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'ToolPaletteDragTargets.ITEMS';
@@ -19878,19 +19878,19 @@ class ToolPaletteDragTargets extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'ToolPaletteDragTargets.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   ToolPaletteDragTargets operator|(ToolPaletteDragTargets other) =>
-    new ToolPaletteDragTargets(value | other.value);
+    new ToolPaletteDragTargets(index | other.index);
   ToolPaletteDragTargets operator&(ToolPaletteDragTargets other) =>
-    new ToolPaletteDragTargets(value & other.value);
+    new ToolPaletteDragTargets(index & other.index);
 }
 
 abstract class ToolShell extends GObjectBase implements Widget {
@@ -20098,10 +20098,10 @@ class ToolbarSpaceStyle extends GEnumBase {
   static const ToolbarSpaceStyle EMPTY = const ToolbarSpaceStyle(0);
   static const ToolbarSpaceStyle LINE = const ToolbarSpaceStyle(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ToolbarSpaceStyle.EMPTY';
       case 1: return 'ToolbarSpaceStyle.LINE';
-      default: return 'new ToolbarSpaceStyle($value)';
+      default: return 'new ToolbarSpaceStyle($index)';
     }
   }
 }
@@ -20115,12 +20115,12 @@ class ToolbarStyle extends GEnumBase {
   static const ToolbarStyle BOTH = const ToolbarStyle(2);
   static const ToolbarStyle BOTH_HORIZ = const ToolbarStyle(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'ToolbarStyle.ICONS';
       case 1: return 'ToolbarStyle.TEXT';
       case 2: return 'ToolbarStyle.BOTH';
       case 3: return 'ToolbarStyle.BOTH_HORIZ';
-      default: return 'new ToolbarStyle($value)';
+      default: return 'new ToolbarStyle($index)';
     }
   }
 }
@@ -20400,9 +20400,9 @@ class TreeModelFlags extends GEnumBase {
 
   static const TreeModelFlags NULL = const TreeModelFlags(0);
   static const TreeModelFlags ITERS_PERSIST = const TreeModelFlags(1);
-  bool get itersPersist => (value & 1) == 1;
+  bool get itersPersist => (index & 1) == 1;
   static const TreeModelFlags LIST_ONLY = const TreeModelFlags(2);
-  bool get listOnly => (value & 2) == 2;
+  bool get listOnly => (index & 2) == 2;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'TreeModelFlags.ITERS_PERSIST';
@@ -20411,19 +20411,19 @@ class TreeModelFlags extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'TreeModelFlags.NULL';
     }
     List codes = [];
     for (var i=1; i <= 2; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   TreeModelFlags operator|(TreeModelFlags other) =>
-    new TreeModelFlags(value | other.value);
+    new TreeModelFlags(index | other.index);
   TreeModelFlags operator&(TreeModelFlags other) =>
-    new TreeModelFlags(value & other.value);
+    new TreeModelFlags(index & other.index);
 }
 
 typedef bool TreeModelForeachFunc(TreeModel model, TreePath path, TreeIter iter);
@@ -21482,11 +21482,11 @@ class TreeViewColumnSizing extends GEnumBase {
   static const TreeViewColumnSizing AUTOSIZE = const TreeViewColumnSizing(1);
   static const TreeViewColumnSizing FIXED = const TreeViewColumnSizing(2);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TreeViewColumnSizing.GROW_ONLY';
       case 1: return 'TreeViewColumnSizing.AUTOSIZE';
       case 2: return 'TreeViewColumnSizing.FIXED';
-      default: return 'new TreeViewColumnSizing($value)';
+      default: return 'new TreeViewColumnSizing($index)';
     }
   }
 }
@@ -21500,12 +21500,12 @@ class TreeViewDropPosition extends GEnumBase {
   static const TreeViewDropPosition INTO_OR_BEFORE = const TreeViewDropPosition(2);
   static const TreeViewDropPosition INTO_OR_AFTER = const TreeViewDropPosition(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TreeViewDropPosition.BEFORE';
       case 1: return 'TreeViewDropPosition.AFTER';
       case 2: return 'TreeViewDropPosition.INTO_OR_BEFORE';
       case 3: return 'TreeViewDropPosition.INTO_OR_AFTER';
-      default: return 'new TreeViewDropPosition($value)';
+      default: return 'new TreeViewDropPosition($index)';
     }
   }
 }
@@ -21519,12 +21519,12 @@ class TreeViewGridLines extends GEnumBase {
   static const TreeViewGridLines VERTICAL = const TreeViewGridLines(2);
   static const TreeViewGridLines BOTH = const TreeViewGridLines(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'TreeViewGridLines.NONE';
       case 1: return 'TreeViewGridLines.HORIZONTAL';
       case 2: return 'TreeViewGridLines.VERTICAL';
       case 3: return 'TreeViewGridLines.BOTH';
-      default: return 'new TreeViewGridLines($value)';
+      default: return 'new TreeViewGridLines($index)';
     }
   }
 }
@@ -21768,27 +21768,27 @@ class UIManagerItemType extends GEnumBase {
   static final GIObjectInfo _staticInfo = new GIObjectInfo('Gtk', 'UIManagerItemType');
 
   static const UIManagerItemType AUTO = const UIManagerItemType(0);
-  bool get auto => (value & 0) == 0;
+  bool get auto => (index & 0) == 0;
   static const UIManagerItemType MENUBAR = const UIManagerItemType(1);
-  bool get menubar => (value & 1) == 1;
+  bool get menubar => (index & 1) == 1;
   static const UIManagerItemType MENU = const UIManagerItemType(2);
-  bool get menu => (value & 2) == 2;
+  bool get menu => (index & 2) == 2;
   static const UIManagerItemType TOOLBAR = const UIManagerItemType(4);
-  bool get toolbar => (value & 4) == 4;
+  bool get toolbar => (index & 4) == 4;
   static const UIManagerItemType PLACEHOLDER = const UIManagerItemType(8);
-  bool get placeholder => (value & 8) == 8;
+  bool get placeholder => (index & 8) == 8;
   static const UIManagerItemType POPUP = const UIManagerItemType(16);
-  bool get popup => (value & 16) == 16;
+  bool get popup => (index & 16) == 16;
   static const UIManagerItemType MENUITEM = const UIManagerItemType(32);
-  bool get menuitem => (value & 32) == 32;
+  bool get menuitem => (index & 32) == 32;
   static const UIManagerItemType TOOLITEM = const UIManagerItemType(64);
-  bool get toolitem => (value & 64) == 64;
+  bool get toolitem => (index & 64) == 64;
   static const UIManagerItemType SEPARATOR = const UIManagerItemType(128);
-  bool get separator => (value & 128) == 128;
+  bool get separator => (index & 128) == 128;
   static const UIManagerItemType ACCELERATOR = const UIManagerItemType(256);
-  bool get accelerator => (value & 256) == 256;
+  bool get accelerator => (index & 256) == 256;
   static const UIManagerItemType POPUP_WITH_ACCELS = const UIManagerItemType(512);
-  bool get popupWithAccels => (value & 512) == 512;
+  bool get popupWithAccels => (index & 512) == 512;
   static _valueToString(int value) {
     switch(value) {
       case 1: return 'UIManagerItemType.MENUBAR';
@@ -21803,19 +21803,19 @@ class UIManagerItemType extends GEnumBase {
     }
   }
   String toString() {
-    if (value == 0) {
+    if (index == 0) {
       return 'UIManagerItemType.AUTO';
     }
     List codes = [];
     for (var i=1; i <= 512; i <<= 1) {
-      if (value & i != 0) codes.add(_valueToString(i));
+      if (index & i != 0) codes.add(_valueToString(i));
     }
     return codes.join(' | ');
   }
   UIManagerItemType operator|(UIManagerItemType other) =>
-    new UIManagerItemType(value | other.value);
+    new UIManagerItemType(index | other.index);
   UIManagerItemType operator&(UIManagerItemType other) =>
-    new UIManagerItemType(value & other.value);
+    new UIManagerItemType(index & other.index);
 }
 
 class Unit extends GEnumBase {
@@ -21827,12 +21827,12 @@ class Unit extends GEnumBase {
   static const Unit INCH = const Unit(2);
   static const Unit MM = const Unit(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'Unit.NONE';
       case 1: return 'Unit.POINTS';
       case 2: return 'Unit.INCH';
       case 3: return 'Unit.MM';
-      default: return 'new Unit($value)';
+      default: return 'new Unit($index)';
     }
   }
 }
@@ -22037,7 +22037,8 @@ class Widget extends InitiallyUnowned with ImplementorIface, Buildable {
   TextDirection getDirection() => _staticInfo.callMethodOnReceiver('get_direction', this, []);
   Display getDisplay() => _staticInfo.callMethodOnReceiver('get_display', this, []);
   bool get doubleBuffered => _staticInfo.callMethodOnReceiver('get_double_buffered', this, []);
-  int get events => _staticInfo.callMethodOnReceiver('get_events', this, []);
+  int get _events => _staticInfo.callMethodOnReceiver('get_events', this, []);
+  EventMask get events => new EventMask(_events);
   FontMap getFontMap() => _staticInfo.callMethodOnReceiver('get_font_map', this, []);
   FontOptions getFontOptions() => _staticInfo.callMethodOnReceiver('get_font_options', this, []);
   FrameClock getFrameClock() => _staticInfo.callMethodOnReceiver('get_frame_clock', this, []);
@@ -22170,9 +22171,12 @@ class Widget extends InitiallyUnowned with ImplementorIface, Buildable {
   void setDeviceEvents(Device device, EventMask events) => _staticInfo.callMethodOnReceiver('set_device_events', this, [device, events]);
   void setDirection(TextDirection dir) => _staticInfo.callMethodOnReceiver('set_direction', this, [dir]);
   void set doubleBuffered(bool doubleBuffered) => _staticInfo.callMethodOnReceiver('set_double_buffered', this, [doubleBuffered]);
-  void set events(int events) => _staticInfo.callMethodOnReceiver('set_events', this, [events]);
-  void setFontMap(FontMap fontMap) => _staticInfo.callMethodOnReceiver('set_font_map', this, [fontMap]);
-  void setFontOptions(FontOptions options) => _staticInfo.callMethodOnReceiver('set_font_options', this, [options]);
+  void set _events(int events) => _staticInfo.callMethodOnReceiver('set_events', this, [events]);
+  void set events(EventMask mask) {
+    _events = mask.index;
+  }
+    void setFontMap(FontMap fontMap) => _staticInfo.callMethodOnReceiver('set_font_map', this, [fontMap]);
+    void setFontOptions(FontOptions options) => _staticInfo.callMethodOnReceiver('set_font_options', this, [options]);
   void set halign(Align align) => _staticInfo.callMethodOnReceiver('set_halign', this, [align]);
   void set hasTooltip(bool hasTooltip) => _staticInfo.callMethodOnReceiver('set_has_tooltip', this, [hasTooltip]);
   void setHasWindow(bool hasWindow) => _staticInfo.callMethodOnReceiver('set_has_window', this, [hasWindow]);
@@ -24941,10 +24945,10 @@ class WidgetHelpType extends GEnumBase {
   static const WidgetHelpType TOOLTIP = const WidgetHelpType(0);
   static const WidgetHelpType WHATS_THIS = const WidgetHelpType(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WidgetHelpType.TOOLTIP';
       case 1: return 'WidgetHelpType.WHATS_THIS';
-      default: return 'new WidgetHelpType($value)';
+      default: return 'new WidgetHelpType($index)';
     }
   }
 }
@@ -25364,13 +25368,13 @@ class WindowPosition extends GEnumBase {
   static const WindowPosition CENTER_ALWAYS = const WindowPosition(3);
   static const WindowPosition CENTER_ON_PARENT = const WindowPosition(4);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WindowPosition.NONE';
       case 1: return 'WindowPosition.CENTER';
       case 2: return 'WindowPosition.MOUSE';
       case 3: return 'WindowPosition.CENTER_ALWAYS';
       case 4: return 'WindowPosition.CENTER_ON_PARENT';
-      default: return 'new WindowPosition($value)';
+      default: return 'new WindowPosition($index)';
     }
   }
 }
@@ -25382,10 +25386,10 @@ class WindowType extends GEnumBase {
   static const WindowType TOPLEVEL = const WindowType(0);
   static const WindowType POPUP = const WindowType(1);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WindowType.TOPLEVEL';
       case 1: return 'WindowType.POPUP';
-      default: return 'new WindowType($value)';
+      default: return 'new WindowType($index)';
     }
   }
 }
@@ -25399,12 +25403,12 @@ class WrapMode extends GEnumBase {
   static const WrapMode WORD = const WrapMode(2);
   static const WrapMode WORD_CHAR = const WrapMode(3);
   String toString() {
-    switch(value) {
+    switch(index) {
       case 0: return 'WrapMode.NONE';
       case 1: return 'WrapMode.CHAR';
       case 2: return 'WrapMode.WORD';
       case 3: return 'WrapMode.WORD_CHAR';
-      default: return 'new WrapMode($value)';
+      default: return 'new WrapMode($index)';
     }
   }
 }
